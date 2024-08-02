@@ -1,4 +1,4 @@
-#!/home/rgerard/miniconda3/bin/python3
+#!/bin/python3
 #-*- coding: utf-8 -*-
 # Pg compute packing defects on membranes simulations
 # R. Gautier A. Bacle april 2016
@@ -7,13 +7,13 @@ import sys
 import math
 import argparse
 
-import listes as l
-import matrix as m
-import pdb as pdb
-import connected_component as cc
-import dico as d
-import BasicFunctions as bfrg
-import param as p
+from bin import listes as l
+from bin import matrix as m
+from bin import pdb as pdb
+from bin import connected_component as cc
+from bin import dico as d
+from bin import BasicFunctions as bfrg
+from bin import param as p
 
 # Pour le projet
 import numpy as np
