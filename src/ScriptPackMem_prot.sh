@@ -1,4 +1,4 @@
-#!/bin/python3
+#!/bin/bash
 
 # Script to launch PackMem analysis on multiple PDB files.
 # P. Fuchs, R. Gautier, 2016
@@ -26,15 +26,15 @@ do
     # print counter to screen
     echo "$(date): PackMem running on pdb/${prefix}${pdbnum}.pdb"
     # launch PackMem for the 3 types of packing defects
-    ${PackMemPATH}/PackMem_prot.py -i ${PackMemPATH}/${prefix}/pdb/${prefix}${pdbnum}.pdb \
+    ${PackMemPATH}/PackMem_prot.py -i pdb/${prefix}${pdbnum}.pdb \
                               -r ${PackMemPATH}/vdw_radii_Charmm.txt \
                               -p ${PackMemPATH}/param_Charmm.txt \
                               -o ${prefix}${pdbnum} -d 1.0 -t deep
-    ${PackMemPATH}/PackMem_prot.py -i ${PackMemPATH}/${prefix}/pdb/${prefix}${pdbnum}.pdb \
+    ${PackMemPATH}/PackMem_prot.py -i pdb/${prefix}${pdbnum}.pdb \
                               -r ${PackMemPATH}/vdw_radii_Charmm.txt \
                               -p ${PackMemPATH}/param_Charmm.txt \
                               -o ${prefix}${pdbnum} -d 1.0 -t shallow
-    ${PackMemPATH}/PackMem_prot.py -i ${PackMemPATH}/${prefix}/pdb/${prefix}${pdbnum}.pdb \
+    ${PackMemPATH}/PackMem_prot.py -i pdb/${prefix}${pdbnum}.pdb \
                               -r ${PackMemPATH}/vdw_radii_Charmm.txt \
                               -p ${PackMemPATH}/param_Charmm.txt \
                               -o ${prefix}${pdbnum} -d 1.0 -t all
