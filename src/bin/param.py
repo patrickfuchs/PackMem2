@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 # R. Gautier  A. Bacle 2015
 
-import BasicFunctions as bfrg
+from bin import BasicFunctions as bfrg
 import re
 import sys
 
