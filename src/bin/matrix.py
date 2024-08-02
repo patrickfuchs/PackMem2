@@ -4,7 +4,7 @@
 
 import math
 import sys
-import BasicFunctions as bfrg
+from bin import BasicFunctions as bfrg
 
 # matrix size  (square size = 1A)
 SIZE=1.0
