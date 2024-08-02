@@ -26,6 +26,6 @@ if __name__=="__main__":
         stop =  intervals[i+1]-1
         if i==(len(intervals)-2):
             stop = args.frames
-        print(f"nice -19 bash ../../ScriptPackMem_prot.sh {args.prefix} {start} {stop} >& OUT_packmem{i} &")
+        print(f"nice -19 bash ../../New_PackMem/ScriptPackMem_prot.sh {args.prefix} {start} {stop} >& OUT_packmem{i} &")
 
 
