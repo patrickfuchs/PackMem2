@@ -1,11 +1,11 @@
-#!/home/rgerard/miniconda3/envs/packmem-env/bin/python
+#!/bin/python3
 
 # Script to launch PackMem analysis on multiple PDB files.
 # P. Fuchs, R. Gautier, 2016
 
 # set PackMem absolute path
 # change this path according to your system 
-PackMemPATH=../..
+PackMemPATH=/home/mayazygadlo/These/tools/packmem_prot/New_PackMem/src
 
 # set prefix of the pdb files
 prefix=$1
