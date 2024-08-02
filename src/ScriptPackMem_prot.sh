@@ -5,7 +5,7 @@
 
 # set PackMem absolute path
 # change this path according to your system 
-PackMemPATH=/home/mayazygadlo/These/tools/packmem_prot/New_PackMem/src
+PackMemPATH=/home/mayazygadlo/These/tools/packmem_prot/New_PackMem
 
 # set prefix of the pdb files
 prefix=$1
@@ -26,16 +26,16 @@ do
     # print counter to screen
     echo "$(date): PackMem running on pdb/${prefix}${pdbnum}.pdb"
     # launch PackMem for the 3 types of packing defects
-    ${PackMemPATH}/PackMem_prot.py -i pdb/${prefix}${pdbnum}.pdb \
-                              -r ${PackMemPATH}/vdw_radii_Charmm.txt \
-                              -p ${PackMemPATH}/param_Charmm.txt \
+    ${PackMemPATH}/src/PackMem_prot.py -i pdb/${prefix}${pdbnum}.pdb \
+                              -r ${PackMemPATH}/data/vdw_radii_Charmm.txt \
+                              -p ${PackMemPATH}/data/param_Charmm.txt \
                               -o ${prefix}${pdbnum} -d 1.0 -t deep
-    ${PackMemPATH}/PackMem_prot.py -i pdb/${prefix}${pdbnum}.pdb \
-                              -r ${PackMemPATH}/vdw_radii_Charmm.txt \
-                              -p ${PackMemPATH}/param_Charmm.txt \
+    ${PackMemPATH}/src/PackMem_prot.py -i pdb/${prefix}${pdbnum}.pdb \
+                              -r ${PackMemPATH}/data/vdw_radii_Charmm.txt \
+                              -p ${PackMemPATH}/data/param_Charmm.txt \
                               -o ${prefix}${pdbnum} -d 1.0 -t shallow
-    ${PackMemPATH}/PackMem_prot.py -i pdb/${prefix}${pdbnum}.pdb \
-                              -r ${PackMemPATH}/vdw_radii_Charmm.txt \
-                              -p ${PackMemPATH}/param_Charmm.txt \
+    ${PackMemPATH}/src/PackMem_prot.py -i pdb/${prefix}${pdbnum}.pdb \
+                              -r ${PackMemPATH}/data/vdw_radii_Charmm.txt \
+                              -p ${PackMemPATH}/data/param_Charmm.txt \
                               -o ${prefix}${pdbnum} -d 1.0 -t all
 done
