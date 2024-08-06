@@ -132,6 +132,7 @@ if __name__ == '__main__':
     startID,endID = pdb.determine_pos_resid(pdblines)
 
     ###################Which lipids in bilayer?###################
+    # Get the x, y, z of all atoms
     zaxis_byatoms = []
     xaxis_byatoms = []
     yaxis_byatoms = []
@@ -182,16 +183,16 @@ if __name__ == '__main__':
         print("Please, renumerate your residue_number to avoid this problem (for example using editconf Gromacs tool)")  
         sys.exit()
 
-
+    # Get the membrane dimension infos
     xmin, xmax, xmean = l.min_max(xaxis_byatoms)
     ymin, ymax, ymean = l.min_max(yaxis_byatoms)
     zmin, zmax, zmean = l.min_max(zaxis_byatoms)
 
-    # print(dicoMb)
-    # modify the lipid name in data (3L->new3L to take account problem POPvsPOPS/POPE)
+    # Modify the lipid name of the membrane component to its 3 letters code (DMC vs DMPC)
     pdblines = pdb.modifyPDBdata(pdblines, dicoMb, startID, endID)
 
     ########## extract UPPER/LOWER leaflet ##########
+    # If no index file seperating the leaflets
     if args.indexFile == None:
         lower_leaflet = []
         lower_listZ = {}
@@ -199,27 +200,30 @@ if __name__ == '__main__':
         upper_listZ = {}
         for atm_line in pdblines :
             if atm_line[0:4] == "ATOM":
-                # for the upper leaflet
                 atom_name = atm_line[12:16].strip()
                 res_name = atm_line[17:21].strip()
                 z_coord = float(atm_line[46:54])
+                # Upper leaflet
                 if (atom_name == RESNAME_GLYC[res_name] and z_coord > zmean):
+                    # Add the residue number to the list of upper leaflet C2
                     res_number = int(atm_line[startID:endID])
-                    # append res_id in the list of lipids in upper leaflet
                     upper_leaflet.append(res_number)
-                    # build list of Z-level for the Upper leaflet
+                    # Build a list from z_coord-1 to zmax+1 every 1.0
                     tmp = l.create_list_ascend(z_coord - args.dist_suppl_Z, 
                                                     zmax + 1.0, m.SIZE)
+
+                    # Reverse it
                     tmp.reverse()
                     upper_listZ[res_number] = tmp
-                # for the lower leaflet
+                # Lower leaflet
                 if (atom_name == RESNAME_GLYC[res_name] and z_coord < zmean):
+                    # Add the residue number to the list of lower leaflet C2
                     res_number = int(atm_line[startID:endID])
-                    # append res_id in the list of lipids in lower leaflet
                     lower_leaflet.append(res_number)
-                    # build list of Z-level for the lower leaflet
+                    # Build a list from zmin-1 to z_coord+1 every 1.0
                     tmp = l.create_list_descend(z_coord + args.dist_suppl_Z, 
                                                     zmin - 1.0, m.SIZE * -1)
+                    # Then reverse it
                     tmp.reverse()
                     lower_listZ[res_number] = tmp
     else:
@@ -232,35 +236,42 @@ if __name__ == '__main__':
                 res_name = atm_line[17:21].strip()
                 z_coord = float(atm_line[46:54])
                 res_number = int(atm_line[startID:endID])
+                # Upper leaflet
                 if (atom_name == RESNAME_GLYC[res_name] and 
                         res_number in upper_leaflet) :
+                    # Build a list from z_coord-1 to zmax+1 every 1.0
                     tmp = l.create_list_ascend(z_coord - args.dist_suppl_Z, 
                                                     zmax + 1.0, m.SIZE)
+                    # Reverse it
                     tmp.reverse()
                     upper_listZ[res_number] = tmp
+                # Lower leaflet
                 if (atom_name == RESNAME_GLYC[res_name] and
                         res_number in lower_leaflet):
+                    # Build a list from zmin-1 to z_coord+1 every 1.0
                     tmp = l.create_list_descend(z_coord + args.dist_suppl_Z, 
                                                     zmin - 1.0, m.SIZE * -1)
+                    # Reverse it
                     tmp.reverse()
                     lower_listZ[res_number] = tmp
                 
                 
 
     
-    # create listX[xmin,xmax] and listY[ymin,ymax] 
+    # Build a lists from xmin-1 to xmax+1 every 1.0
     listX = l.create_list_ascend(int(xmin - 1.0), int(xmax + 1.0), m.SIZE)
+    # Build a lists from ymin-1 to ymax+1 every 1.0
     listY = l.create_list_ascend(int(ymin - 1.0), int(ymax + 1.0), m.SIZE)
 
     ##################################################  Initialize Matrix   ##############
-    # initialize  matrix 2D for Upper and Lower leaflet
+    # Initialize 2 list of list for Upper and Lower leaflet of length listX,listY
     MatrixUp = m.initialize_matrix2D(len(listX), len(listY), "NA")
     MatrixLo = m.initialize_matrix2D(len(listX), len(listY), "NA")
                 
     #################################################  Compute Matrix    #################
-    #value to limit the search around
+    # Search around v cases around coord
     v = 5
-    #for each atoms of lipids
+    # For each atoms of lipids
     for atm_line in pdblines:
         if atm_line[0:4] == "ATOM":
             coordtmp = []
