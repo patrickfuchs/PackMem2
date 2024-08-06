@@ -163,21 +163,25 @@ if __name__ == '__main__':
                 print(f"Lipid name {res_name} not found in the parameter file submitted")
                 sys.exit()
 
-    #Residue_number problems
-    # 1 nb > 9999
+    # If there are too many lipids (> 9999)
     nb_res=0
+    # Compute the total number of residues considered membrane
     for key in dicoMb:
         nb_res+=len(dicoMb[key])
+    # If it exceeds 9999
     if nb_res > 9999:
         print("The number of lipids in your membrane overtakes the PDB format (>9999)!!")
-        print("This point is not supported by PackMem, this tool may not work properly !")       
-    # 2 same number in Two lipids but < 9999
+        print("This point is not supported by PackMem, this tool may not work properly !")
+        sys.exit()
+
+    # If there is twice the same lipid
     flD=d.detect_duplicate(dicoMb)
     if flD:
         print("You have duplicate in lipids residue_number")    
         print("This point is not supported by PackMem, this tool may not work properly !") 
         print("Please, renumerate your residue_number to avoid this problem (for example using editconf Gromacs tool)")  
         sys.exit()
+
 
     xmin, xmax, xmean = l.min_max(xaxis_byatoms)
     ymin, ymax, ymean = l.min_max(yaxis_byatoms)
