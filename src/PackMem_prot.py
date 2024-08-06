@@ -4,7 +4,6 @@
 # R. Gautier A. Bacle april 2016
 
 import sys
-import math
 import argparse
 
 from bin import listes as l
@@ -17,9 +16,7 @@ from bin import param as p
 
 # Pour le projet
 import numpy as np
-import random as rd
 import protdist as pdist
-#import matplotlib.pyplot as plt
 
 
 
