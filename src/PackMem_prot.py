@@ -91,7 +91,7 @@ if __name__ == '__main__':
         # LIPID = ['DOP', 'DOE', 'DPP', etc]
         DICT_3L, RESNAME_GLYC, LIPID = p.set_params(args.paramFile)
 
-        # determine packing defedct type (all/shallow/deep)
+        # Determine packing defedct type (all/shallow/deep)
         if args.pd_type == 'all':
             FlagPDtype = 0
         elif args.pd_type == 'shallow':
@@ -112,7 +112,7 @@ if __name__ == '__main__':
         #  'CRYST1   56.638   56.638   74.530  90.00  90.00  90.00 P 1           1\n',
         #  'MODEL        2\n', 
         # 'ATOM      1  N   ARG A  43      28.420  41.300  49.850  1.00  0.00           N\n', etc]
-        pdblines = bfrg.read_file(args.filename)
+        pdblines = bfrg.read_file(args.filename) # remplace with MDAnalysis
         # {'ALA N': 1.85, 'ALA HN': 0.22, 'ALA HT1': 0.22, etc}
         # for the amino acids then the lipids
         radius = bfrg.read_radius(args.filesrad)
@@ -125,35 +125,42 @@ if __name__ == '__main__':
                -p param.txt -o output -d distGlyc -t deep/all/shallow [-n index file] [-v] or -h for help')
         sys.exit()
 
-    #extract num_frame in pdb file (line MODEL) or 1 by default
+    # Extract frame number in the pdb file (line MODEL) or 1 by default
     num_frame=pdb.find_numframe(pdblines)
 
-    # determine the position of res_identifier ([22:26] or [21:27]) depending the number of residues
+    # Determine the position of residue number ([22:26] or [21:27]) depending the number of residues
     startID,endID = pdb.determine_pos_resid(pdblines)
 
     ###################Which lipids in bilayer?###################
     zaxis_byatoms = []
     xaxis_byatoms = []
     yaxis_byatoms = []
+    # dicoMb = {'ARG': [43, 52, 53], ... , 'DMC': [59, 60, 61, ..]]
     dicoMb = {}
-    #dict[lipid type]=list of residue number
+    # Get all the residue number of the lipids (and residues)
     for line_atom in pdblines:
         if line_atom[0:4] == "ATOM":
-            res_name=line_atom[17:21].strip()
-            atm_name=line_atom[12:16].strip()
+            res_name = line_atom[17:21].strip()
+            atm_name = line_atom[12:16].strip()
             zaxis_byatoms.append(float(line_atom[46:54]))
             xaxis_byatoms.append(float(line_atom[30:38]))
             yaxis_byatoms.append(float(line_atom[38:46]))
             key = res_name+  "_" + atm_name
+            # If the residue in a lipid or protein
             if res_name in LIPID:
+                # If residue_atom is the DICT_3L
                 if key in DICT_3L:
+                    # If the 3 letter name is in dicoMb
                     if DICT_3L[key] in dicoMb:
+                        # Add the resid number of this residue_atom
                         dicoMb[DICT_3L[key]].append(int(line_atom[startID:endID]))
                     else:
+                        # Create the entry list in dicoMb
                         dicoMb[DICT_3L[key]] = []
+                        # Add the resid number of the residue_atom
                         dicoMb[DICT_3L[key]].append(int(line_atom[startID:endID]))
             else :
-                print("Lipid name %s not found in the parameter file submitted"%(res_name))
+                print(f"Lipid name {res_name} not found in the parameter file submitted")
                 sys.exit()
 
     #Residue_number problems
