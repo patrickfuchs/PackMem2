@@ -6,7 +6,7 @@
 # Set constants
 DIST_GROUP="close"
 # prefix name
-PREFIX="256IM_"
+PREFIX="TREMD_DMPC_14_"
 # long prefix name
 LONG_PREFIX=paste("Total_Up_",PREFIX,sep="")
 # set precision for writing packdef cosntants (nb of decimals) in the txt 
