@@ -5,6 +5,7 @@
 
 import sys
 import argparse
+import numpy as np
 
 from bin import listes as l
 from bin import matrix as m
@@ -13,12 +14,7 @@ from bin import connected_component as cc
 from bin import dico as d
 from bin import BasicFunctions as bfrg
 from bin import param as p
-
-# Pour le projet
-import numpy as np
-import protdist as pdist
-
-
+from bin import protdist as pdist
 
 
 ##########################################################################################
