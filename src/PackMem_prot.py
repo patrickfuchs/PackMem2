@@ -1,4 +1,4 @@
-#!/bin/python3
+#!/usr/bin/python3
 #-*- coding: utf-8 -*-
 # Pg compute packing defects on membranes simulations
 # R. Gautier A. Bacle april 2016
@@ -6,6 +6,7 @@
 import sys
 import argparse
 import numpy as np
+#import MDAnalysis as mda
 
 from bin import listes as l
 from bin import matrix as m
@@ -94,10 +95,10 @@ if __name__ == '__main__':
         # Determine packing defedct type (all/shallow/deep)
         if args.pd_type == 'all':
             FlagPDtype = 0
-        elif args.pd_type == 'shallow':
-            FlagPDtype = 2
         elif args.pd_type == 'deep' :
             FlagPDtype = 1
+        elif args.pd_type == 'shallow':
+            FlagPDtype = 2
         else: 
             print('ERROR : Packing defect type not known. Please choose : all/deep/shallow')
             sys.exit()
@@ -125,13 +126,14 @@ if __name__ == '__main__':
                -p param.txt -o output -d distGlyc -t deep/all/shallow [-n index file] [-v] or -h for help')
         sys.exit()
 
+
+
     # Extract frame number in the pdb file (line MODEL) or 1 by default
     num_frame=pdb.find_numframe(pdblines)
 
     # Determine the position of residue number ([22:26] or [21:27]) depending the number of residues
     startID,endID = pdb.determine_pos_resid(pdblines)
 
-    ###################Which lipids in bilayer?###################
     # Get the x, y, z of all atoms
     zaxis_byatoms = []
     xaxis_byatoms = []
@@ -164,6 +166,7 @@ if __name__ == '__main__':
                 print(f"Lipid name {res_name} not found in the parameter file submitted")
                 sys.exit()
 
+
     # If there are too many lipids (> 9999)
     nb_res=0
     # Compute the total number of residues considered membrane
@@ -183,6 +186,7 @@ if __name__ == '__main__':
         print("Please, renumerate your residue_number to avoid this problem (for example using editconf Gromacs tool)")  
         sys.exit()
 
+
     # Get the membrane dimension infos
     xmin, xmax, xmean = l.min_max(xaxis_byatoms)
     ymin, ymax, ymean = l.min_max(yaxis_byatoms)
@@ -191,7 +195,7 @@ if __name__ == '__main__':
     # Modify the lipid name of the membrane component to its 3 letters code (DMC vs DMPC)
     pdblines = pdb.modifyPDBdata(pdblines, dicoMb, startID, endID)
 
-    ########## extract UPPER/LOWER leaflet ##########
+    ######### Extract UPPER/LOWER leaflet ##########
     # If no index file seperating the leaflets
     if args.indexFile == None:
         lower_leaflet = []
@@ -263,13 +267,12 @@ if __name__ == '__main__':
     # Build a lists from ymin-1 to ymax+1 every 1.0
     listY = l.create_list_ascend(int(ymin - 1.0), int(ymax + 1.0), m.SIZE)
 
-    ##################################################  Initialize Matrix   ##############
     # Initialize 2 list of list for Upper and Lower leaflet of length listX,listY
     MatrixUp = m.initialize_matrix2D(len(listX), len(listY), "NA")
     MatrixLo = m.initialize_matrix2D(len(listX), len(listY), "NA")
                 
-    #################################################  Compute Matrix    #################
-    # Search around v cases around coord
+    ####################  Compute Matrix    #################
+    # Search v cells around coord
     v = 5
     # For each atoms of lipids
     for atm_line in pdblines:
@@ -279,27 +282,37 @@ if __name__ == '__main__':
             res_name = atm_line[17:21].strip()
             res_id = int(atm_line[startID:endID])
             radius_res=m.get_radius(radius, res_name, atom_name)
+            # Get if the residue is aliphatic or not
             aliph_atom=m.get_aliphatic(aliphatic, res_name, atom_name)
+            # Get the coordinates X Y Z
             coordtmp.append(float(atm_line[30:38])) #X
             coordtmp.append(float(atm_line[38:46])) #Y
             coordtmp.append(float(atm_line[46:54])) #Z
-            # ##################################### Upper leaflet ########################
+            # Upper leaflet ########################
             if res_id in upper_leaflet :
-                # limit the loop around dfZ
+                # dfZ = z_C2_res - z_atom
                 dfZ = m.find_Z(coordtmp[2], upper_listZ[res_id])
+                # If dfZ < 5
+                # To limit the search around an atom to 5 cells
                 if dfZ < (1. * v):
-                    MatrixUp= m.fill_matrix(MatrixUp, coordtmp, res_id, res_name,
-                                            atom_name,listX, listY, upper_listZ[res_id], 
-                                            radius_res,FlagPDtype, aliph_atom)
+                    # Fill the matrix with value 0 < a < 1 for aliphatic
+                    # Or with < 1 if polar OR deep
+                    # Defects = 0
+                    MatrixUp= m.fill_matrix(MatrixUp, coordtmp, listX, listY,
+                                            upper_listZ[res_id], radius_res,
+                                            FlagPDtype, aliph_atom)
 
-            # #################################### lower leaflet #########################
+            # Lower leaflet ########################
             if res_id in lower_leaflet :
-                # limit the loop around dfZ
+                # dfZ = z_C2_res - z_atom
                 dfZ = m.find_Z(coordtmp[2], lower_listZ[res_id])
+                # If dfZ > -5
+                # To limit the search around an atom to 5 cells
                 if dfZ > (-1. * v):
-                    MatrixLo = m.fill_matrix(MatrixLo, coordtmp, res_id, res_name,
-                                            atom_name, listX, listY, lower_listZ[res_id], 
-                                            radius_res, FlagPDtype, aliph_atom)
+                    # 
+                    MatrixLo = m.fill_matrix(MatrixLo, coordtmp, listX, listY,
+                                             lower_listZ[res_id], radius_res,
+                                             FlagPDtype, aliph_atom)
 
     ########################preliminary process only for shallow defect and problem of the edges 
     ### to eliminate shallow defects on edges first: binarize on all defects and storage edges coord
