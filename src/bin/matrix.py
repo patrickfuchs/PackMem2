@@ -69,17 +69,18 @@ def fill_matrix(matrix,coordtmp,res_number,res_name,atom_name, listX,listY,listZ
     xLip = coordtmp[0]
     yLip = coordtmp[1]
     zLip = coordtmp[2]
-    # 
-    # works only around X, Y position of the matrix +/- v cases
+    # Find the index of x_atom and y_atom in listX and listY
     iX,iY = find_X_Y(coordtmp, listX, listY)
+    # 
     iX = check_edges(iX, v, len(listX))
     iY = check_edges(iY, v, len(listY))
+    #
     listXM = listX[iX - v : iX + (v + 1)]
     listYM = listY[iY - v : iY + (v + 1)]
 
     dist_lim = (SIZE+radius_res) ** 2
     dist_meet = (SIZE_SIDE + radius_res) ** 2
-
+    # works only around X, Y position of the matrix +/- v cases
     for indZ, sliceZ in enumerate(listZ):
         distZ_to_sliceZ = bfrg.dist_oneAxis(zLip,sliceZ)
         if distZ_to_sliceZ > dist_lim:
@@ -102,7 +103,7 @@ def fill_matrix(matrix,coordtmp,res_number,res_name,atom_name, listX,listY,listZ
                 val_mat = matrix[X][Y]
                 if distance <= dist_meet:
                     # shallow PDefects (2) or all PDefects (0)
-                    if FlagPDtype is 2 or FlagPDtype is 0:
+                    if FlagPDtype == 2 or FlagPDtype == 0:
                         matrix[X][Y] = setDefects(atom_name, aliph_atoms, val_mat)
                     # deep PDefects (1)
                     else:
@@ -224,6 +225,24 @@ def find_Z(coordZ, matZ):
     return matZ[-1]-coordZ
 
 def check_edges(val, val_lim1, val_lim2):
+    """
+    Check if the cell index is lower than 5 or higher than dimension-5
+    Changes the value of the cell index if so
+
+    --------------------
+    INPUT
+    val : int
+        Index of the coordinate of the atom in listX or listY
+    val_lim1 : int
+        The number of cell to work around the atom
+    val_lim2 : int
+        The length of listX or listY
+
+    --------------------
+    OUTPUT
+    int
+        The cell index that represents the center of the search
+    """
     if val < val_lim1:
         return val_lim1
     elif val >= val_lim2-val_lim1:
