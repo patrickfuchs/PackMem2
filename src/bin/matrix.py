@@ -28,7 +28,7 @@ def get_aliphatic(aliphatic, res_name, atom_name):
         sys.exit()
     return aliphatic[key]
 
-def fill_matrix(matrix,coordtmp,res_number,res_name,atom_name, listX,listY,listZ,
+def fill_matrix(matrix, coordtmp, listX, listY, listZ,
                 radius_res, FlagPDtype, aliph_atoms):
     """
     fill the matrix for each atom
@@ -38,12 +38,6 @@ def fill_matrix(matrix,coordtmp,res_number,res_name,atom_name, listX,listY,listZ
         List of list to be filled where there are atoms
     coordtmp : list
         Contains the coordinates x,y,z of the atom
-    res_number : int
-        The residue number
-    res_name : string
-        The name of the residue
-    atom_name : string
-        The name of the atom
     listX : list
         List from xmin-1 to xmax+1 by step of 1.0
     listY : list
@@ -56,7 +50,7 @@ def fill_matrix(matrix,coordtmp,res_number,res_name,atom_name, listX,listY,listZ
     FlagPDtype : int
         The type of defect to analyse. 0 : all / 1 : deep / 2 : shallow
     aliph_atoms : string
-        The nature of the atom. n : aliphatique / a : polar
+        The nature of the atom. a : aliphatique / n : polar
 
     -----------------
     OUTPUT
@@ -70,49 +64,66 @@ def fill_matrix(matrix,coordtmp,res_number,res_name,atom_name, listX,listY,listZ
     yLip = coordtmp[1]
     zLip = coordtmp[2]
     # Find the index of x_atom and y_atom in listX and listY
+    # this corresponds to the location of the atom in the matrix
     iX,iY = find_X_Y(coordtmp, listX, listY)
-    # 
+    # Change the indexes (cell index in matrix) if < v or > len(matrix)-5
     iX = check_edges(iX, v, len(listX))
     iY = check_edges(iY, v, len(listY))
-    #
+    # Select the cells to work in at i+-v
     listXM = listX[iX - v : iX + (v + 1)]
     listYM = listY[iY - v : iY + (v + 1)]
-
+    # Limit distance in a radius
     dist_lim = (SIZE+radius_res) ** 2
+    # Limit distance in diagonal
     dist_meet = (SIZE_SIDE + radius_res) ** 2
-    # works only around X, Y position of the matrix +/- v cases
+    # Loop on the different z positions of the upper OR lower leaflet
     for indZ, sliceZ in enumerate(listZ):
+        # Distance from the position of the atom to the slice in Z
         distZ_to_sliceZ = bfrg.dist_oneAxis(zLip,sliceZ)
+        # Check that we can search in the all the radius
         if distZ_to_sliceZ > dist_lim:
             continue
+        # Loop on the different cells in x dimension
         for indX,sliceX in enumerate(listXM):
+            # Distance from the position of the atom to a cell in X
             distX_to_sliceX = bfrg.dist_oneAxis(xLip, sliceX)
+            # Check that we can search in the all the radius
             if distX_to_sliceX > dist_lim:
                 continue
+            # Loop on the different cells in y dimension
             for indY,sliceY in enumerate(listYM):
+                # Distance from the position of the atom to a cell in X
                 distY_to_sliceY = bfrg.dist_oneAxis(yLip, sliceY)
+                # Check that we can search in the all the radius
                 if distY_to_sliceY > dist_lim:
                     continue
+                # 
                 X = indX + (iX - v)
                 Y = indY + (iY - v)
-                Z = indZ
+                # Create a list with the coordinates x,y,z of a cell
+                # in a 5 cell radius of the atom
                 coordCenter = [float(sliceX), float(sliceY), float(sliceZ)]
+                # Compute the distance between the atom and this position of the matrix
                 distance = bfrg.dist(coordCenter, coordtmp)
+                # If the matrix cell was empty, put 0.0
                 if matrix[X][Y]=="NA":
                     matrix[X][Y]=0.
+                # Get the value in this cell of the matrix
                 val_mat = matrix[X][Y]
+                # 
                 if distance <= dist_meet:
-                    # shallow PDefects (2) or all PDefects (0)
+                    # If shallow (2) or all (0) defect
                     if FlagPDtype == 2 or FlagPDtype == 0:
-                        matrix[X][Y] = setDefects(atom_name, aliph_atoms, val_mat)
-                    # deep PDefects (1)
+                        # 
+                        matrix[X][Y] = setDefects(aliph_atoms, val_mat)
+                    # If deep (1) defect
                     else:
                         matrix[X][Y] +=1.
     return matrix
 
 
 # fill matrix cell depending on the defect type (Deep, Shallow)
-def setDefects(atom_name, list_aliphatic, val_mat):
+def setDefects(list_aliphatic, val_mat):
     if list_aliphatic == "a":
         val_mat += 0.001
     else:
