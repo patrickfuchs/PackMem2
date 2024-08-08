@@ -309,7 +309,9 @@ if __name__ == '__main__':
                 # If dfZ > -5
                 # To limit the search around an atom to 5 cells
                 if dfZ > (-1. * v):
-                    # 
+                    # Fill the matrix with value 0 < a < 1 for aliphatic
+                    # Or with < 1 if polar OR deep
+                    # Defects = 0
                     MatrixLo = m.fill_matrix(MatrixLo, coordtmp, listX, listY,
                                              lower_listZ[res_id], radius_res,
                                              FlagPDtype, aliph_atom)
