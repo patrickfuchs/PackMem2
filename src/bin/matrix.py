@@ -192,13 +192,31 @@ def determinelastNA(matrix):
     for i in range(len(matrix)-1, -1, -1):
         print(i, matrix[i][0][0])
 
-# function that determine from x,y coordinates the central value in matrix
 def find_X_Y(coord, matX, matY):
+    """
+    Determine from x,y coordinates the index in matX and matY
+    Has  been said to determine the central value in matrix
+
+    --------------------
+    INPUT
+    coord : list
+        Contains the coordinates x,y,z of an atom
+    matX : list
+        Contains integer from xmin-1 to xmax+1 by step of 1.0
+    matY : list
+        Contains integer from ymin-1 to ymax+1 by step of 1.0
+    
+    --------------------
+    OUTPUT
+    tuple of int
+        the index of the coord x and y of the atom in matX and matY
+    """
+    # Convert to integer
     tmpX = int(coord[0])
     tmpY = int(coord[1])
+    # Find the index of the value given (x_atom or y_atom)
     iX = matX.index(tmpX)
     iY = matY.index(tmpY)
-    #print(tmpX, matX, iX)
     return iX,iY
 
 # compute the difference between the last value in matrixZ and the Z for one atom
