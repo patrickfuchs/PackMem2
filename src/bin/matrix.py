@@ -28,14 +28,48 @@ def get_aliphatic(aliphatic, res_name, atom_name):
         sys.exit()
     return aliphatic[key]
 
-# fill the matrix for each atom
 def fill_matrix(matrix,coordtmp,res_number,res_name,atom_name, listX,listY,listZ,
                 radius_res, FlagPDtype, aliph_atoms):
+    """
+    fill the matrix for each atom
+    ---------------
+    INPUT
+    matrix : list of list
+        List of list to be filled where there are atoms
+    coordtmp : list
+        Contains the coordinates x,y,z of the atom
+    res_number : int
+        The residue number
+    res_name : string
+        The name of the residue
+    atom_name : string
+        The name of the atom
+    listX : list
+        List from xmin-1 to xmax+1 by step of 1.0
+    listY : list
+        List from ymin-1 to ymax+1 by step of 1.0
+    listZ : list
+        List from zmax+1 to z_C2_coord-1 by step of 1.0  OR
+        List from z_C2_coord+1 to zmin-1 by step of 1.0
+    radius_res : float
+        the radius of the atom type for the residue
+    FlagPDtype : int
+        The type of defect to analyse. 0 : all / 1 : deep / 2 : shallow
+    aliph_atoms : string
+        The nature of the atom. n : aliphatique / a : polar
+
+    -----------------
+    OUTPUT
+    list of list
+        List of list filled where there are atoms
+    """
+    # Number of cells to work around
     v=5
-    # for each lipid get listZ
+    # Get coords of the atom
     xLip = coordtmp[0]
     yLip = coordtmp[1]
     zLip = coordtmp[2]
+    # 
     # works only around X, Y position of the matrix +/- v cases
     iX,iY = find_X_Y(coordtmp, listX, listY)
     iX = check_edges(iX, v, len(listX))
