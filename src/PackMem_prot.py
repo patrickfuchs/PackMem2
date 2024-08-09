@@ -315,8 +315,8 @@ if __name__ == '__main__':
                                              lower_listZ[res_id], radius_res,
                                              FlagPDtype, aliph_atom)
 
-    ########################preliminary process only for shallow defect and problem of the edges 
-    ### to eliminate shallow defects on edges first: binarize on all defects and storage edges coord
+    # Preliminary process for shallow defect and problem of the edges 
+    # To eliminate shallow defects on edges first: binarize on all defects and storage edges coord
     # If shallow defects (2)
     if FlagPDtype == 2:
         # Initalise matrices to 0.0
@@ -337,30 +337,34 @@ if __name__ == '__main__':
         clust_edge_UpM=cc.get_clusters_on_the_edge(Matrix_labels_UpM,len(listX),len(listY))
         clust_edge_LoM=cc.get_clusters_on_the_edge(Matrix_labels_LoM,len(listX),len(listY))
 
-    ############################################## binarisation matrices ##################
-    #print("PackingDefect generation")
-    # matrix binarization
+    # Binarisation matrices ##################
+    # Initalise matrices to 0.0
     Matrix_Upbin=m.initialize_matrix2D(len(listX),len(listY),0.)
     Matrix_Lobin=m.initialize_matrix2D(len(listX),len(listY),0.)
-    # shallow PDefects (2)
+
+    # If shallow (2)
     if FlagPDtype == 2:
-        Matrix_Upbin = m.binarize_matrix_whithout0(MatrixUp, Matrix_Upbin , 0, 0.99)
-        Matrix_Lobin = m.binarize_matrix_whithout0(MatrixLo, Matrix_Lobin, 0, 0.99)
-    # all PDefects (2)
+        # Binarise these matrices, with 0 for aliphatic atoms and 1 otherwise
+        Matrix_Upbin = m.binarize_matrix_without0(MatrixUp, Matrix_Upbin , 0, 0.99)
+        Matrix_Lobin = m.binarize_matrix_without0(MatrixLo, Matrix_Lobin, 0, 0.99)
+    # If all (0)
     elif FlagPDtype == 0:
-        Matrix_Upbin = m.binarize_matrix_whithout0(MatrixUp, Matrix_Upbin , -0.01, 0.99)
-        Matrix_Lobin = m.binarize_matrix_whithout0(MatrixLo, Matrix_Lobin, -0.01, 0.99)
-    # deep
+        # Binarise these matrices, with 0 for aliphatic atoms and 1 otherwise
+        Matrix_Upbin = m.binarize_matrix_without0(MatrixUp, Matrix_Upbin , -0.01, 0.99)
+        Matrix_Lobin = m.binarize_matrix_without0(MatrixLo, Matrix_Lobin, -0.01, 0.99)
+    # If deep (1)
     else:
+        # Binarise these matrices, with 1 if deep defect, 0 otherwise
         Matrix_Upbin = m.binarize_matrix(MatrixUp, Matrix_Upbin, 0.)
         Matrix_Lobin = m.binarize_matrix(MatrixLo, Matrix_Lobin, 0.)
 
-    # Exception when shallow defects
+    # If shallow defects (2)
     if FlagPDtype == 2:
-        #modify the binary matrix to take account edges (determined by all packing defects)
-        #add the first coonected_component (edge
+        # Modify the binary matrix to take account edges (determined by all packing defects)
+        # the edges are put to 0.0
         Matrix_Upbin = m.modify_matrix(Matrix_labels_UpM, Matrix_Upbin, clust_edge_UpM)
         Matrix_Lobin = m.modify_matrix(Matrix_labels_LoM, Matrix_Lobin, clust_edge_LoM)
+
 
     ############################################## packing defects determination  ########
     # get packing defects 
