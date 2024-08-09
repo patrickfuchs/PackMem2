@@ -485,23 +485,23 @@ if __name__ == '__main__':
     #                           lab2 = [(x1, y1), (x2, y2), ...], 
     #                           ...                              }
     dict_labels_coor_Up = pdist.find_pd_border(array2d_labels_Up)
-    dict_labels_coor_Lo = pdist.find_pd_border(array2d_labels_Lo)
+    #dict_labels_coor_Lo = pdist.find_pd_border(array2d_labels_Lo)
 
     # Get the coordinates of the matrix where the edges of the protein are located.
     # list of tuples [(x1, y1), (x2, y2), ...]
     list_edge_coor_prot_Up = pdist.find_prot_border(array2d_prot_Up)
-    list_edge_coor_prot_Lo = pdist.find_prot_border(array2d_prot_Lo)
+    #list_edge_coor_prot_Lo = pdist.find_prot_border(array2d_prot_Lo)
 
     # Assign distance group for each packing defect, "far" or "close". Default threshold = 10 A.
     # dict {lab1 : 'group', lab2 : 'group', ... }
     pd_labels_group_Up = pdist.assign_dist_group(list_edge_coor_prot_Up, dict_labels_coor_Up, 10)
-    pd_labels_group_Lo = pdist.assign_dist_group(list_edge_coor_prot_Lo, dict_labels_coor_Lo, 10)
+    #pd_labels_group_Lo = pdist.assign_dist_group(list_edge_coor_prot_Lo, dict_labels_coor_Lo, 10)
 
     # Results
     # Ouput text file
     # header : label,dist_group,area
     pdist.outputTXT_defects_prot(args.outputname, FlagPDtype, "Up", pd_labels_group_Up, area_clusters_Up)
-    pdist.outputTXT_defects_prot(args.outputname, FlagPDtype, "Lo", pd_labels_group_Lo, area_clusters_Lo)
+    #pdist.outputTXT_defects_prot(args.outputname, FlagPDtype, "Lo", pd_labels_group_Lo, area_clusters_Lo)
 
     # Print matrix - to check
     #mat_group = pdist.create_mat_group(dico_labels_coor_Up, pd_labels_group_Up, array2d_labels_Up)
