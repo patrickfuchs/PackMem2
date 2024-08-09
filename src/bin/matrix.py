@@ -162,11 +162,31 @@ def binarize_matrix(matrix, matrix_ini, val=0.):
     return matrix_ini
 
 def binarize_matrix_whithout0(matrix, matrix_ini, val1=0, val2=0.99):
+    """
+    Binarise the presence of aliphatic atom in matrix
+
+    --------------------
+    INPUT
+    matrix : list of list
+        Contains where there are atoms in the simulation box and their type
+    matrix_ini : list of list
+        Matrix to be binarised
+    val1 : float
+        lower limit value
+    val2 : float
+        higher limit value
+
+    --------------------
+    OUTPUT
+    list of list
+        Contains the position of the aliphatic atoms (0) in the simulationb box    
+    """
     for i in range(0, len(matrix)):
         for j in range(0, len(matrix[0])):
-            #print(matrix[i][j])
             if matrix[i][j] == "NA":
                 matrix_ini[i][j]=0.
+            # Check Matrix, if there is an aliphatic atom : 0
+            # Otherwise : 1
             else:
                 if (matrix[i][j] > val1 and  matrix[i][j] < val2):
                     matrix_ini[i][j]=0.
