@@ -301,7 +301,6 @@ if __name__ == '__main__':
                     MatrixUp= m.fill_matrix(MatrixUp, coordtmp, listX, listY,
                                             upper_listZ[res_id], radius_res,
                                             FlagPDtype, aliph_atom)
-
             # Lower leaflet ########################
             if res_id in lower_leaflet :
                 # dfZ = z_C2_res - z_atom
@@ -318,24 +317,25 @@ if __name__ == '__main__':
 
     ########################preliminary process only for shallow defect and problem of the edges 
     ### to eliminate shallow defects on edges first: binarize on all defects and storage edges coord
-    # shallow PDefects (2)
+    # If shallow defects (2)
     if FlagPDtype == 2:
-        # binarization Matrices according defect type [XM][YM]
+        # Initalise matrices to 0.0
         Matrix_UpbinM = m.initialize_matrix2D(len(listX),len(listY),0.)
         Matrix_LobinM = m.initialize_matrix2D(len(listX),len(listY),0.)
-        Matrix_UpbinM = m.binarize_matrix_whithout0(MatrixUp, Matrix_UpbinM , -0.01, 0.99)
-        Matrix_LobinM = m.binarize_matrix_whithout0(MatrixLo, Matrix_LobinM, -0.01, 0.99)
+        # Binarise these matrices, with 0 for aliphatic atoms and 1 otherwise
+        Matrix_UpbinM = m.binarize_matrix_without0(MatrixUp, Matrix_UpbinM , -0.01, 0.99)
+        Matrix_LobinM = m.binarize_matrix_without0(MatrixLo, Matrix_LobinM, -0.01, 0.99)
     
-        # get temp packing defects 
+        # Get temporary packing defects
+        # Connect the packing defects
         Matrix_labels_UpM, root_labels_UpM, area_clusters_UpM, coor_clusters_UpM = \
             cc.get_connected_components(Matrix_UpbinM,len(listX),len(listY))
         Matrix_labels_LoM, root_labels_LoM, area_clusters_LoM, coor_clusters_LoM = \
             cc.get_connected_components(Matrix_LobinM,len(listX),len(listY))
 
-        # get cluster on the edge
+        # Get the cluster on the edge
         clust_edge_UpM=cc.get_clusters_on_the_edge(Matrix_labels_UpM,len(listX),len(listY))
         clust_edge_LoM=cc.get_clusters_on_the_edge(Matrix_labels_LoM,len(listX),len(listY))
-        # print(clust_edge_UpM, clust_edge_LoM)
 
     ############################################## binarisation matrices ##################
     #print("PackingDefect generation")
