@@ -337,7 +337,7 @@ if __name__ == '__main__':
         clust_edge_UpM=cc.get_clusters_on_the_edge(Matrix_labels_UpM,len(listX),len(listY))
         clust_edge_LoM=cc.get_clusters_on_the_edge(Matrix_labels_LoM,len(listX),len(listY))
 
-    # Binarisation matrices ##################
+    # Binarisation matrices ###################################################
     # Initalise matrices to 0.0
     Matrix_Upbin=m.initialize_matrix2D(len(listX),len(listY),0.)
     Matrix_Lobin=m.initialize_matrix2D(len(listX),len(listY),0.)
@@ -366,18 +366,18 @@ if __name__ == '__main__':
         Matrix_Lobin = m.modify_matrix(Matrix_labels_LoM, Matrix_Lobin, clust_edge_LoM)
 
 
-    ############################################## packing defects determination  ########
-    # get packing defects 
+    # Packing defects determination  ##########################################
+    # Get packing defects 
     Matrix_labels_Up, root_labels_Up, area_clusters_Up, coor_clusters_Up = \
         cc.get_connected_components(Matrix_Upbin,len(listX),len(listY))
     Matrix_labels_Lo, root_labels_Lo, area_clusters_Lo, coor_clusters_Lo = \
         cc.get_connected_components(Matrix_Lobin,len(listX),len(listY))
 
-    # get cluster on the edge
+    # Get cluster on the edge
     clust_edge_Up = cc.get_clusters_on_the_edge(Matrix_labels_Up,len(listX),len(listY))
     clust_edge_Lo = cc.get_clusters_on_the_edge(Matrix_labels_Lo,len(listX),len(listY))
 
-    # count area of the edge
+    # Count area of the edge
     total_edge_Up = 0
     for key in clust_edge_Up:
         total_edge_Up += area_clusters_Up[key]
@@ -385,12 +385,13 @@ if __name__ == '__main__':
     for key in clust_edge_Lo:
         total_edge_Lo += area_clusters_Lo[key]
     
-    #clean dico defects (without edge)
+    # Clean dico defects (without edge)
     area_clusters_Up = d.del_key_dico(area_clusters_Up, clust_edge_Up)
     coor_clusters_Up = d.del_key_dico(coor_clusters_Up, clust_edge_Up)
     area_clusters_Lo = d.del_key_dico(area_clusters_Lo, clust_edge_Lo)
     coor_clusters_Lo = d.del_key_dico(coor_clusters_Lo, clust_edge_Lo)
-   
+
+    # If shallow (2)
     if FlagPDtype == 2:
         # Eliminate NA inside (deep not shallow defect)
         Matrix_labels_Lo, total_edge_Lo, clustPb_Lo = \
@@ -404,20 +405,20 @@ if __name__ == '__main__':
             cc.delete_NApoints_inside(clustPb_Up, Matrix_labels_Up, root_labels_Up, 
                                        area_clusters_Up, len(listX),len(listY))
         
-        # reclean dico defects (without edge)
+        # Reclean dico defects (without edge)
         area_clusters_Up = d.del_key_dico(area_clusters_Up, clust_edge_Up)
         coor_clusters_Up = d.del_key_dico(coor_clusters_Up, clust_edge_Up)
         area_clusters_Lo = d.del_key_dico(area_clusters_Lo, clust_edge_Lo)
         coor_clusters_Lo = d.del_key_dico(coor_clusters_Lo, clust_edge_Lo)
     
-    # ############################################# output text file  ####################
+    # Output text file  #######################################################
     total_size = len(listX) * len(listY)
     pdb.outputTXT_defects(args.outputname, FlagPDtype, "Up", area_clusters_Up, 
                           coor_clusters_Up, total_size, total_edge_Up, listX, listY)
     pdb.outputTXT_defects(args.outputname, FlagPDtype, "Lo", area_clusters_Lo, 
                           coor_clusters_Lo, total_size, total_edge_Lo, listX, listY)
 
-    ############ output PDB files ########################################################
+    # Output PDB files ########################################################
     # final matrix values PD (X,Y) with Z cooresponding to the max(Upper/lowerZlevel)
     if args.pdbout :
         valzmax=float(d.max_value_dico(upper_listZ))
