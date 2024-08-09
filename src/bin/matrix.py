@@ -161,7 +161,7 @@ def binarize_matrix(matrix, matrix_ini, val=0.):
                     matrix_ini[i][j]=0.
     return matrix_ini
 
-def binarize_matrix_whithout0(matrix, matrix_ini, val1=0, val2=0.99):
+def binarize_matrix_without0(matrix, matrix_ini, val1=0, val2=0.99):
     """
     Binarise the presence of aliphatic atom in matrix
 
