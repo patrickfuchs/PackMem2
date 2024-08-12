@@ -9,15 +9,31 @@ from bin import BasicFunctions as bfrg
 
 # matrix size  (square size = 1A)
 SIZE=1.0
-
 # calculate limit size (half diagonal) 3D
 SIZE_SIDE=0.5*(math.sqrt((math.pow(SIZE, 2))* 3.))
 
-# get radius from [Lipid_name Atom_name]
+
 def get_radius(radius, res_name, atom_name):
+    """
+    Get radius from [lipid_name atom_name]
+
+    --------------------
+    INPUT
+    radius : dictionnary
+        Contains the atom's radiuses of lipids and amino acids
+    res_name : string
+        Name of the residue (lipid / amino acid)
+    atom_name : string
+        Name of the atom
+    
+    --------------------
+    OUTPUT
+    float
+        The radius of an lipid's / amino acid's atom
+    """
     key = res_name+" "+atom_name
     if key not in radius.keys():
-        print("ERROR : Association of lipid %s and atom %s not found in parameter file"%(res_name, atom_name))
+        print(f"ERROR : Association of lipid {res_name} and atom {atom_name} not found in parameter file")
         sys.exit()
     return radius[key]
 
