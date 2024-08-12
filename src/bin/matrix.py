@@ -298,9 +298,9 @@ def binarize_matrix_without0(matrix, matrix_ini, val1=0, val2=0.99):
 
     --------------------
     INPUT
-    matrix : list of list
+    matrix : numpy matrix
         Contains where there are atoms in the simulation box and their type
-    matrix_ini : list of list
+    matrix_ini : numpy matrix
         Matrix to be binarised
     val1 : float
         lower limit value
@@ -309,12 +309,12 @@ def binarize_matrix_without0(matrix, matrix_ini, val1=0, val2=0.99):
 
     --------------------
     OUTPUT
-    list of list
+    numpy matrix
         Contains the position of the aliphatic atoms (0) in the simulationb box    
     """
-    for i in range(0, len(matrix)):
-        for j in range(0, len(matrix[0])):
-            if matrix[i][j] == "NA":
+    for i in range(0, matrix.shape[0]):
+        for j in range(0, matrix.shape[1]):
+            if  np.isnan(matrix[i][j]):
                 matrix_ini[i][j]=0.
             # Check Matrix, if there is an aliphatic atom : 0
             # Otherwise : 1
