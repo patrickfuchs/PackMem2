@@ -291,7 +291,7 @@ def binarize_matrix_without0(matrix, matrix_ini, val1=0, val2=0.99):
     """
     for i in range(0, matrix.shape[0]):
         for j in range(0, matrix.shape[1]):
-            if  np.isnan(matrix[i][j]):
+            if np.isnan(matrix[i][j]):
                 matrix_ini[i][j]=0.
             # Check Matrix, if there is an aliphatic atom : 0
             # Otherwise : 1
@@ -313,10 +313,27 @@ def initialize_matrix3D(val1, val2, val3, defaut):
     return Matrix
 
 def binarize_matrix(matrix, matrix_ini, val=0.):
-    for i in range(0, len(matrix)):
-        for j in range(0, len(matrix[0])):
+    """
+    Binarise the presence of atom in matrix
+
+    --------------------
+    INPUT
+    matrix : numpy matrix
+        Contains where there are atoms in the simulation box
+    matrix_ini : numpy matrix
+        Matrix to be binarised
+    val : float
+        lower limit value
+
+    --------------------
+    OUTPUT
+    numpy matrix
+        Contains the position of the atoms (1) in the simulation box
+    """
+    for i in range(0, matrix.shape[0]):
+        for j in range(0, matrix.shape[1]):
             #print(matrix[i][j])
-            if matrix[i][j] == "NA":
+            if np.isnan(matrix[i][j]):
                 matrix_ini[i][j]=0.
             else:
                 if matrix[i][j] > val:
