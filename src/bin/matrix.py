@@ -13,6 +13,27 @@ SIZE=1.0
 SIZE_SIDE=0.5*(math.sqrt((math.pow(SIZE, 2))* 3.))
 
 
+def initialize_matrix2D(val1, val2, default):
+    """
+    Initialise a 2D matrix with a default value
+    
+    --------------------
+    INPUT
+    val1 : int
+        Dimension in X/Y for the array
+    val2 : int
+        Dimension in X/Y for the array
+    default : int / float / string
+        Default value in the matrix cells
+        
+    --------------------
+    OUTPUT
+    numpy matrix
+        Matrix initialised with default value
+    """
+    matrix = np.full((val1, val2), default)
+    return matrix
+
 def get_radius(radius, res_name, atom_name):
     """
     Get radius from [lipid_name atom_name]
@@ -257,27 +278,6 @@ def initialize_matrix3D(val1, val2, val3, defaut):
             for k in range(0, val3):
                 Matrix[i][j][k]=defaut
     return Matrix
-
-def initialize_matrix2D(val1, val2, default):
-    """
-    Initialise a 2D matrix with a default value
-    
-    --------------------
-    INPUT
-    val1 : int
-        Dimension in X/Y for the array
-    val2 : int
-        Dimension in X/Y for the array
-    default : int / float / string
-        Default value in the matrix cells
-        
-    --------------------
-    OUTPUT
-    numpy matrix
-        Matrix initialised with default value
-    """
-    matrix = np.full((val1, val2), default)
-    return matrix       
 
 def binarize_matrix(matrix, matrix_ini, val=0.):
     for i in range(0, len(matrix)):
