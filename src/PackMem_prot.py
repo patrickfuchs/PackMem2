@@ -269,9 +269,9 @@ if __name__ == '__main__':
     # Build a lists from ymin-1 to ymax+1 every 1.0
     listY = l.create_list_ascend(int(ymin - 1.0), int(ymax + 1.0), m.SIZE)
 
-    # Initialize 2 list of list for Upper and Lower leaflet of length listX,listY
-    MatrixUp = m.initialize_matrix2D(len(listX), len(listY), "NA")
-    MatrixLo = m.initialize_matrix2D(len(listX), len(listY), "NA")
+    # Initialize 2 matrixes for Upper and Lower leaflet of length listX,listY
+    MatrixUp = m.initialize_matrix2D(len(listX), len(listY), np.nan)
+    MatrixLo = m.initialize_matrix2D(len(listX), len(listY), np.nan)
                 
     ####################  Compute Matrix    #################
     # Search v cells around coord
