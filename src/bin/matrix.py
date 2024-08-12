@@ -168,10 +168,6 @@ def fill_matrix(matrix, coordtmp, listX, listY, listZ,
     """
     # Number of cells to work around
     v=5
-    # Get coords of the atom
-    xLip = coordtmp[0]
-    yLip = coordtmp[1]
-    zLip = coordtmp[2]
     # Find the index of x_atom and y_atom in listX and listY
     # this corresponds to the location of the atom in the matrix
     iX,iY = find_X_Y(coordtmp, listX, listY)
@@ -186,23 +182,23 @@ def fill_matrix(matrix, coordtmp, listX, listY, listZ,
     # Limit distance in diagonal
     dist_meet = (SIZE_SIDE + radius_res) ** 2
     # Loop on the different z positions of the upper OR lower leaflet
-    for indZ, sliceZ in enumerate(listZ):
+    for sliceZ in listZ:
         # Distance from the position of the atom to the slice in Z
-        distZ_to_sliceZ = bfrg.dist_oneAxis(zLip,sliceZ)
+        distZ_to_sliceZ = bfrg.dist_oneAxis(coordtmp[2],sliceZ)
         # Check that we can search in the all the radius
         if distZ_to_sliceZ > dist_lim:
             continue
         # Loop on the different cells in x dimension
         for indX,sliceX in enumerate(listXM):
             # Distance from the position of the atom to a cell in X
-            distX_to_sliceX = bfrg.dist_oneAxis(xLip, sliceX)
+            distX_to_sliceX = bfrg.dist_oneAxis(coordtmp[0], sliceX)
             # Check that we can search in the all the radius
             if distX_to_sliceX > dist_lim:
                 continue
             # Loop on the different cells in y dimension
             for indY,sliceY in enumerate(listYM):
                 # Distance from the position of the atom to a cell in X
-                distY_to_sliceY = bfrg.dist_oneAxis(yLip, sliceY)
+                distY_to_sliceY = bfrg.dist_oneAxis(coordtmp[1], sliceY)
                 # Check that we can search in the all the radius
                 if distY_to_sliceY > dist_lim:
                     continue
