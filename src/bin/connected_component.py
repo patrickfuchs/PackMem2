@@ -333,7 +333,9 @@ def get_connected_components(M, val_bin=0):
                 
     return M_labels, root_labels, area_clusters, coor_clusters
 
-def get_clusters_on_the_edge(M_labels,nrows,ncols):
+def get_clusters_on_the_edge(M_labels):
+    nrows = M_labels.shape[0]
+    ncols = M_labels.shape[1]
     clusters_on_the_edge = []
     # check clusters on 1st & last row
     #print(M_labels[0])
