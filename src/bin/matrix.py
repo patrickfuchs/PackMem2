@@ -382,8 +382,26 @@ def find_indexfromvalue(value, liste):
     return mini_i
     
 def modify_matrix(mat1, mat2, listval):
-    for i in range(0, len(mat1)):
-        for j in range(0, len(mat1[0])):
+    """
+    Modify the binary matrix to take account edges (determined by all packing defects)
+    The edges are put to 0.0
+
+    --------------------
+    INPUT
+    mat1 : numpy matrix
+        Contains the labels of the packing defects + aliphatic atoms
+    mat2 : numpy matrix
+        Contains the position of the aliphatic atoms (0)
+    listval : list
+        Contains the labels of the clusters on the edges
+    
+    --------------------
+    OUTPUT
+    matrix
+        Contains mat2 where the clusters on the edge were put to 0.0
+    """
+    for i in range(0, mat1.shape[0]):
+        for j in range(0, mat1.shape[1]):
             if mat1[i][j] in listval:
                 mat2[i][j]= 0.0
     return mat2
