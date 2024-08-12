@@ -331,12 +331,12 @@ if __name__ == '__main__':
         # Get temporary packing defects
         # Connect the packing defects
         Matrix_labels_UpM, root_labels_UpM, area_clusters_UpM, coor_clusters_UpM = \
-            cc.get_connected_components(Matrix_UpbinM,)
+            cc.get_connected_components(Matrix_UpbinM)
         Matrix_labels_LoM, root_labels_LoM, area_clusters_LoM, coor_clusters_LoM = \
             cc.get_connected_components(Matrix_LobinM)
         # Get the cluster on the edge
-        clust_edge_UpM=cc.get_clusters_on_the_edge(Matrix_labels_UpM,len(listX),len(listY))
-        clust_edge_LoM=cc.get_clusters_on_the_edge(Matrix_labels_LoM,len(listX),len(listY))
+        clust_edge_UpM=cc.get_clusters_on_the_edge(Matrix_labels_UpM)
+        clust_edge_LoM=cc.get_clusters_on_the_edge(Matrix_labels_LoM)
 
     # Binarisation matrices ###################################################
     # Initalise matrices to 0.0
