@@ -136,7 +136,29 @@ def check_edges(val, val_lim1, val_lim2):
         return val_lim2-(val_lim1+1)
     else:
         return val
-    
+
+def setDefects(type_aliphatic, val_mat):
+    """
+    Fill matrix cell depending on the defect type (Deep, Shallow)
+
+    --------------------
+    INPUT
+    type_aliphatic : string
+        The nature of the atom. a : aliphatique / n : polar
+    val_mat : float
+        The value in the matrix cell corresponding to the atom
+
+    --------------------
+    OUTPUT
+    float
+        The new value of the matrix cell
+    """
+    if type_aliphatic == "a":
+        val_mat += 0.001
+    else:
+        val_mat += 1.
+    return val_mat
+
 def fill_matrix(matrix, coordtmp, listX, listY, listZ,
                 radius_res, FlagPDtype, aliph_atoms):
     """
@@ -225,15 +247,6 @@ def fill_matrix(matrix, coordtmp, listX, listY, listZ,
                     else:
                         matrix[X][Y] +=1.
     return matrix
-
-
-# fill matrix cell depending on the defect type (Deep, Shallow)
-def setDefects(list_aliphatic, val_mat):
-    if list_aliphatic == "a":
-        val_mat += 0.001
-    else:
-        val_mat += 1.
-    return val_mat
 
 def initialize_matrix3D(val1, val2, val3, defaut):
     Matrix=list(range(0,val1))
