@@ -357,29 +357,6 @@ def modify_matrix(mat1, mat2, listval):
                 mat2[i][j]= 0.0
     return mat2
 
-def initialize_matrix3D(val1, val2, val3, defaut):
-    Matrix=list(range(0,val1))
-    for i in range(0, val1):
-        Matrix[i]=list(range(0,val2))
-        for j in range(0, val2):
-            Matrix[i][j]=list(range(0,val3))
-            for k in range(0, val3):
-                Matrix[i][j][k]=defaut
-    return Matrix
-
-def binarize_matrix_whithout0_bis(matrix, matrix_ini, val=0.99):
-    for i in range(0, len(matrix)):
-        for j in range(0, len(matrix[0])):
-            #print(matrix[i][j])
-            if matrix[i][j] == "NA":
-                matrix_ini[i][j]=0.
-            else:
-                if (matrix[i][j] > 0. and  matrix[i][j] < val):
-                    matrix_ini[i][j]=0.
-                else:
-                    matrix_ini[i][j]=1.
-    return matrix_ini
-
 def clean_NA_inside(Matrix_labels, clust_edge, Matrix_ini, total_edge):
     """
 
@@ -418,6 +395,29 @@ def clean_NA_inside(Matrix_labels, clust_edge, Matrix_ini, total_edge):
                 Matrix_labels[i][j]=clust_edge[0]
                 total_edge+=1
     return Matrix_labels, total_edge, clustPb
+
+def initialize_matrix3D(val1, val2, val3, defaut):
+    Matrix=list(range(0,val1))
+    for i in range(0, val1):
+        Matrix[i]=list(range(0,val2))
+        for j in range(0, val2):
+            Matrix[i][j]=list(range(0,val3))
+            for k in range(0, val3):
+                Matrix[i][j][k]=defaut
+    return Matrix
+
+def binarize_matrix_whithout0_bis(matrix, matrix_ini, val=0.99):
+    for i in range(0, len(matrix)):
+        for j in range(0, len(matrix[0])):
+            #print(matrix[i][j])
+            if matrix[i][j] == "NA":
+                matrix_ini[i][j]=0.
+            else:
+                if (matrix[i][j] > 0. and  matrix[i][j] < val):
+                    matrix_ini[i][j]=0.
+                else:
+                    matrix_ini[i][j]=1.
+    return matrix_ini
             
 def determinelastNA(matrix):
     for i in range(len(matrix)-1, -1, -1):
