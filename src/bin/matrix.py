@@ -302,16 +302,6 @@ def binarize_matrix_without0(matrix, matrix_ini, val1=0, val2=0.99):
                     matrix_ini[i][j]=1.
     return matrix_ini
 
-def initialize_matrix3D(val1, val2, val3, defaut):
-    Matrix=list(range(0,val1))
-    for i in range(0, val1):
-        Matrix[i]=list(range(0,val2))
-        for j in range(0, val2):
-            Matrix[i][j]=list(range(0,val3))
-            for k in range(0, val3):
-                Matrix[i][j][k]=defaut
-    return Matrix
-
 def binarize_matrix(matrix, matrix_ini, val=0.):
     """
     Binarise the presence of atom in matrix
@@ -341,6 +331,16 @@ def binarize_matrix(matrix, matrix_ini, val=0.):
                 else:
                     matrix_ini[i][j]=0.
     return matrix_ini
+
+def initialize_matrix3D(val1, val2, val3, defaut):
+    Matrix=list(range(0,val1))
+    for i in range(0, val1):
+        Matrix[i]=list(range(0,val2))
+        for j in range(0, val2):
+            Matrix[i][j]=list(range(0,val3))
+            for k in range(0, val3):
+                Matrix[i][j][k]=defaut
+    return Matrix
 
 def binarize_matrix_whithout0_bis(matrix, matrix_ini, val=0.99):
     for i in range(0, len(matrix)):
