@@ -6,7 +6,9 @@
 ##### P. Fuchs 08/2014
 #####
 
-import copy
+import numpy as np
+import sys
+from bin import matrix as m
 
 def get_random_matrix(nrows,ncols):
     import random
@@ -208,10 +210,9 @@ def merge_list_of_lists(list_of_lists):
 
 
 # this is the important fct 
-def get_connected_components(M,nrows,ncols,val_bin=0):
-##    print_matrix2file("matrix_init.txt",M,nrows,ncols)
+def get_connected_components(M, val_bin=0):
     # Initialize a new matrix (for labels)
-    M_labels = init_matrix_0(nrows,ncols) #set each cell to 0 (integer)
+    M_labels = m.initialize_matrix2D(M.shape[0], M.shape[1], 0) #set each cell to 0 (integer)
     # counter for the number of labels
     nb_labels = 0 
     # list for storing equivalent labels (see below)
