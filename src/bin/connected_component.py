@@ -365,25 +365,59 @@ def get_clusters_on_the_edge(M_labels):
     clusters_on_the_edge = sorted(list(set(clusters_on_the_edge)))
     return clusters_on_the_edge
 
-def delete_NApoints_inside(clustPb, Matrix_labels, root_labels, area_clusters, nrows, ncols):
-    #### supprimer les defauts totalament NA
+def delete_NApoints_inside(clustPb, Matrix_labels, root_labels, area_clusters):
+    """
+    Get rid of the defect comprised enterely of nan
+
+    --------------------
+    INPUT
+    clustPb : dictionnary
+        Contains the labels and the number of cells concerned that has nan in Matrix_ini
+    Matrix_labels : numpy matrix
+        Contains the labels
+    root_labels : list
+        Contains the set of labels in this matrix
+    area_clusters : dictionnary
+        Contains the area of each label
+
+    --------------------
+    OUTPUT
+    list
+        Contains the set of labels in this matrix that are attributed to a non-nan cluster
+    dictionnary
+        Contains the area of each non-nan label
+    dictionnary
+        Contains the first appearance of the non-nan labels in the matrix
+    """
     clust_2_delete=[]
+    # Loop on all the clusters that had nan in them
     for key in clustPb:
+        #  If one of the clusters is enterely composed of nan
         if area_clusters[key] == clustPb[key]:
+            # Add this label to the delete list
             clust_2_delete.append(key)
+    # if there are some labels to be deleted
     if len(clust_2_delete) != 0:
         for num in clust_2_delete:
+            # Get their indexes in root_label
             tmp=root_labels.index(num)
+            # Delete them from root_label
             del root_labels[tmp]
-
-    area_clusters = {} # to store the area of each cluster
-    coor_clusters = {} # to store the coor (in the matrix) of the 1st element of each cluster
+    # to store the area of each cluster
+    area_clusters = {}
+    # to store the coor (in the matrix) of the 1st element of each cluster
+    coor_clusters = {}
+    # Loop on the packing labels in the matrix
     for root_label in root_labels:
         area_clusters[root_label] = 0
-    for i in range(nrows):
-        for j in range(ncols):
+    # Loop on label matrix to compute the area of starting cell of cluster
+    for i in range(Matrix_labels.shape[0]):
+        for j in range(Matrix_labels.shape[1]):
+            # if there is a label
             if Matrix_labels[i][j]:
+                # Add this cell to the area of the label
                 area_clusters[Matrix_labels[i][j]] += 1
+                # Store the coordinates of the first appearance of the label
                 if Matrix_labels[i][j] not in coor_clusters:
                     coor_clusters[Matrix_labels[i][j]]=[i,j]
     return root_labels, area_clusters, coor_clusters
