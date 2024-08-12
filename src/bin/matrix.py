@@ -233,7 +233,7 @@ def fill_matrix(matrix, coordtmp, listX, listY, listZ,
                 # Compute the distance between the atom and this position of the matrix
                 distance = bfrg.dist(coordCenter, coordtmp)
                 # If the matrix cell was empty, put 0.0
-                if matrix[X][Y]=="NA":
+                if np.isnan(matrix[X][Y]):
                     matrix[X][Y]=0.
                 # Get the value in this cell of the matrix
                 val_mat = matrix[X][Y]
