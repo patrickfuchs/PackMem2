@@ -300,9 +300,25 @@ def find_X_Y(coord, matX, matY):
     iY = matY.index(tmpY)
     return iX,iY
 
-# compute the difference between the last value in matrixZ and the Z for one atom
-def find_Z(coordZ, matZ):
-    return matZ[-1]-coordZ
+def find_Z(coordZ, listZ):
+    """
+    Compute the difference between the last value in listZ
+    and the Z for one atom
+
+    --------------------
+    INPUT
+    coordZ : float
+        The z coordinate for one atom
+    listZ : list
+        List from zmax+1 to z_C2_coord-1 by step of 1.0  OR
+        List from z_C2_coord+1 to zmin-1 by step of 1.0
+
+    --------------------
+    OUPUT
+    float
+        The difference between the last value in listZ and the Z for one atom
+    """
+    return listZ[-1]-coordZ
 
 def check_edges(val, val_lim1, val_lim2):
     """
