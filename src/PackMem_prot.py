@@ -362,21 +362,21 @@ if __name__ == '__main__':
     # If shallow defects (2)
     if FlagPDtype == 2:
         # Modify the binary matrix to take account edges (determined by all packing defects)
-        # the edges are put to 0.0
+        # The clusters that had their labels on the edge are put to 0.0
         Matrix_Upbin = m.modify_matrix(Matrix_labels_UpM, Matrix_Upbin, clust_edge_UpM)
         Matrix_Lobin = m.modify_matrix(Matrix_labels_LoM, Matrix_Lobin, clust_edge_LoM)
 
 
     # Packing defects determination  ##########################################
-    # Get packing defects 
+    # Connect the packing defects + label them + count the area
     Matrix_labels_Up, root_labels_Up, area_clusters_Up, coor_clusters_Up = \
-        cc.get_connected_components(Matrix_Upbin,len(listX),len(listY))
+        cc.get_connected_components(Matrix_Upbin)
     Matrix_labels_Lo, root_labels_Lo, area_clusters_Lo, coor_clusters_Lo = \
-        cc.get_connected_components(Matrix_Lobin,len(listX),len(listY))
+        cc.get_connected_components(Matrix_Lobin)
 
     # Get cluster on the edge
-    clust_edge_Up = cc.get_clusters_on_the_edge(Matrix_labels_Up,len(listX),len(listY))
-    clust_edge_Lo = cc.get_clusters_on_the_edge(Matrix_labels_Lo,len(listX),len(listY))
+    clust_edge_Up = cc.get_clusters_on_the_edge(Matrix_labels_Up)
+    clust_edge_Lo = cc.get_clusters_on_the_edge(Matrix_labels_Lo)
 
     # Count area of the edge
     total_edge_Up = 0
@@ -394,17 +394,18 @@ if __name__ == '__main__':
 
     # If shallow (2)
     if FlagPDtype == 2:
-        # Eliminate NA inside (deep not shallow defect)
-        Matrix_labels_Lo, total_edge_Lo, clustPb_Lo = \
-            m.clean_NA_inside(Matrix_labels_Lo, clust_edge_Lo, MatrixLo, total_edge_Lo)
-        root_labels_Lo, area_clusters_Lo, coor_clusters_Lo = \
-            cc.delete_NApoints_inside(clustPb_Lo, Matrix_labels_Lo, root_labels_Lo, 
-                                       area_clusters_Lo, len(listX),len(listY))
+        # Eliminate nan inside (deep not shallow defect)
         Matrix_labels_Up, total_edge_Up, clustPb_Up = \
             m.clean_NA_inside(Matrix_labels_Up, clust_edge_Up, MatrixUp, total_edge_Up)
         root_labels_Up, area_clusters_Up, coor_clusters_Up = \
-            cc.delete_NApoints_inside(clustPb_Up, Matrix_labels_Up, root_labels_Up, 
-                                       area_clusters_Up, len(listX),len(listY))
+            cc.delete_NApoints_inside(clustPb_Up, Matrix_labels_Up,
+                                      root_labels_Up, area_clusters_Up)
+
+        Matrix_labels_Lo, total_edge_Lo, clustPb_Lo = \
+            m.clean_NA_inside(Matrix_labels_Lo, clust_edge_Lo, MatrixLo, total_edge_Lo)
+        root_labels_Lo, area_clusters_Lo, coor_clusters_Lo = \
+            cc.delete_NApoints_inside(clustPb_Lo, Matrix_labels_Lo,
+                                      root_labels_Lo, area_clusters_Lo)
         
         # Reclean dico defects (without edge)
         area_clusters_Up = d.del_key_dico(area_clusters_Up, clust_edge_Up)
