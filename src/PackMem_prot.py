@@ -441,15 +441,9 @@ if __name__ == '__main__':
                               listX, listY, valzmin, Matrix_labels_Lo, clust_edge_Lo)
     
     # Distance from the protein ###############################################
-    # Conversion of labelled matrix to numpy array.
-    # Each cell of the matrix contains either a label corresponding to
-    # a packing defect or the value 0.
-    array2d_labels_Up = np.array(Matrix_labels_Up)
-    array2d_labels_Lo = np.array(Matrix_labels_Lo)
-
     # Label 1 corresponds to the void around the simulation, so we remove it.
-    array2d_labels_Up = np.where(array2d_labels_Up == 1, 0, array2d_labels_Up)
-    array2d_labels_Lo = np.where(array2d_labels_Lo == 1, 0, array2d_labels_Lo)
+    Matrix_labels_Up = np.where(Matrix_labels_Up == 1, 0, Matrix_labels_Up)
+    Matrix_labels_Lo = np.where(Matrix_labels_Lo == 1, 0, Matrix_labels_Lo)
     
     # Retrieve the protein    
     list_code3L_AA = ['ALA', 'ASP', 'ARG', 'ASN', 'CYS',
@@ -458,8 +452,8 @@ if __name__ == '__main__':
                         'SER', 'THR', 'TRP', 'TYR', 'VAL']
 
     # Create empty arrays
-    array2d_prot_Up = np.zeros_like(array2d_labels_Up)
-    array2d_prot_Lo = np.zeros_like(array2d_labels_Lo)
+    array2d_prot_Up = np.zeros_like(Matrix_labels_Up)
+    array2d_prot_Lo = np.zeros_like(Matrix_labels_Lo)
 
     # Find where the protein is in the simulation box
     for atm_line in pdblines :
@@ -484,8 +478,8 @@ if __name__ == '__main__':
     # dictionnary label coords {lab1 = [(x1, y1), (x2, y2), ...],
     #                           lab2 = [(x1, y1), (x2, y2), ...], 
     #                           ...                              }
-    dict_labels_coor_Up = pdist.find_pd_border(array2d_labels_Up)
-    #dict_labels_coor_Lo = pdist.find_pd_border(array2d_labels_Lo)
+    dict_labels_coor_Up = pdist.find_pd_border(Matrix_labels_Up)
+    #dict_labels_coor_Lo = pdist.find_pd_border(Matrix_labels_Lo)
 
     # Get the coordinates of the matrix where the edges of the protein are located.
     # list of tuples [(x1, y1), (x2, y2), ...]
@@ -504,7 +498,7 @@ if __name__ == '__main__':
     #pdist.outputTXT_defects_prot(args.outputname, FlagPDtype, "Lo", pd_labels_group_Lo, area_clusters_Lo)
 
     # Print matrix - to check
-    #mat_group = pdist.create_mat_group(dico_labels_coor_Up, pd_labels_group_Up, array2d_labels_Up)
+    #mat_group = pdist.create_mat_group(dico_labels_coor_Up, pd_labels_group_Up, Matrix_labels_Up)
     #mat_prot = array2d_prot_Up
     #plt.imshow(mat_group - mat_prot, cmap='binary')
     #plt.show()
