@@ -211,17 +211,40 @@ def merge_list_of_lists(list_of_lists):
 
 # this is the important fct 
 def get_connected_components(M, val_bin=0):
+    """
+    Connect the shallow correspond cells together
+
+    --------------------
+    INPUT
+    M : numpy matrix
+        Contains the position of the aliphatic atoms (0) in the simulationb box
+    val_bin : int / float
+        The value to differenciate between pore or atom
+
+    --------------------
+    OUPUT
+    numpy matrix
+        Contains the labels
+    list
+        Contains the set of labels in this matrix
+    dictionnary
+        Contains the area of each label
+    dictionnary
+        Contains the first appearance of the label in the matrix
+    """
     # Initialize a new matrix (for labels)
-    M_labels = m.initialize_matrix2D(M.shape[0], M.shape[1], 0) #set each cell to 0 (integer)
+    # Set each cell to 0 (integer)
+    M_labels = m.initialize_matrix2D(M.shape[0], M.shape[1], 0)
     # counter for the number of labels
     nb_labels = 0 
     # list for storing equivalent labels (see below)
     list_equiv_labels = []
 
     # First pass
-    for i in range(nrows):
-        for j in range(ncols):
-            if M[i][j] == val_bin: # this is a positive cell
+    for i in range(M.shape[0]):
+        for j in range(M.shape[1]):
+            # If there is a positive cell (== 0)
+            if M[i][j] == val_bin:
                 # create a list that contains the positive neighbors
                 # e.g.: [[1, 2]] means the neighboring cell [1,2] (of the current cell) is positive
                 # e.g.: [[6, 6], [6, 4]] means the neighboring cells (of the current cell)
@@ -233,7 +256,7 @@ def get_connected_components(M, val_bin=0):
                         positive_neighbors.append([i-1,j-1])                
                     if M[i-1][j] == val_bin: # North
                         positive_neighbors.append([i-1,j])
-                    if j < ncols - 1 and M[i-1][j+1] == val_bin: # North-East
+                    if j < M.shape[1] - 1 and M[i-1][j+1] == val_bin: # North-East
                         positive_neighbors.append([i-1,j+1])
                 if j > 0 and M[i][j-1] == val_bin: # West
                     positive_neighbors.append([i,j-1])
@@ -250,7 +273,6 @@ def get_connected_components(M, val_bin=0):
                 #  --> it doesn't matter which one: arbitrarily, we choose the first one
                 # in the list positive_neighbors
                 if len(positive_neighbors) > 1:
-                    #print("positive_neighbors:", positive_neighbors)
                     # loop over positive_neighbors and store their label in a list called label_neighbors
                     label_neighbors = []
                     for neighbor in positive_neighbors: # neighbor is a list (e.g. [11,81]) containing coor of the neighbor in M
@@ -268,9 +290,6 @@ def get_connected_components(M, val_bin=0):
                     # e.g. [[1,2],[3,4,5,7],[6,8], ...] (each sublist is ordered)
                     #  -> means 1&2 are equiv, 3,..,7 are equiv, etc
                     if len(label_neighbors) > 1:
-                        #print("positive_neighbors:", positive_neighbors)
-                        #print("cell %3i-%3i: label %3i, label_neighbors: %s" %(i,j,M_labels[i][j],label_neighbors))
-                        #print()
                         # is list_equiv_labels empty? -> easy to fill in
                         if len(list_equiv_labels) == 0:
                             list_equiv_labels.append(label_neighbors)
@@ -281,7 +300,7 @@ def get_connected_components(M, val_bin=0):
                             for k,tmplist in enumerate(list_equiv_labels):
                                 if len(intersect(tmplist,label_neighbors)) > 0:
                                     # found it! So we fuse the lists, avoid duplicates and sort!
-                                    list_equiv_labels[k] = merge_avoid_duplicate_sort_list(list_equiv_labels[k] , label_neighbors)
+                                    list_equiv_labels[k] = merge_avoid_duplicate_sort_list(list_equiv_labels[k], label_neighbors)
                                     is_present_in_list_equiv_labels = 1
                             # label is not present, so we create a new sublist
                             if not is_present_in_list_equiv_labels:
@@ -289,32 +308,29 @@ def get_connected_components(M, val_bin=0):
 
     # There are redundancies in list_equiv_labels -> clean them up
     list_equiv_labels = merge_list_of_lists(list_equiv_labels)
-    # uncomment the following for an output
-##    print("First pass done!")
-##    print_matrix2file("matrix_1after_1stpass.txt",M_labels,nrows,ncols)
-##    print("Intermediary matrix of labels printed to file")
 
     # Second pass
     # Build a dictionnary for assigning a uniq label
     # should look like this: {1: 1, 2: 1, 3: 3, 4: 4}
     # --> label 1 & 2 are equiv, thus we set label 2 to label 1
     dico_of_uniq_labels, root_labels = get_uniq_labels(nb_labels,list_equiv_labels)
-    area_clusters = {} # to store the area of each clusteer
+    area_clusters = {} # to store the area of each cluster
     coor_clusters = {} # to store the coor (in the matrix) of the 1st element of each cluster
+    # Loop on the labels that are not equivalent to any other
     for root_label in root_labels:
         area_clusters[root_label] = 0
-    for i in range(nrows):
-        for j in range(ncols):
+    # Loop on label matrix to get rid of equivalent labels
+    for i in range(M.shape[0]):
+        for j in range(M.shape[1]):
+            # if there is a label
             if M_labels[i][j]:
+                # Change label to its equivalent and kept one
                 M_labels[i][j] = dico_of_uniq_labels[M_labels[i][j]]
                 area_clusters[M_labels[i][j]] += 1
+                # Store the coordinates of the first appearance of the label
                 if M_labels[i][j] not in coor_clusters:
                     coor_clusters[M_labels[i][j]]=[i,j]
                 
-    # uncomment the following for an output                
-##    print("Second pass done!")
-##    print_matrix2file("matrix_2after_2ndpass.txt",M_labels,nrows,ncols)
-##    print("Final matrix of labels printed to file")
     return M_labels, root_labels, area_clusters, coor_clusters
 
 def get_clusters_on_the_edge(M_labels,nrows,ncols):
