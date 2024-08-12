@@ -334,20 +334,33 @@ def get_connected_components(M, val_bin=0):
     return M_labels, root_labels, area_clusters, coor_clusters
 
 def get_clusters_on_the_edge(M_labels):
+    """
+    Get the labels that are on the edge of the matrix
+
+    --------------------
+    INPUT
+    M_labels : numpy matrix
+        Contains the labels of the packing defects (+ aliphatic atoms)
+    
+    --------------------
+    OUTPUT
+    list
+        Contains the labels of each edge of the matrix
+    """
     nrows = M_labels.shape[0]
     ncols = M_labels.shape[1]
     clusters_on_the_edge = []
-    # check clusters on 1st & last row
-    #print(M_labels[0])
-    #print(M_labels[nrows-1])
+    # Get set of labels on 1st & last row
     clusters_on_the_edge += list(set([i for i in M_labels[0] if i != 0]))
     clusters_on_the_edge += list(set([i for i in M_labels[nrows-1] if i != 0]))
     # check clusters on 1st & last col
-    for i in range(nrows):
-        if M_labels[i][0] not in clusters_on_the_edge and M_labels[i][0] != 0:
-            clusters_on_the_edge.append(M_labels[i][0])
-        if M_labels[i][ncols-1] not in clusters_on_the_edge and M_labels[i][ncols-1] != 0:
-            clusters_on_the_edge.append(M_labels[i][ncols-1])
+    clusters_on_the_edge += list(set([i for i in M_labels[:, 0] if i != 0]))
+    clusters_on_the_edge += list(set([i for i in M_labels[:, ncols-1] if i != 0]))
+    #for i in range(nrows):
+    #    if M_labels[i][0] not in clusters_on_the_edge and M_labels[i][0] != 0:
+    #        clusters_on_the_edge.append(M_labels[i][0])
+    #    if M_labels[i][ncols-1] not in clusters_on_the_edge and M_labels[i][ncols-1] != 0:
+    #        clusters_on_the_edge.append(M_labels[i][ncols-1])
     # get rid of duplicates & sort
     clusters_on_the_edge = sorted(list(set(clusters_on_the_edge)))
     return clusters_on_the_edge
