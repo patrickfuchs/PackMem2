@@ -298,7 +298,7 @@ if __name__ == '__main__':
                 # To limit the search around an atom to 5 cells
                 if dfZ < (1. * v):
                     # Fill the matrix with value 0 < a < 1 for aliphatic
-                    # Or with < 1 if polar OR deep
+                    # Or with > 1 if polar OR deep
                     # Defects = 0
                     MatrixUp= m.fill_matrix(MatrixUp, coordtmp, listX, listY,
                                             upper_listZ[res_id], radius_res,
@@ -311,7 +311,7 @@ if __name__ == '__main__':
                 # To limit the search around an atom to 5 cells
                 if dfZ > (-1. * v):
                     # Fill the matrix with value 0 < a < 1 for aliphatic
-                    # Or with < 1 if polar OR deep
+                    # Or with > 1 if polar OR deep
                     # Defects = 0
                     MatrixLo = m.fill_matrix(MatrixLo, coordtmp, listX, listY,
                                              lower_listZ[res_id], radius_res,
@@ -324,12 +324,12 @@ if __name__ == '__main__':
         # Initalise matrices to 0.0
         Matrix_UpbinM = m.initialize_matrix2D(len(listX),len(listY),0.)
         Matrix_LobinM = m.initialize_matrix2D(len(listX),len(listY),0.)
-        # Binarise these matrices, with 0 for aliphatic atoms and 1 otherwise
+        # Binarise these matrices, with 0 for aliphatic atoms + packing defects and 1 otherwise
         Matrix_UpbinM = m.binarize_matrix_without0(MatrixUp, Matrix_UpbinM , -0.01, 0.99)
         Matrix_LobinM = m.binarize_matrix_without0(MatrixLo, Matrix_LobinM, -0.01, 0.99)
     
         # Get temporary packing defects
-        # Connect the packing defects
+        # Connect the packing defects + label them + count the area
         Matrix_labels_UpM, root_labels_UpM, area_clusters_UpM, coor_clusters_UpM = \
             cc.get_connected_components(Matrix_UpbinM)
         Matrix_labels_LoM, root_labels_LoM, area_clusters_LoM, coor_clusters_LoM = \
