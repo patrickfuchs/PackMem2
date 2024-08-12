@@ -111,6 +111,32 @@ def find_X_Y(coord, matX, matY):
     iY = matY.index(tmpY)
     return iX,iY
 
+def check_edges(val, val_lim1, val_lim2):
+    """
+    Check if the cell index is lower than 5 or higher than dimension-5
+    Changes the value of the cell index if so
+
+    --------------------
+    INPUT
+    val : int
+        Index of the coordinate of the atom in listX or listY
+    val_lim1 : int
+        The number of cell to work around the atom
+    val_lim2 : int
+        The length of listX or listY
+
+    --------------------
+    OUTPUT
+    int
+        The cell index that represents the center of the search
+    """
+    if val < val_lim1:
+        return val_lim1
+    elif val >= val_lim2-val_lim1:
+        return val_lim2-(val_lim1+1)
+    else:
+        return val
+    
 def fill_matrix(matrix, coordtmp, listX, listY, listZ,
                 radius_res, FlagPDtype, aliph_atoms):
     """
@@ -319,32 +345,6 @@ def clean_NA_inside(Matrix_labels, clust_edge, Matrix_ini, total_edge):
 def determinelastNA(matrix):
     for i in range(len(matrix)-1, -1, -1):
         print(i, matrix[i][0][0])
-
-def check_edges(val, val_lim1, val_lim2):
-    """
-    Check if the cell index is lower than 5 or higher than dimension-5
-    Changes the value of the cell index if so
-
-    --------------------
-    INPUT
-    val : int
-        Index of the coordinate of the atom in listX or listY
-    val_lim1 : int
-        The number of cell to work around the atom
-    val_lim2 : int
-        The length of listX or listY
-
-    --------------------
-    OUTPUT
-    int
-        The cell index that represents the center of the search
-    """
-    if val < val_lim1:
-        return val_lim1
-    elif val >= val_lim2-val_lim1:
-        return val_lim2-(val_lim1+1)
-    else:
-        return val
 
 def find_indexfromvalue(value, liste):
     mini=100.
