@@ -217,7 +217,7 @@ def get_connected_components(M, val_bin=0):
     --------------------
     INPUT
     M : numpy matrix
-        Contains the position of the aliphatic atoms (0) in the simulationb box
+        Contains the position of the aliphatic atoms (+ packing defects) (0) in the simulationb box
     val_bin : int / float
         The value to differenciate between pore or atom
 
