@@ -4,6 +4,7 @@
 
 import math
 import sys
+import numpy as np
 from bin import BasicFunctions as bfrg
 
 # matrix size  (square size = 1A)
@@ -140,13 +141,26 @@ def initialize_matrix3D(val1, val2, val3, defaut):
                 Matrix[i][j][k]=defaut
     return Matrix
 
-def initialize_matrix2D(val1, val2, defaut):
-    Matrix=list(range(0,val1))
-    for i in range(0, val1):
-        Matrix[i]=list(range(0,val2))
-        for j in range(0, val2):
-            Matrix[i][j]=defaut
-    return Matrix       
+def initialize_matrix2D(val1, val2, default):
+    """
+    Initialise a 2D matrix with a default value
+    
+    --------------------
+    INPUT
+    val1 : int
+        Dimension in X/Y for the array
+    val2 : int
+        Dimension in X/Y for the array
+    default : int / float / string
+        Default value in the matrix cells
+        
+    --------------------
+    OUTPUT
+    numpy matrix
+        Matrix initialised with default value
+    """
+    matrix = np.full((val1, val2), default)
+    return matrix       
 
 def binarize_matrix(matrix, matrix_ini, val=0.):
     for i in range(0, len(matrix)):
