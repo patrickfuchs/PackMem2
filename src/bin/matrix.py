@@ -381,14 +381,40 @@ def binarize_matrix_whithout0_bis(matrix, matrix_ini, val=0.99):
     return matrix_ini
 
 def clean_NA_inside(Matrix_labels, clust_edge, Matrix_ini, total_edge):
+    """
+
+    --------------------
+    INPUT
+    Matrix_labels : numpy matrix
+        Contains the labels
+    clust_edge : list
+        Contains the labels on each edge of the matrix
+    Matrix_ini : numpy matrix
+        Contains the positions of the polar atoms (int)
+        aliphatic atoms (float > 0.0)
+        and packing defects (0.0)
+    total_edge : int
+        The area taken by the packing defects on the edge of the matrix
+
+    --------------------
+    OUTPUT
+    numpy matrix
+        Contains the labels without nan
+    int
+        The updated area taken by the packing defects on the edge of the matrix
+    dictionnary
+        Contains the labels and the number of cells concerned that and nan in Matrix_ini
+    """
     clustPb={}
-    for i in range(0, len(Matrix_ini)):
-        for j in range(0, len(Matrix_ini[0])):
-            if Matrix_ini[i][j] == "NA" and Matrix_labels[i][j] not in clust_edge:
+    # Loop on the Matrix_ini to find potential nan
+    for i in range(0, Matrix_ini.shape[0]):
+        for j in range(0, Matrix_ini.shape[1]):
+            if np.isnan(Matrix_ini[i][j]) and Matrix_labels[i][j] not in clust_edge:
                 if Matrix_labels[i][j] in clustPb:
                     clustPb[Matrix_labels[i][j]]+=1
                 else:
                     clustPb[Matrix_labels[i][j]]=1
+                # Correct the nan by giving it the first label of clust_edge
                 Matrix_labels[i][j]=clust_edge[0]
                 total_edge+=1
     return Matrix_labels, total_edge, clustPb
