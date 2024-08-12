@@ -64,14 +64,61 @@ def get_aliphatic(aliphatic, res_name, atom_name):
         sys.exit()
     return aliphatic[key]
 
+def find_Z(coordZ, listZ):
+    """
+    Compute the difference between the last value in listZ
+    and the Z for one atom
+
+    --------------------
+    INPUT
+    coordZ : float
+        The z coordinate for one atom
+    listZ : list
+        List from zmax+1 to z_C2_coord-1 by step of 1.0  OR
+        List from z_C2_coord+1 to zmin-1 by step of 1.0
+
+    --------------------
+    OUPUT
+    float
+        The difference between the last value in listZ and the Z for one atom
+    """
+    return listZ[-1]-coordZ
+
+def find_X_Y(coord, matX, matY):
+    """
+    Determine from x,y coordinates the index in matX and matY
+    Has  been said to determine the central value in matrix
+
+    --------------------
+    INPUT
+    coord : list
+        Contains the coordinates x,y,z of an atom
+    matX : list
+        Contains integer from xmin-1 to xmax+1 by step of 1.0
+    matY : list
+        Contains integer from ymin-1 to ymax+1 by step of 1.0
+    
+    --------------------
+    OUTPUT
+    tuple of int
+        the index of the coord x and y of the atom in matX and matY
+    """
+    # Convert to integer
+    tmpX = int(coord[0])
+    tmpY = int(coord[1])
+    # Find the index of the value given (x_atom or y_atom)
+    iX = matX.index(tmpX)
+    iY = matY.index(tmpY)
+    return iX,iY
+
 def fill_matrix(matrix, coordtmp, listX, listY, listZ,
                 radius_res, FlagPDtype, aliph_atoms):
     """
     fill the matrix for each atom
     ---------------
     INPUT
-    matrix : list of list
-        List of list to be filled where there are atoms
+    matrix : numpy matrix
+        Matrix to be filled where there are atoms
     coordtmp : list
         Contains the coordinates x,y,z of the atom
     listX : list
@@ -272,53 +319,6 @@ def clean_NA_inside(Matrix_labels, clust_edge, Matrix_ini, total_edge):
 def determinelastNA(matrix):
     for i in range(len(matrix)-1, -1, -1):
         print(i, matrix[i][0][0])
-
-def find_X_Y(coord, matX, matY):
-    """
-    Determine from x,y coordinates the index in matX and matY
-    Has  been said to determine the central value in matrix
-
-    --------------------
-    INPUT
-    coord : list
-        Contains the coordinates x,y,z of an atom
-    matX : list
-        Contains integer from xmin-1 to xmax+1 by step of 1.0
-    matY : list
-        Contains integer from ymin-1 to ymax+1 by step of 1.0
-    
-    --------------------
-    OUTPUT
-    tuple of int
-        the index of the coord x and y of the atom in matX and matY
-    """
-    # Convert to integer
-    tmpX = int(coord[0])
-    tmpY = int(coord[1])
-    # Find the index of the value given (x_atom or y_atom)
-    iX = matX.index(tmpX)
-    iY = matY.index(tmpY)
-    return iX,iY
-
-def find_Z(coordZ, listZ):
-    """
-    Compute the difference between the last value in listZ
-    and the Z for one atom
-
-    --------------------
-    INPUT
-    coordZ : float
-        The z coordinate for one atom
-    listZ : list
-        List from zmax+1 to z_C2_coord-1 by step of 1.0  OR
-        List from z_C2_coord+1 to zmin-1 by step of 1.0
-
-    --------------------
-    OUPUT
-    float
-        The difference between the last value in listZ and the Z for one atom
-    """
-    return listZ[-1]-coordZ
 
 def check_edges(val, val_lim1, val_lim2):
     """
