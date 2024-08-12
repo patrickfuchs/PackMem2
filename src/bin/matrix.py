@@ -37,11 +37,30 @@ def get_radius(radius, res_name, atom_name):
         sys.exit()
     return radius[key]
 
-# get aliphatic flag [Lipid_name Atom_name]
 def get_aliphatic(aliphatic, res_name, atom_name):
+    """
+    Get aliphatic flag [Lipid_name Atom_name]
+
+    n for polar atoms
+    a for aliphatic atoms
+
+    --------------------
+    INPUT
+    aliphatic : dictionnary
+        Contains the nature of the atoms
+    res_name : string
+        Name of the residue (lipid / amino acid)
+    atom_name : string
+        Name of the atom
+    
+    --------------------
+    OUTPUT
+    float
+        The nature of an lipid's / amino acid's atom
+    """
     key = res_name+" "+atom_name
     if key not in aliphatic.keys():
-        print("ERROR : Association of lipid %s and atom %s not found in parameter file"%(res_name, atom_name))
+        print(f"ERROR : Association of lipid {res_name} and atom {atom_name} not found in parameter file")
         sys.exit()
     return aliphatic[key]
 
