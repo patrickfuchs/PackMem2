@@ -185,8 +185,8 @@ def fill_matrix(matrix, coordtmp, listX, listY, listZ,
 
     -----------------
     OUTPUT
-    list of list
-        List of list filled where there are atoms
+    numpy matrix
+        Matrix filled where there are atoms
     """
     # Number of cells to work around
     v=5
