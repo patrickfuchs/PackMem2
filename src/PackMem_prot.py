@@ -350,12 +350,12 @@ if __name__ == '__main__':
         Matrix_Lobin = m.binarize_matrix_without0(MatrixLo, Matrix_Lobin, 0, 0.99)
     # If all (0)
     elif FlagPDtype == 0:
-        # Binarise these matrices, with 0 for aliphatic atoms and 1 otherwise
+        # Binarise these matrices, with 0 for aliphatic atoms + packing defects and 1 otherwise
         Matrix_Upbin = m.binarize_matrix_without0(MatrixUp, Matrix_Upbin , -0.01, 0.99)
         Matrix_Lobin = m.binarize_matrix_without0(MatrixLo, Matrix_Lobin, -0.01, 0.99)
     # If deep (1)
     else:
-        # Binarise these matrices, with 1 if deep defect, 0 otherwise
+        # Binarise these matrices, with 0 if deep defect, 1 otherwise
         Matrix_Upbin = m.binarize_matrix(MatrixUp, Matrix_Upbin, 0.)
         Matrix_Lobin = m.binarize_matrix(MatrixLo, Matrix_Lobin, 0.)
 
