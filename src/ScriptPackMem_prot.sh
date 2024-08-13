@@ -5,7 +5,7 @@
 
 # set PackMem absolute path
 # change this path according to your system 
-PackMemPATH=/home/mayazygadlo/These/tools/packmem_prot/New_PackMem
+PackMemPATH=/home/maya/Documents/tools/New_PackMem/
 
 # set prefix of the pdb files
 prefix=$1
