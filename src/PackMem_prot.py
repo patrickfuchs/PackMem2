@@ -167,7 +167,7 @@ if __name__ == '__main__':
         if args.indexFile == None:
             lower_leaflet = []
             upper_leaflet = []
-            for atm_line in pdblines :
+            for atm_line in range(len(res_ids)) :
                 if atm_line[0:4] == "ATOM":
                     atom_name = atm_line[12:16].strip()
                     res_name = atm_line[17:21].strip()
@@ -197,7 +197,7 @@ if __name__ == '__main__':
                         lower_listZ[res_number] = tmp
         else:
             (lower_leaflet, upper_leaflet) = p.read_ndx(args.indexFile)
-            for atm_line in pdblines :
+            for atm_line in range(len(res_ids)) :
                 if atm_line[0:4] == "ATOM":
                     atom_name = atm_line[12:16].strip()
                     res_name = atm_line[17:21].strip()
@@ -238,7 +238,7 @@ if __name__ == '__main__':
         # Search v cells around coord
         v = 5
         # For each atoms of lipids
-        for atm_line in pdblines:
+        for atm_line in range(len(res_ids)):
             if atm_line[0:4] == "ATOM":
                 coordtmp = []
                 atom_name = atm_line[12:16].strip()
@@ -383,23 +383,23 @@ if __name__ == '__main__':
 
         # Output PDB files ########################################################
         # final matrix values PD (X,Y) with Z cooresponding to the max(Upper/lowerZlevel)
-        if args.pdbout :
-            valzmax=float(d.max_value_dico(upper_listZ))
-            valzmin=float(d.min_value_dico(lower_listZ))
-            pdb.outputPDB_leaflet(pdblines, upper_leaflet, args.outputname + "_Upper.pdb", 
-                                startID, endID, num_frame)
-            pdb.outputPDB_leaflet(pdblines, lower_leaflet, args.outputname + "_Lower.pdb", 
-                                startID, endID, num_frame)
-                            
-            pdb.outputPDB_Total_matrix(args.outputname, FlagPDtype, "Up", num_frame,
-                                    listX, listY, valzmax, MatrixUp)
-            pdb.outputPDB_Total_matrix(args.outputname, FlagPDtype, "Lo", num_frame,
-                                    listX, listY, valzmin, MatrixLo)
-                                    
-            pdb.outputPDB_defects(args.outputname, FlagPDtype, "Up", num_frame,
-                                listX, listY, valzmax, Matrix_labels_Up, clust_edge_Up)
-            pdb.outputPDB_defects(args.outputname, FlagPDtype, "Lo", num_frame,
-                                listX, listY, valzmin, Matrix_labels_Lo, clust_edge_Lo)
+        #if args.pdbout :
+        #    valzmax=float(d.max_value_dico(upper_listZ))
+        #    valzmin=float(d.min_value_dico(lower_listZ))
+        #    pdb.outputPDB_leaflet(pdblines, upper_leaflet, args.outputname + "_Upper.pdb", 
+        #                        startID, endID, num_frame)
+        #    pdb.outputPDB_leaflet(pdblines, lower_leaflet, args.outputname + "_Lower.pdb", 
+        #                        startID, endID, num_frame)
+        #                    
+        #    pdb.outputPDB_Total_matrix(args.outputname, FlagPDtype, "Up", num_frame,
+        #                            listX, listY, valzmax, MatrixUp)
+        #    pdb.outputPDB_Total_matrix(args.outputname, FlagPDtype, "Lo", num_frame,
+        #                            listX, listY, valzmin, MatrixLo)
+        #                            
+        #    pdb.outputPDB_defects(args.outputname, FlagPDtype, "Up", num_frame,
+        #                        listX, listY, valzmax, Matrix_labels_Up, clust_edge_Up)
+        #    pdb.outputPDB_defects(args.outputname, FlagPDtype, "Lo", num_frame,
+        #                        listX, listY, valzmin, Matrix_labels_Lo, clust_edge_Lo)
         
         # Distance from the protein ###############################################
         # Label 1 corresponds to the void around the simulation, so we remove it.
@@ -417,7 +417,7 @@ if __name__ == '__main__':
         array2d_prot_Lo = np.zeros_like(Matrix_labels_Lo)
 
         # Find where the protein is in the simulation box
-        for atm_line in pdblines :
+        for atm_line in range(len(res_ids)) :
             # If it is an amino acid atom
             if atm_line[0:4] == "ATOM" and atm_line[17:20] in list_code3L_AA:
                 atom_name = atm_line[12:16].strip()
