@@ -8,7 +8,7 @@
 import sys
 import argparse
 import numpy as np
-#import MDAnalysis as mda
+import MDAnalysis as mda
 
 from bin import listes as l
 from bin import matrix as m
@@ -66,7 +66,8 @@ if __name__ == '__main__':
         outputname = "output"
         pdbout = 0
         parser = argparse.ArgumentParser(description = 'Arguments for the app')
-        parser.add_argument('-i', action = 'store', dest = 'filename', help = 'PDB File')
+        parser.add_argument('-f', action = 'store', dest = 'traj', help = 'trajectory file (.xtc)')
+        parser.add_argument('-s', action='store', dest='topo', help='Topology file (.gro)')
         parser.add_argument('-r', action = 'store', dest = 'filesrad',
                             help = 'File for radius (default vdw_radiiFinal2014.txt)',
                             default = 'vdw_radiiFinal2014.txt')
@@ -82,6 +83,10 @@ if __name__ == '__main__':
                             help = 'File for index (Gromacs ndx style). Only Lower/Upper group accepted')
         parser.add_argument('-v', dest = 'pdbout', action = 'store_true',
                             help = 'Increase the verbosity')
+        parser.add_argument('-b', action = 'store', dest = 'start', type=int,
+                            help = 'frame to start the analysis')
+        parser.add_argument('-e', action = 'store', dest = 'end', type=int,
+                            help = 'frame to end the analysis')
                             
         args = parser.parse_args()
         
