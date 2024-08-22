@@ -377,19 +377,19 @@ if __name__ == '__main__':
         #if args.pdbout :
         #    valzmax=float(d.max_value_dico(upper_listZ))
         #    valzmin=float(d.min_value_dico(lower_listZ))
-        #    pdb.outputPDB_leaflet(pdblines, upper_leaflet, args.outputname + "_Upper.pdb", 
+        #    pdb.outputPDB_leaflet(pdblines, upper_leaflet, f"{args.outputname}{ts.frame}" + "_Upper.pdb", 
         #                        startID, endID, num_frame)
-        #    pdb.outputPDB_leaflet(pdblines, lower_leaflet, args.outputname + "_Lower.pdb", 
+        #    pdb.outputPDB_leaflet(pdblines, lower_leaflet, f"{args.outputname}{ts.frame}" + "_Lower.pdb", 
         #                        startID, endID, num_frame)
         #                    
-        #    pdb.outputPDB_Total_matrix(args.outputname, FlagPDtype, "Up", num_frame,
+        #    pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", FlagPDtype, "Up", num_frame,
         #                            listX, listY, valzmax, MatrixUp)
-        #    pdb.outputPDB_Total_matrix(args.outputname, FlagPDtype, "Lo", num_frame,
+        #    pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", FlagPDtype, "Lo", num_frame,
         #                            listX, listY, valzmin, MatrixLo)
         #                            
-        #    pdb.outputPDB_defects(args.outputname, FlagPDtype, "Up", num_frame,
+        #    pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", FlagPDtype, "Up", num_frame,
         #                        listX, listY, valzmax, Matrix_labels_Up, clust_edge_Up)
-        #    pdb.outputPDB_defects(args.outputname, FlagPDtype, "Lo", num_frame,
+        #    pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", FlagPDtype, "Lo", num_frame,
         #                        listX, listY, valzmin, Matrix_labels_Lo, clust_edge_Lo)
         
         # Distance from the protein ###############################################
