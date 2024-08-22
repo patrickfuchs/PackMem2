@@ -408,15 +408,13 @@ if __name__ == '__main__':
         array2d_prot_Lo = np.zeros_like(Matrix_labels_Lo)
 
         # Find where the protein is in the simulation box
-        for atm_line in range(len(res_ids)) :
+        for i in range(len(res_ids)) :
+            res_name = system.resnames[i]
             # If it is an amino acid atom
-            if atm_line[0:4] == "ATOM" and atm_line[17:20] in list_code3L_AA:
-                atom_name = atm_line[12:16].strip()
-                res_name = atm_line[17:20]
-                coordtmp = []
-                coordtmp.append(float(atm_line[30:38])) #X
-                coordtmp.append(float(atm_line[38:46])) #Y
-                coordtmp.append(float(atm_line[46:54])) #Z
+            if res_name in list_code3L_AA:
+                atom_name = system.names[i]
+                # Get the coordinates X Y Z
+                coordtmp = [x_atoms[i], y_atoms[i], z_atoms[i]]
                 iX,iY = m.find_X_Y(coordtmp, listX, listY)
                 # Upper leaflet
                 if coordtmp[2] > zmean:
@@ -446,8 +444,8 @@ if __name__ == '__main__':
         # Results
         # Ouput text file
         # header : label,dist_group,area
-        pdist.outputTXT_defects_prot(args.outputname, FlagPDtype, "Up", pd_labels_group_Up, area_clusters_Up)
-        #pdist.outputTXT_defects_prot(args.outputname, FlagPDtype, "Lo", pd_labels_group_Lo, area_clusters_Lo)
+        pdist.outputTXT_defects_prot(f"{args.outputname}{ts.frame}", FlagPDtype, "Up", pd_labels_group_Up, area_clusters_Up)
+        #pdist.outputTXT_defects_prot(f"{args.outputname}{ts.frame}", FlagPDtype, "Lo", pd_labels_group_Lo, area_clusters_Lo)
 
         # Print matrix - to check
         #mat_group = pdist.create_mat_group(dico_labels_coor_Up, pd_labels_group_Up, Matrix_labels_Up)
