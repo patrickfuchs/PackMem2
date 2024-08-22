@@ -141,72 +141,24 @@ if __name__ == '__main__':
         system = u.atoms
         #system = u.select_atoms("resname DMPG or protein")
 
-        # Extract frame number in the pdb file (line MODEL) or 1 by default
-        num_frame=pdb.find_numframe(pdblines)
-
-        # Determine the position of residue number ([22:26] or [21:27]) depending the number of residues
-        startID,endID = pdb.determine_pos_resid(pdblines)
-
-        # Get the x, y, z of all atoms
-        zaxis_byatoms = []
-        xaxis_byatoms = []
-        yaxis_byatoms = []
-        # dicoMb = {'ARG': [43, 52, 53], ... , 'DMC': [59, 60, 61, ..]]
-        dicoMb = {}
-        # Get all the residue number of the lipids (and residues)
-        for line_atom in pdblines:
-            if line_atom[0:4] == "ATOM":
-                res_name = line_atom[17:21].strip()
-                atm_name = line_atom[12:16].strip()
-                zaxis_byatoms.append(float(line_atom[46:54]))
-                xaxis_byatoms.append(float(line_atom[30:38]))
-                yaxis_byatoms.append(float(line_atom[38:46]))
-                key = res_name+  "_" + atm_name
-                # If the residue in a lipid or protein
-                if res_name in LIPID:
-                    # If residue_atom is the DICT_3L
-                    if key in DICT_3L:
-                        # If the 3 letter name is in dicoMb
-                        if DICT_3L[key] in dicoMb:
-                            # Add the resid number of this residue_atom
-                            dicoMb[DICT_3L[key]].append(int(line_atom[startID:endID]))
-                        else:
-                            # Create the entry list in dicoMb
-                            dicoMb[DICT_3L[key]] = []
-                            # Add the resid number of the residue_atom
-                            dicoMb[DICT_3L[key]].append(int(line_atom[startID:endID]))
-                else :
-                    print(f"Lipid name {res_name} not found in the parameter file submitted")
-                    sys.exit()
-
+        # Get all the residues in the membrane
+        res_ids = system.resids
+        dicoMb = list(set(res_ids))
 
         # If there are too many lipids (> 9999)
-        nb_res=0
-        # Compute the total number of residues considered membrane
-        for key in dicoMb:
-            nb_res+=len(dicoMb[key])
-        # If it exceeds 9999
-        if nb_res > 9999:
+        if len(dicoMb) > 9999:
             print("The number of lipids in your membrane overtakes the PDB format (>9999)!!")
             print("This point is not supported by PackMem, this tool may not work properly !")
             sys.exit()
 
-        # If there is twice the same lipid
-        flD=d.detect_duplicate(dicoMb)
-        if flD:
-            print("You have duplicate in lipids residue_number")    
-            print("This point is not supported by PackMem, this tool may not work properly !") 
-            print("Please, renumerate your residue_number to avoid this problem (for example using editconf Gromacs tool)")  
-            sys.exit()
-
-
-        # Get the membrane dimension infos
-        xmin, xmax, xmean = l.min_max(xaxis_byatoms)
-        ymin, ymax, ymean = l.min_max(yaxis_byatoms)
-        zmin, zmax, zmean = l.min_max(zaxis_byatoms)
-
-        # Modify the lipid name of the membrane component to its 3 letters code (DMC vs DMPC)
-        pdblines = pdb.modifyPDBdata(pdblines, dicoMb, startID, endID)
+        # Get all x, y and z
+        x_atoms = system.positions[:,0].round(2)
+        y_atoms = system.positions[:,1].round(2)
+        z_atoms = system.positions[:,2].round(2)
+        # Get membrane dimension
+        xmin, xmax, xmean = l.min_max(x_atoms)
+        ymin, ymax, ymean = l.min_max(y_atoms)
+        zmin, zmax, zmean = l.min_max(z_atoms)
 
         ######### Extract UPPER/LOWER leaflet ##########
         # If no index file seperating the leaflets
