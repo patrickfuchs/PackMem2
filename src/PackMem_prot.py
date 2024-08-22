@@ -161,12 +161,12 @@ if __name__ == '__main__':
         zmin, zmax, zmean = l.min_max(z_atoms)
 
         ######### Extract UPPER/LOWER leaflet ##########
+        lower_listZ = {}
+        upper_listZ = {}
         # If no index file seperating the leaflets
         if args.indexFile == None:
             lower_leaflet = []
-            lower_listZ = {}
             upper_leaflet = []
-            upper_listZ = {}
             for atm_line in pdblines :
                 if atm_line[0:4] == "ATOM":
                     atom_name = atm_line[12:16].strip()
@@ -197,8 +197,6 @@ if __name__ == '__main__':
                         lower_listZ[res_number] = tmp
         else:
             (lower_leaflet, upper_leaflet) = p.read_ndx(args.indexFile)
-            lower_listZ = {}
-            upper_listZ = {}
             for atm_line in pdblines :
                 if atm_line[0:4] == "ATOM":
                     atom_name = atm_line[12:16].strip()
