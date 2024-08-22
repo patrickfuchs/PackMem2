@@ -367,9 +367,9 @@ if __name__ == '__main__':
         
         # Output text file  #######################################################
         total_size = len(listX) * len(listY)
-        pdb.outputTXT_defects(args.outputname, FlagPDtype, "Up", area_clusters_Up, 
+        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", FlagPDtype, "Up", area_clusters_Up, 
                             coor_clusters_Up, total_size, total_edge_Up, listX, listY)
-        pdb.outputTXT_defects(args.outputname, FlagPDtype, "Lo", area_clusters_Lo, 
+        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", FlagPDtype, "Lo", area_clusters_Lo, 
                             coor_clusters_Lo, total_size, total_edge_Lo, listX, listY)
 
         # Output PDB files ########################################################
