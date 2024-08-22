@@ -233,45 +233,41 @@ if __name__ == '__main__':
         # Search v cells around coord
         v = 5
         # For each atoms of lipids
-        for atm_line in range(len(res_ids)):
-            if atm_line[0:4] == "ATOM":
-                coordtmp = []
-                atom_name = atm_line[12:16].strip()
-                res_name = atm_line[17:21].strip()
-                res_id = int(atm_line[startID:endID])
-                radius_res=m.get_radius(radius, res_name, atom_name)
-                # Get if the residue is aliphatic or not
-                aliph_atom=m.get_aliphatic(aliphatic, res_name, atom_name)
-                # Get the coordinates X Y Z
-                coordtmp.append(float(atm_line[30:38])) #X
-                coordtmp.append(float(atm_line[38:46])) #Y
-                coordtmp.append(float(atm_line[46:54])) #Z
-                # Upper leaflet ########################
-                if res_id in upper_leaflet :
-                    # dfZ = z_C2_res - z_atom
-                    dfZ = m.find_Z(coordtmp[2], upper_listZ[res_id])
-                    # If dfZ < 5
-                    # To limit the search around an atom to 5 cells
-                    if dfZ < (1. * v):
-                        # Fill the matrix with value 0 < a < 1 for aliphatic
-                        # Or with > 1 if polar OR deep
-                        # Defects = 0
-                        MatrixUp= m.fill_matrix(MatrixUp, coordtmp, listX, listY,
-                                                upper_listZ[res_id], radius_res,
-                                                FlagPDtype, aliph_atom)
-                # Lower leaflet ########################
-                if res_id in lower_leaflet :
-                    # dfZ = z_C2_res - z_atom
-                    dfZ = m.find_Z(coordtmp[2], lower_listZ[res_id])
-                    # If dfZ > -5
-                    # To limit the search around an atom to 5 cells
-                    if dfZ > (-1. * v):
-                        # Fill the matrix with value 0 < a < 1 for aliphatic
-                        # Or with > 1 if polar OR deep
-                        # Defects = 0
-                        MatrixLo = m.fill_matrix(MatrixLo, coordtmp, listX, listY,
-                                                lower_listZ[res_id], radius_res,
-                                                FlagPDtype, aliph_atom)
+        for i in range(len(res_ids)):
+            atom_name = system.names[i]
+            res_name = system.resnames[i]
+            res_id = system.resids[i]
+            radius_res=m.get_radius(radius, res_name, atom_name)
+            # Get if the residue is aliphatic or not
+            aliph_atom=m.get_aliphatic(aliphatic, res_name, atom_name)
+            # Get the coordinates X Y Z
+            coordtmp = [x_atoms[i], y_atoms[i], z_atoms[i]]
+            # Upper leaflet ########################
+            if res_id in upper_leaflet :
+                # dfZ = z_C2_res - z_atom
+                dfZ = round(m.find_Z(coordtmp[2], upper_listZ[res_id]),2)
+                # If dfZ < 5
+                # To limit the search around an atom to 5 cells
+                if dfZ < (1. * v):
+                    # Fill the matrix with value 0 < a < 1 for aliphatic
+                    # Or with > 1 if polar OR deep
+                    # Defects = 0
+                    MatrixUp= m.fill_matrix(MatrixUp, coordtmp, listX, listY,
+                                            upper_listZ[res_id], radius_res,
+                                            FlagPDtype, aliph_atom)
+            # Lower leaflet ########################
+            if res_id in lower_leaflet :
+                # dfZ = z_C2_res - z_atom
+                dfZ = round(m.find_Z(coordtmp[2], lower_listZ[res_id]),2)
+                # If dfZ > -5
+                # To limit the search around an atom to 5 cells
+                if dfZ > (-1. * v):
+                    # Fill the matrix with value 0 < a < 1 for aliphatic
+                    # Or with > 1 if polar OR deep
+                    # Defects = 0
+                    MatrixLo = m.fill_matrix(MatrixLo, coordtmp, listX, listY,
+                                            lower_listZ[res_id], radius_res,
+                                            FlagPDtype, aliph_atom)
 
         # Preliminary process for shallow defect and problem of the edges 
         # To eliminate shallow defects on edges first: binarize on all defects and storage edges coord
