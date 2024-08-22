@@ -167,64 +167,59 @@ if __name__ == '__main__':
         if args.indexFile == None:
             lower_leaflet = []
             upper_leaflet = []
-            for atm_line in range(len(res_ids)) :
-                if atm_line[0:4] == "ATOM":
-                    atom_name = atm_line[12:16].strip()
-                    res_name = atm_line[17:21].strip()
-                    z_coord = float(atm_line[46:54])
-                    # Upper leaflet
-                    if (atom_name == RESNAME_GLYC[res_name] and z_coord > zmean):
-                        # Add the residue number to the list of upper leaflet C2
-                        res_number = int(atm_line[startID:endID])
-                        upper_leaflet.append(res_number)
-                        # Build a list from z_coord-1 to zmax+1 every 1.0
-                        tmp = l.create_list_ascend(z_coord - args.dist_suppl_Z, 
-                                                        zmax + 1.0, m.SIZE)
+            for i in range(len(res_ids)) :
+                atom_name = system.names[i]
+                res_name = system.resnames[i]
+                z_coord = z_atoms[i]
+                # Upper leaflet
+                if (atom_name == RESNAME_GLYC[res_name] and z_coord > zmean):
+                    # Add the residue number to the list of upper leaflet C2
+                    res_number = system.resids[i]
+                    upper_leaflet.append(res_number)
+                    # Build a list from z_coord-1 to zmax+1 every 1.0
+                    tmp = l.create_list_ascend(round(z_coord - args.dist_suppl_Z, 2),
+                                            round(zmax +1.0, 2), m.SIZE)
 
-                        # Reverse it
-                        tmp.reverse()
-                        upper_listZ[res_number] = tmp
-                    # Lower leaflet
-                    if (atom_name == RESNAME_GLYC[res_name] and z_coord < zmean):
-                        # Add the residue number to the list of lower leaflet C2
-                        res_number = int(atm_line[startID:endID])
-                        lower_leaflet.append(res_number)
-                        # Build a list from zmin-1 to z_coord+1 every 1.0
-                        tmp = l.create_list_descend(z_coord + args.dist_suppl_Z, 
-                                                        zmin - 1.0, m.SIZE * -1)
-                        # Then reverse it
-                        tmp.reverse()
-                        lower_listZ[res_number] = tmp
+                    # Reverse it
+                    tmp.reverse()
+                    upper_listZ[res_number] = tmp
+                # Lower leaflet
+                if (atom_name == RESNAME_GLYC[res_name] and z_coord < zmean):
+                    # Add the residue number to the list of lower leaflet C2
+                    res_number = system.resids[i]
+                    lower_leaflet.append(res_number)
+                    # Build a list from zmin-1 to z_coord+1 every 1.0
+                    tmp = l.create_list_descend(round(z_coord + args.dist_suppl_Z, 2),
+                                                round(zmin - 1.0, 2), m.SIZE * -1)
+                    # Then reverse it
+                    tmp.reverse()
+                    lower_listZ[res_number] = tmp
         else:
             (lower_leaflet, upper_leaflet) = p.read_ndx(args.indexFile)
-            for atm_line in range(len(res_ids)) :
-                if atm_line[0:4] == "ATOM":
-                    atom_name = atm_line[12:16].strip()
-                    res_name = atm_line[17:21].strip()
-                    z_coord = float(atm_line[46:54])
-                    res_number = int(atm_line[startID:endID])
-                    # Upper leaflet
-                    if (atom_name == RESNAME_GLYC[res_name] and 
-                            res_number in upper_leaflet) :
-                        # Build a list from z_coord-1 to zmax+1 every 1.0
-                        tmp = l.create_list_ascend(z_coord - args.dist_suppl_Z, 
-                                                        zmax + 1.0, m.SIZE)
-                        # Reverse it
-                        tmp.reverse()
-                        upper_listZ[res_number] = tmp
-                    # Lower leaflet
-                    if (atom_name == RESNAME_GLYC[res_name] and
-                            res_number in lower_leaflet):
-                        # Build a list from zmin-1 to z_coord+1 every 1.0
-                        tmp = l.create_list_descend(z_coord + args.dist_suppl_Z, 
-                                                        zmin - 1.0, m.SIZE * -1)
-                        # Reverse it
-                        tmp.reverse()
-                        lower_listZ[res_number] = tmp
+            for i in range(len(res_ids)) :
+                atom_name = system.names[i]
+                res_name = system.resnames[i]
+                z_coord = z_atoms[i]
+                res_number = system.resids[i]
+                # Upper leaflet
+                if (atom_name == RESNAME_GLYC[res_name] and 
+                        res_number in upper_leaflet) :
+                    # Build a list from z_coord-1 to zmax+1 every 1.0
+                    tmp = l.create_list_ascend(round(z_coord - args.dist_suppl_Z, 2),
+                                            round(zmax +1.0, 2), m.SIZE)
+                    # Reverse it
+                    tmp.reverse()
+                    upper_listZ[res_number] = tmp
+                # Lower leaflet
+                if (atom_name == RESNAME_GLYC[res_name] and
+                        res_number in lower_leaflet):
+                    # Build a list from zmin-1 to z_coord+1 every 1.0
+                    tmp = l.create_list_descend(round(z_coord + args.dist_suppl_Z, 2),
+                                                round(zmin - 1.0, 2), m.SIZE * -1)
+                    # Reverse it
+                    tmp.reverse()
+                    lower_listZ[res_number] = tmp
                     
-                    
-
-        
         # Build a lists from xmin-1 to xmax+1 every 1.0
         listX = l.create_list_ascend(int(xmin - 1.0), int(xmax + 1.0), m.SIZE)
         # Build a lists from ymin-1 to ymax+1 every 1.0
