@@ -44,15 +44,15 @@ def find_numframe(data):
             num_frame = int(line.split()[-1])
     return num_frame
     
-# create output file of atoms in listres in PDB format
-def outputPDB_leaflet(data, listres, outputname, startID, endID, num_frame=1):
+# create output file of atoms in list_res in PDB format
+def outputPDB_leaflet(res_ids, res_names, atom_names, atom_pos, list_res, outputname, num_frame=1):
     with open(outputname,"w") as f:
-        f.write("MODEL      %3d\n"%(num_frame))
-        for val in data:
-            if val[0:4] == "ATOM":
-                res_number=int(val[startID:endID])
-                if res_number in listres:
-                    f.write(val)
+        f.write(f"MODEL        {num_frame+1}\n")
+        atom_num = 0
+        for i in range(len(res_ids)):
+                if res_ids[i] in list_res:
+                    atom_num += 1
+                    f.write(f"{'ATOM':6s}{atom_num:5d} {atom_names[i]:^5s}{res_names[i]:3s}  {res_ids[i]:4d}{atom_pos[i][0]:12.3f}{atom_pos[i][1]:8.3f}{atom_pos[i][2]:8.3f}{1.00:6.2f}  {0.00:<16.2f}\n")
         f.write("ENDMDL\n")
 
 # create output file of atm_name in listres in PDB format
