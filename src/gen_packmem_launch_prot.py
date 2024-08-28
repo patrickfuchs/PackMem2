@@ -3,14 +3,16 @@ import argparse
 
 # Getting the arguments
 parser = argparse.ArgumentParser()
+parser.add_argument('-f', action = 'store', dest = 'traj',
+                    help = 'The trajectory file (.xtc)')
+parser.add_argument('-s', action = 'store', dest = 'topo',
+                    help = 'The topology file (.gro)')
 parser.add_argument('-c', action = 'store', dest = 'cores',
                     help = 'The number of cores you want the script to work on',
                     default = 1, type = int)
-parser.add_argument('-f', action = 'store', dest = 'frames',
+parser.add_argument('-fm', action = 'store', dest = 'frames',
                     help = 'The number of frames in your simulation',
                     type = int)
-parser.add_argument('-p', action = 'store', dest = 'prefix',
-                    help = 'The name you gave as prefix for the frames')
 args = parser.parse_args()
 
 ################################################################################
@@ -26,6 +28,6 @@ if __name__=="__main__":
         stop =  intervals[i+1]-1
         if i==(len(intervals)-2):
             stop = args.frames
-        print(f"nice -19 bash /home/maya/Documents/tools/New_PackMem/src/ScriptPackMem_prot.sh {args.prefix} {start} {stop} >& OUT_packmem{i} &")
+        print(f"nice -19 bash /home/maya/Documents/tools/New_PackMem/src/ScriptPackMem_prot.sh {args.traj} {args.topo} {start} {stop} >& OUT_packmem{i} &")
 
 
