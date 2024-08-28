@@ -7,35 +7,29 @@
 # change this path according to your system 
 PackMemPATH=/home/maya/Documents/tools/New_PackMem/
 
-# set prefix of the pdb files
-prefix=$1
+# Get the files needed
+traj=$1
+topo=$2
 
 # set the starting and ending frames
-frame_start=$2
-frame_stop=$3
+frame_start=$3
+frame_stop=$4
 
 ###################
 # No change below #
 ###################
-
-# loop over the frames
-# for example, if we have 400ns with one frame every 1000 ps,
-# we loop from 0 to 400 frames (0-400 ns)
-for pdbnum in $(seq ${frame_start} ${frame_stop})
-do
-    # print counter to screen
-    echo "$(date): PackMem running on pdb/${prefix}${pdbnum}.pdb"
-    # launch PackMem for the 3 types of packing defects
-    ${PackMemPATH}/src/PackMem_prot.py -i pdb/${prefix}${pdbnum}.pdb \
-                              -r ${PackMemPATH}/data/vdw_radii_Charmm.txt \
-                              -p ${PackMemPATH}/data/param_Charmm.txt \
-                              -o ${prefix}${pdbnum} -d 1.0 -t deep
-    ${PackMemPATH}/src/PackMem_prot.py -i pdb/${prefix}${pdbnum}.pdb \
-                              -r ${PackMemPATH}/data/vdw_radii_Charmm.txt \
-                              -p ${PackMemPATH}/data/param_Charmm.txt \
-                              -o ${prefix}${pdbnum} -d 1.0 -t shallow
-    ${PackMemPATH}/src/PackMem_prot.py -i pdb/${prefix}${pdbnum}.pdb \
-                              -r ${PackMemPATH}/data/vdw_radii_Charmm.txt \
-                              -p ${PackMemPATH}/data/param_Charmm.txt \
-                              -o ${prefix}${pdbnum} -d 1.0 -t all
-done
+# print counter to screen
+#echo "$(date): PackMem running on pdb/${prefix}${pdbnum}.pdb"
+# launch PackMem for the 3 types of packing defects
+python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} \
+                            -r ${PackMemPATH}/data/vdw_radii_Charmm.txt \
+                            -p ${PackMemPATH}/data/param_Charmm.txt \
+                            -o packmemout -d 1.0 -t deep -b ${frame_start} -e ${frame_stop}
+python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} \
+                            -r ${PackMemPATH}/data/vdw_radii_Charmm.txt \
+                            -p ${PackMemPATH}/data/param_Charmm.txt \
+                            -o packmemout -d 1.0 -t shallow -b ${frame_start} -e ${frame_stop}
+python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} \
+                            -r ${PackMemPATH}/data/vdw_radii_Charmm.txt \
+                            -p ${PackMemPATH}/data/param_Charmm.txt \
+                            -o packmemout -d 1.0 -t all -b ${frame_start} -e ${frame_stop}
