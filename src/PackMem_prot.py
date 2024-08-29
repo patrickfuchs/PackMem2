@@ -81,12 +81,14 @@ if __name__ == '__main__':
                             help = 'File for lipid parameters')
         parser.add_argument('-n', action = 'store', dest = 'indexFile',
                             help = 'File for index (Gromacs ndx style). Only Lower/Upper group accepted')
-        parser.add_argument('-v', dest = 'pdbout', action = 'store_true',
-                            help = 'Increase the verbosity')
         parser.add_argument('-b', action = 'store', dest = 'start', type=int,
                             help = 'frame to start the analysis')
         parser.add_argument('-e', action = 'store', dest = 'end', type=int,
                             help = 'frame to end the analysis')
+        parser.add_argument('-pdb', dest = 'pdbout', action = 'store_true',
+                            help = 'Get .pdb outputs of the packing defects')
+        parser.add_argument('-prot', dest = 'protein', action = 'store_true',
+                            help = 'Analyse the packing defects close/far of the protein')
                             
         args = parser.parse_args()
         
@@ -397,62 +399,63 @@ if __name__ == '__main__':
         #                        listX, listY, valzmin, Matrix_labels_Lo, clust_edge_Lo)
         
         # Distance from the protein ###############################################
-        # Label 1 corresponds to the void around the simulation, so we remove it.
-        Matrix_labels_Up = np.where(Matrix_labels_Up == 1, 0, Matrix_labels_Up)
-        Matrix_labels_Lo = np.where(Matrix_labels_Lo == 1, 0, Matrix_labels_Lo)
-        
-        # Retrieve the protein    
-        list_code3L_AA = ['ALA', 'ASP', 'ARG', 'ASN', 'CYS',
-                            'GLN', 'GLU', 'GLY', 'HIS', 'ILE',
-                            'LEU', 'LYS', 'MET', 'PHE', 'PRO',
-                            'SER', 'THR', 'TRP', 'TYR', 'VAL']
+        if args.protein :
+            # Label 1 corresponds to the void around the simulation, so we remove it.
+            Matrix_labels_Up = np.where(Matrix_labels_Up == 1, 0, Matrix_labels_Up)
+            Matrix_labels_Lo = np.where(Matrix_labels_Lo == 1, 0, Matrix_labels_Lo)
+            
+            # Retrieve the protein    
+            list_code3L_AA = ['ALA', 'ASP', 'ARG', 'ASN', 'CYS',
+                                'GLN', 'GLU', 'GLY', 'HIS', 'ILE',
+                                'LEU', 'LYS', 'MET', 'PHE', 'PRO',
+                                'SER', 'THR', 'TRP', 'TYR', 'VAL']
 
-        # Create empty arrays
-        array2d_prot_Up = np.zeros_like(Matrix_labels_Up)
-        array2d_prot_Lo = np.zeros_like(Matrix_labels_Lo)
+            # Create empty arrays
+            array2d_prot_Up = np.zeros_like(Matrix_labels_Up)
+            array2d_prot_Lo = np.zeros_like(Matrix_labels_Lo)
 
-        # Find where the protein is in the simulation box
-        for i in range(len(res_ids)) :
-            res_name = system.resnames[i]
-            # If it is an amino acid atom
-            if res_name in list_code3L_AA:
-                atom_name = system.names[i]
-                # Get the coordinates X Y Z
-                coordtmp = [x_atoms[i], y_atoms[i], z_atoms[i]]
-                iX,iY = m.find_X_Y(coordtmp, listX, listY)
-                # Upper leaflet
-                if coordtmp[2] > zmean:
-                    array2d_prot_Up[iX, iY] = 1
-                # Lower leaflet
-                if coordtmp[2] < zmean:
-                    array2d_prot_Lo[iX, iY] = 1
-        
-        # Classification of Packing Defects by distance group 
-        # Get the coordinates of the matrix where the edges of the packing defects are located.
-        # dictionnary label coords {lab1 = [(x1, y1), (x2, y2), ...],
-        #                           lab2 = [(x1, y1), (x2, y2), ...], 
-        #                           ...                              }
-        dict_labels_coor_Up = pdist.find_pd_border(Matrix_labels_Up)
-        #dict_labels_coor_Lo = pdist.find_pd_border(Matrix_labels_Lo)
+            # Find where the protein is in the simulation box
+            for i in range(len(res_ids)) :
+                res_name = system.resnames[i]
+                # If it is an amino acid atom
+                if res_name in list_code3L_AA:
+                    atom_name = system.names[i]
+                    # Get the coordinates X Y Z
+                    coordtmp = [x_atoms[i], y_atoms[i], z_atoms[i]]
+                    iX,iY = m.find_X_Y(coordtmp, listX, listY)
+                    # Upper leaflet
+                    if coordtmp[2] > zmean:
+                        array2d_prot_Up[iX, iY] = 1
+                    # Lower leaflet
+                    if coordtmp[2] < zmean:
+                        array2d_prot_Lo[iX, iY] = 1
+            
+            # Classification of Packing Defects by distance group 
+            # Get the coordinates of the matrix where the edges of the packing defects are located.
+            # dictionnary label coords {lab1 = [(x1, y1), (x2, y2), ...],
+            #                           lab2 = [(x1, y1), (x2, y2), ...], 
+            #                           ...                              }
+            dict_labels_coor_Up = pdist.find_pd_border(Matrix_labels_Up)
+            #dict_labels_coor_Lo = pdist.find_pd_border(Matrix_labels_Lo)
 
-        # Get the coordinates of the matrix where the edges of the protein are located.
-        # list of tuples [(x1, y1), (x2, y2), ...]
-        list_edge_coor_prot_Up = pdist.find_prot_border(array2d_prot_Up)
-        #list_edge_coor_prot_Lo = pdist.find_prot_border(array2d_prot_Lo)
+            # Get the coordinates of the matrix where the edges of the protein are located.
+            # list of tuples [(x1, y1), (x2, y2), ...]
+            list_edge_coor_prot_Up = pdist.find_prot_border(array2d_prot_Up)
+            #list_edge_coor_prot_Lo = pdist.find_prot_border(array2d_prot_Lo)
 
-        # Assign distance group for each packing defect, "far" or "close". Default threshold = 10 A.
-        # dict {lab1 : 'group', lab2 : 'group', ... }
-        pd_labels_group_Up = pdist.assign_dist_group(list_edge_coor_prot_Up, dict_labels_coor_Up, 10)
-        #pd_labels_group_Lo = pdist.assign_dist_group(list_edge_coor_prot_Lo, dict_labels_coor_Lo, 10)
+            # Assign distance group for each packing defect, "far" or "close". Default threshold = 10 A.
+            # dict {lab1 : 'group', lab2 : 'group', ... }
+            pd_labels_group_Up = pdist.assign_dist_group(list_edge_coor_prot_Up, dict_labels_coor_Up, 10)
+            #pd_labels_group_Lo = pdist.assign_dist_group(list_edge_coor_prot_Lo, dict_labels_coor_Lo, 10)
 
-        # Results
-        # Ouput text file
-        # header : label,dist_group,area
-        pdist.outputTXT_defects_prot(f"{args.outputname}{ts.frame}", FlagPDtype, "Up", pd_labels_group_Up, area_clusters_Up)
-        #pdist.outputTXT_defects_prot(f"{args.outputname}{ts.frame}", FlagPDtype, "Lo", pd_labels_group_Lo, area_clusters_Lo)
+            # Results
+            # Ouput text file
+            # header : label,dist_group,area
+            pdist.outputTXT_defects_prot(f"{args.outputname}{ts.frame}", FlagPDtype, "Up", pd_labels_group_Up, area_clusters_Up)
+            #pdist.outputTXT_defects_prot(f"{args.outputname}{ts.frame}", FlagPDtype, "Lo", pd_labels_group_Lo, area_clusters_Lo)
 
-        # Print matrix - to check
-        #mat_group = pdist.create_mat_group(dico_labels_coor_Up, pd_labels_group_Up, Matrix_labels_Up)
-        #mat_prot = array2d_prot_Up
-        #plt.imshow(mat_group - mat_prot, cmap='binary')
-        #plt.show()
+            # Print matrix - to check
+            #mat_group = pdist.create_mat_group(dico_labels_coor_Up, pd_labels_group_Up, Matrix_labels_Up)
+            #mat_prot = array2d_prot_Up
+            #plt.imshow(mat_group - mat_prot, cmap='binary')
+            #plt.show()
