@@ -145,10 +145,10 @@ if __name__ == '__main__':
         res_ids = system.resids
         dicoMb = list(set(res_ids))
 
-        # If there are too many lipids (> 9999)
+        # If there are a lot of lipids (> 9999)
         if len(dicoMb) > 9999:
-            print("The number of lipids in your membrane overtakes the PDB format (>9999)!!")
-            print("This point is not supported by PackMem, this tool may not work properly !")
+            print("The number of lipids in your membrane is very high (>9999)!")
+            print("Please check that you only give to PackMem your membrane (+ protein)")
             sys.exit()
 
         # Get all x, y and z
