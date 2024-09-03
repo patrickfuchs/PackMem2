@@ -388,15 +388,15 @@ if __name__ == '__main__':
                                   f"{args.outputname}{ts.frame}" + "_Lower.pdb", 
                                   ts.frame)
                             
-        #    pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", FlagPDtype, "Up", ts.frame,
-        #                            listX, listY, valzmax, MatrixUp)
-        #    pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", FlagPDtype, "Lo", ts.frame,
-        #                            listX, listY, valzmin, MatrixLo)
-        #                            
-        #    pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", FlagPDtype, "Up", ts.frame,
-        #                        listX, listY, valzmax, Matrix_labels_Up, clust_edge_Up)
-        #    pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", FlagPDtype, "Lo", ts.frame,
-        #                        listX, listY, valzmin, Matrix_labels_Lo, clust_edge_Lo)
+            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", FlagPDtype, "Up", ts.frame,
+                                    listX, listY, valzmax, MatrixUp)
+            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", FlagPDtype, "Lo", ts.frame,
+                                    listX, listY, valzmin, MatrixLo)
+                                    
+            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", FlagPDtype, "Up", ts.frame,
+                                listX, listY, valzmax, Matrix_labels_Up, clust_edge_Up)
+            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", FlagPDtype, "Lo", ts.frame,
+                                listX, listY, valzmin, Matrix_labels_Lo, clust_edge_Lo)
         
         # Distance from the protein ###############################################
         if args.protein :
@@ -453,9 +453,3 @@ if __name__ == '__main__':
             # header : label,dist_group,area
             pdist.outputTXT_defects_prot(f"{args.outputname}{ts.frame}", FlagPDtype, "Up", pd_labels_group_Up, area_clusters_Up)
             #pdist.outputTXT_defects_prot(f"{args.outputname}{ts.frame}", FlagPDtype, "Lo", pd_labels_group_Lo, area_clusters_Lo)
-
-            # Print matrix - to check
-            #mat_group = pdist.create_mat_group(dico_labels_coor_Up, pd_labels_group_Up, Matrix_labels_Up)
-            #mat_prot = array2d_prot_Up
-            #plt.imshow(mat_group - mat_prot, cmap='binary')
-            #plt.show()
