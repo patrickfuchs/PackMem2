@@ -7,13 +7,58 @@
 # change this path according to your system 
 PackMemPATH=/home/maya/Documents/tools/New_PackMem/
 
-# Get the files needed
-traj=$1
-topo=$2
+usage(){
+cat <<EOF
 
-# set the starting and ending frames
-frame_start=$3
-frame_stop=$4
+usage : $0 -n prefix -b first_frame -e last_frame options
+
+This script concatenates the PackMem analysis on multiple frame.
+
+Options to specify input files:
+    -n prefix of the files
+    -b The first frame of the PackMem analysis
+    -e The last frame of the PackMem analysis
+
+OPTIONS:
+    -p If there is a protein (Dafult : false)
+
+EOF
+}
+
+prot=false
+
+while getopts "hf:s:n:b:e:p" OPTION
+do
+    case $OPTION in
+        h)
+            usage
+            exit 1
+            ;;
+        f)
+            traj=$OPTARG
+            ;;
+        s)
+            topo=$OPTARG
+            ;;
+        n)
+            prefix=$OPTARG
+            ;;
+        b)
+            frame_start=$OPTARG
+            ;;
+        e)
+            frame_stop=$OPTARG
+            ;;
+        p)
+            prot=true
+            ;;
+        ?)
+            usage
+            exit
+            ;;
+    esac
+done
+
 
 ###################
 # No change below #
@@ -25,7 +70,7 @@ BEFORE=`date +%s`
 python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} \
                             -r ${PackMemPATH}/data/vdw_radii_Charmm.txt \
                             -p ${PackMemPATH}/data/param_Charmm.txt \
-                            -o packmemout -d 1.0 -t deep -b ${frame_start} -e ${frame_stop}
+                            -o ${prefix} -d 1.0 -t deep -b ${frame_start} -e ${frame_stop}
 AFTER=`date +%s`
 ELAPSED=$(((($AFTER-$BEFORE))/60))
 echo "Deep analysis ran for $ELAPSED minutes."
@@ -33,7 +78,7 @@ BEFORE=`date +%s`
 python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} \
                             -r ${PackMemPATH}/data/vdw_radii_Charmm.txt \
                             -p ${PackMemPATH}/data/param_Charmm.txt \
-                            -o packmemout -d 1.0 -t shallow -b ${frame_start} -e ${frame_stop}
+                            -o ${prefix} -d 1.0 -t shallow -b ${frame_start} -e ${frame_stop}
 AFTER=`date +%s`
 ELAPSED=$(((($AFTER-$BEFORE))/60))
 echo "Shallow analysis ran for $ELAPSED minutes."
@@ -41,7 +86,7 @@ BEFORE=`date +%s`
 python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} \
                             -r ${PackMemPATH}/data/vdw_radii_Charmm.txt \
                             -p ${PackMemPATH}/data/param_Charmm.txt \
-                            -o packmemout -d 1.0 -t all -b ${frame_start} -e ${frame_stop}
+                            -o ${prefix} -d 1.0 -t all -b ${frame_start} -e ${frame_stop}
 AFTER=`date +%s`
 ELAPSED=$(((($AFTER-$BEFORE))/60))
 echo "All analysis ran for $ELAPSED minutes."
