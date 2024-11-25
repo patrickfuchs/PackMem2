@@ -13,7 +13,7 @@ parser.add_argument('-c', action = 'store', dest = 'cores',
 parser.add_argument('-fm', action = 'store', dest = 'frames',
                     help = 'The number of frames in your simulation',
                     type = int)
-parser.add_arguemnt('-n', action='store', dest='prefix', 
+parser.add_argument('-n', action='store', dest='prefix', 
                     help='The prefix of the files')
 parser.add_argument('-prot', action='store_true', dest='prot', 
                     help='Put if you want to see the packing defects close/far of the protein')
