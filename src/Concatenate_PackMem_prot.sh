@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Script to concatenate the PackMem analysis on multiple PDB files.
+
 usage(){
 cat <<EOF
 
@@ -71,12 +73,12 @@ do
      cat  ${prefix}${pdbnum}_Lo_All_result.txt >> Total_Lo_${prefix}_all.txt
 
     # we no longer need the defects of the current frame
-    # rm -f ${prefix}${pdbnum}_Up_Deep_result.txt
-    # rm -f ${prefix}${pdbnum}_Lo_Deep_result.txt
-    # rm -f ${prefix}${pdbnum}_Up_Shallow_result.txt
-    # rm -f ${prefix}${pdbnum}_Lo_Shallow_result.txt
-    # rm -f ${prefix}${pdbnum}_Up_All_result.txt
-    # rm -f ${prefix}${pdbnum}_Lo_All_result.txt
+    rm -f ${prefix}${pdbnum}_Up_Deep_result.txt
+    rm -f ${prefix}${pdbnum}_Lo_Deep_result.txt
+    rm -f ${prefix}${pdbnum}_Up_Shallow_result.txt
+    rm -f ${prefix}${pdbnum}_Lo_Shallow_result.txt
+    rm -f ${prefix}${pdbnum}_Up_All_result.txt
+    rm -f ${prefix}${pdbnum}_Lo_All_result.txt
 done
 
 if [ ${prot} = true ]
@@ -114,3 +116,4 @@ egrep -v "#" Total_Lo_${prefix}_all.txt > Total_Lo_${prefix}_all_clean.txt
 rm -f Total_*${prefix}_deep.txt
 rm -f Total_*${prefix}_shallow.txt
 rm -f Total_*${prefix}_all.txt
+
