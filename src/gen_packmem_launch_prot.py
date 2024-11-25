@@ -33,6 +33,6 @@ if __name__=="__main__":
         if i==(len(intervals)-2):
             stop = args.frames
         if args.prot:
-            print(f"nice -19 bash /home/maya/Documents/tools/New_PackMem/src/ScriptPackMem_prot.sh -f {args.traj} -s {args.topo} -n {prefix} -b {start} -e {stop} -p >& OUT_packmem{i} &")
+            print(f"nice -19 bash /home/maya/Documents/tools/New_PackMem/src/ScriptPackMem_prot.sh -f {args.traj} -s {args.topo} -n {args.prefix} -b {start} -e {stop} -p >& OUT_packmem{i} &")
         else:
-            print(f"nice -19 bash /home/maya/Documents/tools/New_PackMem/src/ScriptPackMem_prot.sh -f {args.traj} -s {args.topo} -n {prefix} -b {start} -e {stop} >& OUT_packmem{i} &")
+            print(f"nice -19 bash /home/maya/Documents/tools/New_PackMem/src/ScriptPackMem_prot.sh -f {args.traj} -s {args.topo} -n {args.prefix} -b {start} -e {stop} >& OUT_packmem{i} &")
