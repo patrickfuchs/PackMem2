@@ -66,7 +66,7 @@ done
 BEFORE=`date +%s`
 # print counter to screen
 #echo "$(date): PackMem running on pdb/${prefix}${pdbnum}.pdb"
-if [ ${prot} ]
+if [ ${prot} == true ]
 then
     # launch PackMem for the 3 types of packing defects
     python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} \
@@ -84,7 +84,7 @@ AFTER=`date +%s`
 ELAPSED=$(((($AFTER-$BEFORE))/60))
 echo "Deep analysis ran for $ELAPSED minutes."
 BEFORE=`date +%s`
-if [ ${prot} ]
+if [ ${prot} == true ]
 then
     python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} \
                             -r ${PackMemPATH}/data/vdw_radii_Charmm.txt \
@@ -100,7 +100,7 @@ AFTER=`date +%s`
 ELAPSED=$(((($AFTER-$BEFORE))/60))
 echo "Shallow analysis ran for $ELAPSED minutes."
 BEFORE=`date +%s`
-if [ ${prot} ]
+if [ ${prot} == true ]
 then
     python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} \
                             -r ${PackMemPATH}/data/vdw_radii_Charmm.txt \
