@@ -116,7 +116,7 @@ if __name__=="__main__":
     for DEFECT in ["deep","shallow","all"]:
         # load PackMem data
         filename = args.prefix+"_"+DEFECT+"_clean.txt"
-        packdef_data = pd.read_csv(filename, header=None, delim_whitespace=True)[1]
+        packdef_data = pd.read_csv(filename, header=None, sep=r"\s+")[1]
         
         # Compute PackDef distributions (on the whole set)
         H = plt.hist(packdef_data, bins=np.arange(0.5,max(packdef_data)+0.5))
@@ -159,12 +159,12 @@ if __name__=="__main__":
         print(f"Mean +/- sd on 3 blocks: {round(inv_decay_block,args.precision)} +/- {round(error_inv_decay_block,args.precision)} A^2")
 
         # store all the results in the data frame
-        packdef_constants[DEFECT]["PackDef_cst_global"] = global_inv_decay
-        packdef_constants[DEFECT]["PackDef_cst_block1"] = FITS_3blocks[0]
-        packdef_constants[DEFECT]["PackDef_cst_block2"] = FITS_3blocks[1]
-        packdef_constants[DEFECT]["PackDef_cst_block3"] = FITS_3blocks[2]
-        packdef_constants[DEFECT]["PackDef_cst_all_blocks"] = inv_decay_block
-        packdef_constants[DEFECT]["error_all_blocks"] = error_inv_decay_block
+        packdef_constants.loc["PackDef_cst_global", DEFECT] = global_inv_decay
+        packdef_constants.loc["PackDef_cst_block1", DEFECT] = FITS_3blocks[0]
+        packdef_constants.loc["PackDef_cst_block2", DEFECT] = FITS_3blocks[1]
+        packdef_constants.loc["PackDef_cst_block3", DEFECT] = FITS_3blocks[2]
+        packdef_constants.loc["PackDef_cst_all_blocks", DEFECT] = inv_decay_block
+        packdef_constants.loc["error_all_blocks", DEFECT] = error_inv_decay_block
     
     ####
     # INTERMEDIATE plot: plot all packdef constants on a single barplot
