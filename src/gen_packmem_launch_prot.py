@@ -13,6 +13,8 @@ parser.add_argument('-c', action = 'store', dest = 'cores',
 parser.add_argument('-fm', action = 'store', dest = 'frames',
                     help = 'The number of frames in your simulation',
                     type = int)
+parser.add_arguemnt('-n', action='store', dest='prefix', 
+                    help='The prefix of the files')
 parser.add_argument('-prot', action='store_true', dest='prot', 
                     help='Put if you want to see the packing defects close/far of the protein')
 args = parser.parse_args()
@@ -30,6 +32,7 @@ if __name__=="__main__":
         stop =  intervals[i+1]-1
         if i==(len(intervals)-2):
             stop = args.frames
-        print(f"nice -19 bash /home/maya/Documents/tools/New_PackMem/src/ScriptPackMem_prot.sh {args.traj} {args.topo} {start} {stop} >& OUT_packmem{i} &")
-
-
+        if args.prot:
+            print(f"nice -19 bash /home/maya/Documents/tools/New_PackMem/src/ScriptPackMem_prot.sh -f {args.traj} -s {args.topo} -n {prefix} -b {start} -e {stop} -p >& OUT_packmem{i} &")
+        else:
+            print(f"nice -19 bash /home/maya/Documents/tools/New_PackMem/src/ScriptPackMem_prot.sh -f {args.traj} -s {args.topo} -n {prefix} -b {start} -e {stop} >& OUT_packmem{i} &")
