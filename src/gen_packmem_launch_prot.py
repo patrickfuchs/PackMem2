@@ -26,6 +26,14 @@ if __name__=="__main__":
     step = int(args.frames / args.cores)
     intervals = list(range(0, args.frames+1, step))
 
+    #If too few frames
+    if args.frame < (args.cores*2):
+        if args.prot:
+            print(f"nice -19 bash /home/maya/Documents/tools/New_PackMem/src/ScriptPackMem_prot.sh -f {args.traj} -s {args.topo} -n {args.prefix} -b 0 -e {args.frame} -p >& OUT_packmem0 &")
+        else:
+            print(f"nice -19 bash /home/maya/Documents/tools/New_PackMem/src/ScriptPackMem_prot.sh -f {args.traj} -s {args.topo} -n {args.prefix} -b 0 -e {args.frame} >& OUT_packmem0 &")
+
+
     # Loop to create the prompt to launch PackMem on several cores
     for i in range(len(intervals)-1):
         start = intervals[i]
