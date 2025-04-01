@@ -14,7 +14,7 @@ parser.add_argument('-fm', action = 'store', dest = 'frames',
                     help = 'The number of frames in your simulation',
                     type = int)
 parser.add_argument('-n', action='store', dest='prefix', 
-                    help='The prefix of the files')
+                    help='The type of lipid')
 parser.add_argument('-prot', action='store_true', dest='prot', 
                     help='Put if you want to see the packing defects close/far of the protein')
 args = parser.parse_args()
