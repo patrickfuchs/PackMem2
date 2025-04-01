@@ -10,17 +10,19 @@ PackMemPATH=/home/maya/Documents/tools/New_PackMem/
 usage(){
 cat <<EOF
 
-usage : $0 -n prefix -b first_frame -e last_frame options
+usage : $0 -f traj.xtc -s topo.gro -n prefix -b first_frame -e last_frame options
 
 This script concatenates the PackMem analysis on multiple frame.
 
 Options to specify input files:
+    -f Trajectory file (.xtc)
+    -s Topology file (.gro)
     -n prefix of the files
     -b The first frame of the PackMem analysis
     -e The last frame of the PackMem analysis
 
 OPTIONS:
-    -p If there is a protein (Dafult : false)
+    -p Flag. If put, compute the default around the protein (Default : False)
 
 EOF
 }
@@ -69,13 +71,13 @@ BEFORE=`date +%s`
 if [ ${prot} == true ]
 then
     # launch PackMem for the 3 types of packing defects
-    python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} \
+    python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} -l ${prefix} \
                             -r ${PackMemPATH}/data/vdw_radii_Charmm.txt \
                             -p ${PackMemPATH}/data/param_Charmm.txt \
                             -o ${prefix} -d 1.0 -t deep -b ${frame_start} -e ${frame_stop} -prot
 else
     # launch PackMem for the 3 types of packing defects
-    python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} \
+    python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} -l ${prefix} \
                             -r ${PackMemPATH}/data/vdw_radii_Charmm.txt \
                             -p ${PackMemPATH}/data/param_Charmm.txt \
                             -o ${prefix} -d 1.0 -t deep -b ${frame_start} -e ${frame_stop}
@@ -86,12 +88,12 @@ echo "Deep analysis ran for $ELAPSED minutes."
 BEFORE=`date +%s`
 if [ ${prot} == true ]
 then
-    python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} \
+    python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} -l ${prefix} \
                             -r ${PackMemPATH}/data/vdw_radii_Charmm.txt \
                             -p ${PackMemPATH}/data/param_Charmm.txt \
                             -o ${prefix} -d 1.0 -t shallow -b ${frame_start} -e ${frame_stop} -prot
 else
-    python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} \
+    python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} -l ${prefix} \
                             -r ${PackMemPATH}/data/vdw_radii_Charmm.txt \
                             -p ${PackMemPATH}/data/param_Charmm.txt \
                             -o ${prefix} -d 1.0 -t shallow -b ${frame_start} -e ${frame_stop}
@@ -102,12 +104,12 @@ echo "Shallow analysis ran for $ELAPSED minutes."
 BEFORE=`date +%s`
 if [ ${prot} == true ]
 then
-    python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} \
+    python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} -l ${prefix} \
                             -r ${PackMemPATH}/data/vdw_radii_Charmm.txt \
                             -p ${PackMemPATH}/data/param_Charmm.txt \
                             -o ${prefix} -d 1.0 -t all -b ${frame_start} -e ${frame_stop} -prot
 else
-    python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} \
+    python ${PackMemPATH}/src/PackMem_prot.py -f ${traj} -s ${topo} -l ${prefix} \
                             -r ${PackMemPATH}/data/vdw_radii_Charmm.txt \
                             -p ${PackMemPATH}/data/param_Charmm.txt \
                             -o ${prefix} -d 1.0 -t all -b ${frame_start} -e ${frame_stop}
