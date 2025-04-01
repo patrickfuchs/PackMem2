@@ -68,6 +68,7 @@ if __name__ == '__main__':
         parser = argparse.ArgumentParser(description = 'Arguments for the app')
         parser.add_argument('-f', action = 'store', dest = 'traj', help = 'trajectory file (.xtc)')
         parser.add_argument('-s', action='store', dest='topo', help='Topology file (.gro)')
+        parser.add_argument('-l', action='store', dest='lipid', help='Lipid name in the .gro file')
         parser.add_argument('-r', action = 'store', dest = 'filesrad',
                             help = 'File for radius (default vdw_radiiFinal2014.txt)',
                             default = 'vdw_radiiFinal2014.txt')
@@ -140,8 +141,8 @@ if __name__ == '__main__':
     for ts in u.trajectory[args.start:args.end+1]:
         print(f"Working on frame {ts.frame:3d}")
         # select all atoms in systems
-        system = u.atoms
-        #system = u.select_atoms("resname DMPG or protein")
+        #system = u.atoms
+        system = u.select_atoms(f"resname {args.lipid} or protein")
 
         # Get all the residues in the membrane
         res_ids = system.resids
