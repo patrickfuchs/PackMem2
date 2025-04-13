@@ -9,6 +9,7 @@ import sys
 import argparse
 import numpy as np
 import MDAnalysis as mda
+from MDAnalysis.analysis.leaflet import LeafletFinder 
 
 from bin import listes as l
 from bin import matrix as m
@@ -19,6 +20,28 @@ from bin import BasicFunctions as bfrg
 from bin import param as p
 from bin import protdist as pdist
 
+def separate_Up_Lo(residues, list_resids, atom_mb, dist_suppl_Z, z_extr, up=True):
+    """
+    Separate the lipids from the upper and lower leaflet
+    """
+    leaflet_listZ = {}
+    for resid in list_resids:
+        # Get the residue at a given residue number (resid)
+        residue = residues[residues.resids == resid][0]
+        # Get the atom given in the parameter file
+        atom = residue.atoms[residue.atoms.names == atom_mb][0]
+        # Get the z of this atom
+        z_coord = atom.position[2]
+        if up:
+            tmp = l.create_list_ascend(round(z_coord - dist_suppl_Z, 2),
+                                        round(z_extr +1.0, 2), m.SIZE)
+        else:
+            tmp = l.create_list_descend(round(z_coord + dist_suppl_Z, 2),
+                                            round(z_extr - 1.0, 2), m.SIZE * -1)
+        # Reverse it
+        tmp.reverse()
+        leaflet_listZ[resid] = tmp
+    return leaflet_listZ
 
 ##########################################################################################
 ##### main
@@ -164,64 +187,18 @@ if __name__ == '__main__':
         zmin, zmax, zmean = l.min_max(z_atoms)
 
         ######### Extract UPPER/LOWER leaflet ##########
-        lower_listZ = {}
-        upper_listZ = {}
+        atom_mb = RESNAME_GLYC[args.lipid]
         # If no index file seperating the leaflets
         if args.indexFile == None:
-            lower_leaflet = []
-            upper_leaflet = []
-            for i in range(len(res_ids)) :
-                atom_name = system.names[i]
-                res_name = system.resnames[i]
-                z_coord = z_atoms[i]
-                # Upper leaflet
-                if (atom_name == RESNAME_GLYC[res_name] and z_coord > zmean):
-                    # Add the residue number to the list of upper leaflet C2
-                    res_number = system.resids[i]
-                    upper_leaflet.append(res_number)
-                    # Build a list from z_coord-1 to zmax+1 every 1.0
-                    tmp = l.create_list_ascend(round(z_coord - args.dist_suppl_Z, 2),
-                                            round(zmax +1.0, 2), m.SIZE)
-
-                    # Reverse it
-                    tmp.reverse()
-                    upper_listZ[res_number] = tmp
-                # Lower leaflet
-                if (atom_name == RESNAME_GLYC[res_name] and z_coord < zmean):
-                    # Add the residue number to the list of lower leaflet C2
-                    res_number = system.resids[i]
-                    lower_leaflet.append(res_number)
-                    # Build a list from zmin-1 to z_coord+1 every 1.0
-                    tmp = l.create_list_descend(round(z_coord + args.dist_suppl_Z, 2),
-                                                round(zmin - 1.0, 2), m.SIZE * -1)
-                    # Then reverse it
-                    tmp.reverse()
-                    lower_listZ[res_number] = tmp
+            # Create lists of the residue number  for upper and lower leaflets
+            upper_leaflet = LeafletFinder(system, f'name {atom_mb}',cutoff=10.0).groups(0).resids[:]
+            lower_leaflet = LeafletFinder(system, f'name {atom_mb}',cutoff=10.0).groups(1).resids[:]
         else:
-            (lower_leaflet, upper_leaflet) = p.read_ndx(args.indexFile)
-            for i in range(len(res_ids)) :
-                atom_name = system.names[i]
-                res_name = system.resnames[i]
-                z_coord = z_atoms[i]
-                res_number = system.resids[i]
-                # Upper leaflet
-                if (atom_name == RESNAME_GLYC[res_name] and 
-                        res_number in upper_leaflet) :
-                    # Build a list from z_coord-1 to zmax+1 every 1.0
-                    tmp = l.create_list_ascend(round(z_coord - args.dist_suppl_Z, 2),
-                                            round(zmax +1.0, 2), m.SIZE)
-                    # Reverse it
-                    tmp.reverse()
-                    upper_listZ[res_number] = tmp
-                # Lower leaflet
-                if (atom_name == RESNAME_GLYC[res_name] and
-                        res_number in lower_leaflet):
-                    # Build a list from zmin-1 to z_coord+1 every 1.0
-                    tmp = l.create_list_descend(round(z_coord + args.dist_suppl_Z, 2),
-                                                round(zmin - 1.0, 2), m.SIZE * -1)
-                    # Reverse it
-                    tmp.reverse()
-                    lower_listZ[res_number] = tmp
+            lower_leaflet, upper_leaflet = p.read_ndx(args.indexFile)
+        
+        upper_listZ = separate_Up_Lo(system.residues, upper_leaflet, atom_mb, args.dist_suppl_Z, zmax)
+        lower_listZ = separate_Up_Lo(system.residues, lower_leaflet, atom_mb, args.dist_suppl_Z, zmin, up=False)
+
                     
         # Build a lists from xmin-1 to xmax+1 every 1.0
         listX = l.create_list_ascend(int(xmin - 1.0), int(xmax + 1.0), m.SIZE)
