@@ -11,15 +11,6 @@ def create_list_ascend(v1, v2, step):
         i = i+step
     return liste
 
-# create list[
-def create_list_descend(v1, v2, step):
-    liste = []
-    i = v1
-    while i >= v2:
-        liste.append(i)
-        i = i+step
-    return liste
-
 #from list[list] determine max length
 def determine_lenMax(listeTot):
     return max([len(data) for data in listeTot])
