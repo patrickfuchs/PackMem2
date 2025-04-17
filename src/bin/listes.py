@@ -2,14 +2,22 @@
 # Functions to create, analyse list variables
 # R. Gautier 2015
 
-# create list[v1 to v2, step]
-def create_list_ascend(v1, v2, step):
-    liste = []
-    i = v1
-    while i <= v2:
-        liste.append(i)
-        i = i+step
-    return liste
+import numpy as np
+
+def create_array(v1, v2, step):
+    """
+    Create numpy array from v1 to v2 by step step
+    ---------------------------------------------------------------------------
+    INPUT:
+    v1 : float
+    v2 : float
+    step : float
+    ---------------------------------------------------------------------------
+    OUTPUT
+    numpy array
+        Containing floats from v1 to v2 by step step
+    """
+    return np.arange(v1, v2, step)
 
 #from list[list] determine max length
 def determine_lenMax(listeTot):
