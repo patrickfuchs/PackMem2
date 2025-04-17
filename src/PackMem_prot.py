@@ -20,9 +20,28 @@ from bin import BasicFunctions as bfrg
 from bin import param as p
 from bin import protdist as pdist
 
-def separate_Up_Lo(residues, list_resids, atom_mb, dist_suppl_Z, z_extr, up=True):
+def create_listZ(residues, list_resids, atom_mb, dist_suppl_Z, z_extr, up=True):
     """
-    Separate the lipids from the upper and lower leaflet
+    Create the listZ array for upper and lower leaflet
+    ---------------------------------------------------------------------------
+    INPUT:
+    residues : MDAnalysis ResidueGroup
+        Contains the names of all the residues selected
+    list_resids : numpy array
+        Contains all the residue numbers selected
+    atom_mb : str
+        Name of the reference atom for the lipids (C2)
+    dist_suppl_Z : float
+        Supplementary distance from the z coord
+    z_extr : float
+        Either maximum or minimum value of z coord
+    up : boolean
+        If we are on the upper leaflet
+    ---------------------------------------------------------------------------
+    OUTPUT:
+    numpy array
+        Contains floats ranging from z_coord to zmin
+        or from zmax to z_coord by 1.0 steps
     """
     leaflet_listZ = {}
     for resid in list_resids:
@@ -33,13 +52,13 @@ def separate_Up_Lo(residues, list_resids, atom_mb, dist_suppl_Z, z_extr, up=True
         # Get the z of this atom
         z_coord = atom.position[2]
         if up:
-            tmp = l.create_list_ascend(round(z_coord - dist_suppl_Z, 2),
+            tmp = l.create_array(round(z_coord - dist_suppl_Z, 2),
                                         round(z_extr +1.0, 2), m.SIZE)
         else:
-            tmp = l.create_list_descend(round(z_coord + dist_suppl_Z, 2),
-                                            round(z_extr - 1.0, 2), m.SIZE * -1)
+            tmp = l.create_array(round(z_coord + dist_suppl_Z, 2),
+                                            round(z_extr - 1.0, 2), -m.SIZE)
         # Reverse it
-        tmp.reverse()
+        tmp = np.flip(tmp)
         leaflet_listZ[resid] = tmp
     return leaflet_listZ
 
@@ -200,8 +219,8 @@ if __name__ == '__main__':
         ymin, ymax, ymean = l.min_max(y_atoms)
         zmin, zmax, zmean = l.min_max(z_atoms)
         
-        upper_listZ = separate_Up_Lo(system.residues, upper_leaflet, atom_mb, args.dist_suppl_Z, zmax)
-        lower_listZ = separate_Up_Lo(system.residues, lower_leaflet, atom_mb, args.dist_suppl_Z, zmin, up=False)
+        upper_listZ = create_listZ(system.residues, upper_leaflet, atom_mb, args.dist_suppl_Z, zmax)
+        lower_listZ = create_listZ(system.residues, lower_leaflet, atom_mb, args.dist_suppl_Z, zmin, up=False)
                     
         # Build a lists from xmin-1 to xmax+1 every 1.0
         listX = l.create_list_ascend(int(xmin - 1.0), int(xmax + 1.0), m.SIZE)
