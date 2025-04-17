@@ -223,9 +223,9 @@ if __name__ == '__main__':
         lower_listZ = create_listZ(system.residues, lower_leaflet, atom_mb, args.dist_suppl_Z, zmin, up=False)
                     
         # Build a lists from xmin-1 to xmax+1 every 1.0
-        listX = l.create_list_ascend(int(xmin - 1.0), int(xmax + 1.0), m.SIZE)
+        listX = l.create_array(int(xmin-1), int(xmax+2), m.SIZE)
         # Build a lists from ymin-1 to ymax+1 every 1.0
-        listY = l.create_list_ascend(int(ymin - 1.0), int(ymax + 1.0), m.SIZE)
+        listY = l.create_array(int(ymin-1), int(ymax+2), m.SIZE)
 
         # Initialize 2 matrixes for Upper and Lower leaflet of length listX,listY
         MatrixUp = m.initialize_matrix2D(len(listX), len(listY), np.nan)
