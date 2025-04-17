@@ -159,7 +159,21 @@ if __name__ == '__main__':
                -p param.txt -o output -d distGlyc -t deep/all/shallow [-n index file] [-v] or -h for help')
         sys.exit()
 
+    ######### LOAD UNIVERSE  #########
     u = mda.Universe(args.topo, args.traj)
+    # select the lipids in system
+    system = u.select_atoms(f"resname {args.lipid}")
+    
+    ######### Extract UPPER/LOWER leaflet ##########
+    atom_mb = RESNAME_GLYC[args.lipid]
+    # If no index file seperating the leaflets
+    if args.indexFile == None:
+        # Create lists of the residue number  for upper and lower leaflets
+        L = LeafletFinder(system, f'name {atom_mb}')
+        upper_leaflet = L.groups(0).resids
+        lower_leaflet = L.groups(1).resids
+    else:
+        lower_leaflet, upper_leaflet = p.read_ndx(args.indexFile)
 
     for ts in u.trajectory[args.start:args.end+1]:
         print(f"Working on frame {ts.frame:3d}")
@@ -185,20 +199,9 @@ if __name__ == '__main__':
         xmin, xmax, xmean = l.min_max(x_atoms)
         ymin, ymax, ymean = l.min_max(y_atoms)
         zmin, zmax, zmean = l.min_max(z_atoms)
-
-        ######### Extract UPPER/LOWER leaflet ##########
-        atom_mb = RESNAME_GLYC[args.lipid]
-        # If no index file seperating the leaflets
-        if args.indexFile == None:
-            # Create lists of the residue number  for upper and lower leaflets
-            upper_leaflet = LeafletFinder(system, f'name {atom_mb}',cutoff=10.0).groups(0).resids[:]
-            lower_leaflet = LeafletFinder(system, f'name {atom_mb}',cutoff=10.0).groups(1).resids[:]
-        else:
-            lower_leaflet, upper_leaflet = p.read_ndx(args.indexFile)
         
         upper_listZ = separate_Up_Lo(system.residues, upper_leaflet, atom_mb, args.dist_suppl_Z, zmax)
         lower_listZ = separate_Up_Lo(system.residues, lower_leaflet, atom_mb, args.dist_suppl_Z, zmin, up=False)
-
                     
         # Build a lists from xmin-1 to xmax+1 every 1.0
         listX = l.create_list_ascend(int(xmin - 1.0), int(xmax + 1.0), m.SIZE)
