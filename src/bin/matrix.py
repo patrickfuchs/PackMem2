@@ -128,8 +128,8 @@ def find_X_Y(coord, matX, matY):
     tmpX = int(coord[0])
     tmpY = int(coord[1])
     # Find the index of the value given (x_atom or y_atom)
-    iX = matX.index(tmpX)
-    iY = matY.index(tmpY)
+    iX = np.where(matX == tmpX)[0][0]
+    iY = np.where(matY == tmpY)[0][0]
     return iX,iY
 
 def check_edges(val, val_lim1, val_lim2):
