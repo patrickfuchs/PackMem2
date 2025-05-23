@@ -5,7 +5,7 @@
 
 # set PackMem absolute path
 # change this path according to your system 
-PackMemPATH=/home/maya/Documents/tools/New_PackMem/
+PackMemPATH=/home/maya/Documents/tools/New_PackMem
 
 usage(){
 cat <<EOF
