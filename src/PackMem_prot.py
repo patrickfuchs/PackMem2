@@ -174,8 +174,9 @@ if __name__ == '__main__':
         aliphatic = bfrg.read_aliphatic(args.filesrad)
         
     except:
-        print('Command line: PackMem.py -i file.pdb -r fileRadius.txt \
-               -p param.txt -o output -d distGlyc -t deep/all/shallow [-n index file] [-v] or -h for help')
+        print('Command line: PackMem_prot.py -f file.xtc -s file.gro -l lipid_name\
+               -p param.txt -r radius.txt -t deep/all/shallow -o output [-d distGlyc]\
+              [-b start frame] [-e end frame][-n index file] [-pdb] [-prot] or -h for help')
         sys.exit()
 
     ######### LOAD UNIVERSE  #########
