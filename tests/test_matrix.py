@@ -11,68 +11,68 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 's
 from  bin import matrix as m
 
 def test_initialize_matrix2D():
-    input = m.initialize_matrix2D(4, 4, np.nan)
+    tested_ouput = m.initialize_matrix2D(4, 4, np.nan)
     wanted_output = np.array([[np.nan, np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan, np.nan]])
-    np.testing.assert_array_equal(input, wanted_output)
+    np.testing.assert_array_equal(tested_ouput, wanted_output)
 
 def test_get_radius():
     radius = {"DMPG C13": 2.01, "DMPG H13A": 1.34, "DMPG H13B": 1.34, "DMPG OC3": 1.77, "DMPG C12": 2.28, "DMPG P": 2.15, "DMPG HX": 1.34}
-    input = m.get_radius(radius, "DMPG", "C13")
+    tested_ouput = m.get_radius(radius, "DMPG", "C13")
     wanted_output = 2.01
-    assert(input == wanted_output)
+    assert(tested_ouput == wanted_output)
 
 def test_get_aliphatic():
     aliph = {"DMPG C13": 'n', "DMPG H13A": 'n', "DMPG H13B": 'n', "DMPG OC3": 'n', "DMPG C12": 'n', "DMPG P": 'n', "DMPG C22": 'a'}
-    input = m.get_aliphatic(aliph, "DMPG", "C13")
+    tested_ouput = m.get_aliphatic(aliph, "DMPG", "C13")
     wanted_output = 'n'
-    assert(input == wanted_output)
+    assert(tested_ouput == wanted_output)
 
 def test_diff_Z():
     listZ = np.array([63.54, 62.54, 61.54, 60.54, 59.54, 58.54, 57.54, 56.54, 55.54, 54.54, 53.54, 52.54, 51.54, 50.54])
-    input = round(m.find_Z(52.18, listZ),2)
+    tested_ouput = round(m.find_Z(52.18, listZ),2)
     wanted_output = -1.64
-    assert(input == wanted_output)
+    assert(tested_ouput == wanted_output)
 
 def test_find_X_Y():
     coord = np.array([44.79, 32.78, 52.18])
     listX = np.arange(-9.0, 95.0)
     listY =  np.arange(-11.0, 96.0)
-    inputX, inputY = m.find_X_Y(coord, listX, listY)
+    tested_ouputX, tested_ouputY = m.find_X_Y(coord, listX, listY)
     wanted_outputX, wanted_outputY = 53, 43
-    assert(inputX == wanted_outputX)
-    assert(inputY == wanted_outputY)
+    assert(tested_ouputX == wanted_outputX)
+    assert(tested_ouputY == wanted_outputY)
 
 def test_check_edges():
-    input_T = m.check_edges(43, 5, 107)
-    input_F = m.check_edges(2, 5, 104)
+    tested_ouput_T = m.check_edges(43, 5, 107)
+    tested_ouput_F = m.check_edges(2, 5, 104)
     wanted_output_T = 43
     wanted_output_F = 5
-    assert(input_T == wanted_output_T)
-    assert(input_F ==  wanted_output_F)
+    assert(tested_ouput_T == wanted_output_T)
+    assert(tested_ouput_F ==  wanted_output_F)
 
 def test_setDefects():
-    input_polar = m.setDefects('n', 0.0)
+    tested_ouput_polar = m.setDefects('n', 0.0)
     polar_output = 1.0
-    input_apolar = m.setDefects('a', 0.0)
+    tested_ouput_apolar = m.setDefects('a', 0.0)
     apolar_output = 0.001
-    assert(input_polar == polar_output)
-    assert(input_apolar == apolar_output)
+    assert(tested_ouput_polar == polar_output)
+    assert(tested_ouput_apolar == apolar_output)
 
 def test_fill_matrix():
     Matrix = np.full((4, 4), np.nan)
     listX = np.arange(-1., 6., 1)
     listY = np.arange(-1., 6., 1)
-    input = m.fill_matrix(Matrix, [0,4,2], listX, listY, np.array([4, 3, 2, 1, 0]), 1.34, 'all', 'a')
+    tested_ouput = m.fill_matrix(Matrix, [0,4,2], listX, listY, np.array([4, 3, 2, 1, 0]), 1.34, 'all', 'a')
     #wanted_output = np.array([[0.0, 0.003, 0.003, 0.003], [0.001, 0.003, 0.005, 0.003], [0.0, 0.003, 0.003, 0.003], [0.0, 0.0, 0.001, 0.0]])
     wanted_output = np.array([[0.0, 3., 3., 3.], [1., 3., 5., 3.], [0.0, 3., 3., 3.], [0.0, 0.0, 1., 0.0]])
-    np.testing.assert_array_equal(input, wanted_output)
+    np.testing.assert_array_equal(tested_ouput, wanted_output)
 
 def test_binarize_matrix_without0():
     Matrix_bin = np.full((4, 4), 0.)
     Matrix = np.array([[0.0, 0.003, 5.0, 0.5], [0.001, 0.003, 1.005, 0.003], [0.99, 0.003, 0.003, 0.003], [0.0, 0.0, 0.001, 0.0]])
-    input = Matrix_bin = m.binarize_matrix_without0(Matrix, Matrix_bin , -0.01, 0.99)
+    tested_ouput = Matrix_bin = m.binarize_matrix_without0(Matrix, Matrix_bin , -0.01, 0.99)
     wanted_output = np.array([[0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 1.0, 0.0], [1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0]])
-    np.testing.assert_array_equal(input, wanted_output)
+    np.testing.assert_array_equal(tested_ouput, wanted_output)
 
 def test_modify_matrix():
     list_lab_edge = np.array([1, 5])
@@ -86,13 +86,13 @@ def test_modify_matrix():
                 [1, 0, 0, 1, 1],
                 [1, 1, 0, 1, 1],
                 [1, 0, 1, 1, 1]])
-    input = m.modify_matrix(mat_lab, mat, list_lab_edge)
+    tested_ouput = m.modify_matrix(mat_lab, mat, list_lab_edge)
     wanted_output = np.array([[0, 0, 0, 0, 0],
                 [0, 1, 1, 0, 0],
                 [0, 0, 0, 1, 0],
                 [1, 1, 0, 1, 0],
                 [1, 0, 0, 0, 0]])
-    np.testing.assert_array_equal(input, wanted_output)
+    np.testing.assert_array_equal(tested_ouput, wanted_output)
 
 def test_clean_NA_inside():
     list_lab_edge = np.array([1, 5])
@@ -107,7 +107,7 @@ def test_clean_NA_inside():
                 [1, 1, 0, 1, 1],
                 [1, np.nan, 1, 1, 1]])
     total_edge = 11
-    input_mat_lab, input_tot_edge, input_clustPb = m.clean_NA_inside(mat_lab, list_lab_edge, mat, total_edge)
+    tested_ouput_mat_lab, tested_ouput_tot_edge, tested_ouput_clustPb = m.clean_NA_inside(mat_lab, list_lab_edge, mat, total_edge)
     output_mat_lab = np.array([[1, 1, 1, 1, 1],
                 [1, 3, 3, 0, 0],
                 [1, 0, 0, 4, 5],
@@ -115,6 +115,6 @@ def test_clean_NA_inside():
                 [2, 1, 5, 5, 5]])
     output_tot_edge = 13
     output_clustPb = {6:1, 7:1}
-    np.testing.assert_array_equal(input_mat_lab, output_mat_lab)
-    assert(input_tot_edge == output_tot_edge)
-    assert(input_clustPb == output_clustPb)
+    np.testing.assert_array_equal(tested_ouput_mat_lab, output_mat_lab)
+    assert(tested_ouput_tot_edge == output_tot_edge)
+    assert(tested_ouput_clustPb == output_clustPb)
