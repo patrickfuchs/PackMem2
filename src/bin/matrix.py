@@ -308,6 +308,27 @@ def modify_matrix(mat1, mat2, listval):
     mat2[index[:,0], index[:,1]] = 0. 
     return mat2
 
+def count_edge_area(area_cluster, cluster_edge):
+    """
+    Count the total area of the clusters on the edge
+
+    --------------------
+    INPUT
+    area_cluster : dictionary
+        Contains the labels of each defects and their areas
+    cluster_edge : numpy array
+        Contains the labels of the defects on the edge
+    
+    --------------------
+    OUTPUT
+    int
+        The sum of the defect areas on the edge
+    """
+    total_edge_area = 0
+    for key in cluster_edge:
+        total_edge_area += area_cluster[key]
+    return  total_edge_area
+
 def clean_NA_inside(Matrix_labels, labels_edge, Matrix_ini, total_edge):
     """
     Clean up the label matrix, the total edge area if there were NaN

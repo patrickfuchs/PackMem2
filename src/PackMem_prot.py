@@ -334,12 +334,8 @@ if __name__ == '__main__':
         clust_edge_Lo = cc.get_clusters_on_the_edge(Matrix_labels_Lo)
 
         # Count area of the edge
-        total_edge_Up = 0
-        for key in clust_edge_Up:
-            total_edge_Up += area_clusters_Up[key]
-        total_edge_Lo = 0
-        for key in clust_edge_Lo:
-            total_edge_Lo += area_clusters_Lo[key]
+        total_edge_Up = m.count_edge_area(area_clusters_Up, clust_edge_Up)
+        total_edge_Lo = m.count_edge_area(area_clusters_Lo, clust_edge_Lo)
         
         # Clean dico defects (without edge)
         area_clusters_Up = d.del_key_dico(area_clusters_Up, clust_edge_Up)

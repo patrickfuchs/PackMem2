@@ -94,6 +94,13 @@ def test_modify_matrix():
                 [1, 0, 0, 0, 0]])
     np.testing.assert_array_equal(tested_ouput, wanted_output)
 
+def test_count_edge_area():
+    cluster_edge = np.array([1, 5])
+    area_cluster = {1: 6, 2 : 3, 3 : 2, 4 : 2, 5 : 5}
+    tested_ouput = m.count_edge_area(area_cluster, cluster_edge)
+    wanted_output = 11
+    assert(tested_ouput == wanted_output)
+
 def test_clean_NA_inside():
     list_lab_edge = np.array([1, 5])
     mat_lab = np.array([[1, 1, 1, 1, 6],
