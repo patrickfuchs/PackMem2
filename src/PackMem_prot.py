@@ -311,8 +311,8 @@ if __name__ == '__main__':
         # If deep (1)
         else:
             # Binarise these matrices, with 0 if deep defect, 1 otherwise
-            Matrix_Upbin = m.binarize_matrix(MatrixUp, Matrix_Upbin, 0.)
-            Matrix_Lobin = m.binarize_matrix(MatrixLo, Matrix_Lobin, 0.)
+            Matrix_Upbin = m.binarize_matrix_without0(MatrixUp, Matrix_Upbin, -0.01, 0.001)
+            Matrix_Lobin = m.binarize_matrix_without0(MatrixLo, Matrix_Lobin, -0.01, 0.001)
 
         # If shallow defects (2)
         if FlagPDtype == 2:

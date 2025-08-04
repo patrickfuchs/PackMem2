@@ -283,36 +283,6 @@ def binarize_matrix_without0(matrix, matrix_ini, val1=0, val2=0.99):
     matrix_ini[index[:,0], index[:,1]] = 1. 
     return matrix_ini
 
-def binarize_matrix(matrix, matrix_ini, val=0.):
-    """
-    Binarise the presence of atom in matrix
-
-    --------------------
-    INPUT
-    matrix : numpy matrix
-        Contains where there are atoms in the simulation box
-    matrix_ini : numpy matrix
-        Matrix to be binarised
-    val : float
-        lower limit value
-
-    --------------------
-    OUTPUT
-    numpy matrix
-        Contains the position of the atoms (1) in the simulation box
-    """
-    for i in range(0, matrix.shape[0]):
-        for j in range(0, matrix.shape[1]):
-            #print(matrix[i][j])
-            if np.isnan(matrix[i][j]):
-                matrix_ini[i][j]=0.
-            else:
-                if matrix[i][j] > val:
-                    matrix_ini[i][j]=1.
-                else:
-                    matrix_ini[i][j]=0.
-    return matrix_ini
-
 def modify_matrix(mat1, mat2, listval):
     """
     Modify the binary matrix to take account edges (determined by all packing defects)
