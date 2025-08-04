@@ -258,7 +258,7 @@ def fill_matrix(matrix, coordtmp, listX, listY, listZ,
 
 def binarize_matrix_without0(matrix, matrix_ini, val1=0, val2=0.99):
     """
-    Binarise the presence of aliphatic atom (and packing defects) in matrix
+    Binarise the presence / absence of aliphatic atom (and packing defects) in matrix
 
     --------------------
     INPUT
@@ -274,19 +274,13 @@ def binarize_matrix_without0(matrix, matrix_ini, val1=0, val2=0.99):
     --------------------
     OUTPUT
     numpy matrix
-        Contains the position of the aliphatic atoms (+ packing defects) (0) in the simulationb box    
+        Contains the position of the aliphatic / polar atoms (+ packing defects) (1)
+        in the simulation box    
     """
-    for i in range(0, matrix.shape[0]):
-        for j in range(0, matrix.shape[1]):
-            if np.isnan(matrix[i][j]):
-                matrix_ini[i][j]=0.
-            # Check Matrix, if there is an aliphatic atom (or pacing defect) : 0
-            # Otherwise : 1
-            else:
-                if (matrix[i][j] > val1 and  matrix[i][j] < val2):
-                    matrix_ini[i][j]=0.
-                else:
-                    matrix_ini[i][j]=1.
+    # Get the index of the polar atoms / deep defects if val2 = 0.99
+    # Get the index of the apolar atoms if val 2 = 0.001
+    index = np.argwhere((matrix >= val2) | (matrix <= val1))
+    matrix_ini[index[:,0], index[:,1]] = 1. 
     return matrix_ini
 
 def binarize_matrix(matrix, matrix_ini, val=0.):
