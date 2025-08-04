@@ -246,10 +246,8 @@ def fill_matrix(matrix, coordtmp, listX, listY, listZ,
                 # If the matrix cell was empty, put 0.0
                 if np.isnan(matrix[X, Y]):
                     matrix[X, Y] = 0.
-                print(matrix)
                 # Get the value in this cell of the matrix
                 if distance <= dist_meet:
-                    print(FlagPDtype)
                     # If shallow or all defect
                     if FlagPDtype == "shallow" or FlagPDtype == "all":
                         matrix[X, Y] = setDefects(aliph_atoms, matrix[X, Y])
