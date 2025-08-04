@@ -302,10 +302,10 @@ def modify_matrix(mat1, mat2, listval):
     matrix
         Contains mat2 where the clusters on the edge were put to 0.0
     """
-    for i in range(0, mat1.shape[0]):
-        for j in range(0, mat1.shape[1]):
-            if mat1[i][j] in listval:
-                mat2[i][j]= 0.0
+    # Get the index in mat1 where the labels are in listval
+    mask = np.isin(mat1, listval)
+    index = np.argwhere(mask)
+    mat2[index[:,0], index[:,1]] = 0. 
     return mat2
 
 def clean_NA_inside(Matrix_labels, clust_edge, Matrix_ini, total_edge):
