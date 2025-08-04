@@ -308,18 +308,21 @@ def modify_matrix(mat1, mat2, listval):
     mat2[index[:,0], index[:,1]] = 0. 
     return mat2
 
-def clean_NA_inside(Matrix_labels, clust_edge, Matrix_ini, total_edge):
+def clean_NA_inside(Matrix_labels, labels_edge, Matrix_ini, total_edge):
     """
+    Clean up the label matrix, the total edge area if there were NaN
+    that weren't changed in the first fill matrix
+    Then gives a dictionary of the wrongly labeled defects
 
     --------------------
     INPUT
     Matrix_labels : numpy matrix
         Contains the labels
-    clust_edge : list
+    labels_edge : numpy array
         Contains the labels on each edge of the matrix
     Matrix_ini : numpy matrix
         Contains the positions of the polar atoms (int)
-        aliphatic atoms (float > 0.0)
+        aliphatic atoms (0.0 < float < 0.99)
         and packing defects (0.0)
     total_edge : int
         The area taken by the packing defects on the edge of the matrix
@@ -331,20 +334,18 @@ def clean_NA_inside(Matrix_labels, clust_edge, Matrix_ini, total_edge):
     int
         The updated area taken by the packing defects on the edge of the matrix
     dictionnary
-        Contains the labels and the number of cells concerned that and nan in Matrix_ini
+        Contains the labels and their area concerned by the NaN problem
     """
-    clustPb={}
-    # Loop on the Matrix_ini to find potential nan
-    for i in range(0, Matrix_ini.shape[0]):
-        for j in range(0, Matrix_ini.shape[1]):
-            if np.isnan(Matrix_ini[i][j]) and Matrix_labels[i][j] not in clust_edge:
-                if Matrix_labels[i][j] in clustPb:
-                    clustPb[Matrix_labels[i][j]]+=1
-                else:
-                    clustPb[Matrix_labels[i][j]]=1
-                # Correct the nan by giving it the first label of clust_edge
-                Matrix_labels[i][j]=clust_edge[0]
-                total_edge+=1
+    # Select the NaN that are inside the memb and not registered as edges
+    index_nan_inside = np.argwhere((np.isnan(Matrix_ini)) & (~np.isin(Matrix_labels, labels_edge)))
+    labels_Pb = Matrix_labels[index_nan_inside[:,0], index_nan_inside[:,1]]
+    # Get the unique labels and count their occurrence => dict
+    unique, counts = np.unique(labels_Pb, return_counts=True)
+    clustPb = dict(zip(unique, counts))
+    # Correct the nan by giving it the first label of clust_edge
+    Matrix_labels[index_nan_inside[:,0], index_nan_inside[:,1]] = labels_edge[0]
+    # Correcy the total edge area
+    total_edge += len(labels_Pb)
     return Matrix_labels, total_edge, clustPb
 
 def initialize_matrix3D(val1, val2, val3, defaut):
