@@ -29,7 +29,7 @@ def test_get_aliphatic():
 
 def test_diff_Z():
     listZ = np.array([63.54, 62.54, 61.54, 60.54, 59.54, 58.54, 57.54, 56.54, 55.54, 54.54, 53.54, 52.54, 51.54, 50.54])
-    tested_ouput = round(m.find_Z(52.18, listZ),2)
+    tested_ouput = round(m.diff_Z(listZ, 52.18),2)
     wanted_output = -1.64
     assert(tested_ouput == wanted_output)
 

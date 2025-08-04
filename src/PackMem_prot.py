@@ -248,7 +248,7 @@ if __name__ == '__main__':
             # Upper leaflet ########################
             if res_id in upper_leaflet :
                 # dfZ = z_C2_res - z_atom
-                dfZ = round(m.find_Z(coordtmp[2], upper_listZ[res_id]),2)
+                dfZ = round(m.diff_Z(upper_listZ[res_id], coordtmp[2]),2)
                 # If dfZ < 5
                 # To limit the search around an atom to 5 cells
                 if dfZ < (1. * v):
@@ -261,7 +261,7 @@ if __name__ == '__main__':
             # Lower leaflet ########################
             if res_id in lower_leaflet :
                 # dfZ = z_C2_res - z_atom
-                dfZ = round(m.find_Z(coordtmp[2], lower_listZ[res_id]),2)
+                dfZ = round(m.diff_Z(lower_listZ[res_id], coordtmp[2]),2)
                 # If dfZ > -5
                 # To limit the search around an atom to 5 cells
                 if dfZ > (-1. * v):
