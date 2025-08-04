@@ -63,8 +63,8 @@ def test_fill_matrix():
     listX = np.arange(-1., 6., 1)
     listY = np.arange(-1., 6., 1)
     tested_ouput = m.fill_matrix(Matrix, [0,4,2], listX, listY, np.array([4, 3, 2, 1, 0]), 1.34, 'all', 'a')
-    #wanted_output = np.array([[0.0, 0.003, 0.003, 0.003], [0.001, 0.003, 0.005, 0.003], [0.0, 0.003, 0.003, 0.003], [0.0, 0.0, 0.001, 0.0]])
-    wanted_output = np.array([[0.0, 3., 3., 3.], [1., 3., 5., 3.], [0.0, 3., 3., 3.], [0.0, 0.0, 1., 0.0]])
+    wanted_output = np.array([[0.0, 0.003, 0.003, 0.003], [0.001, 0.003, 0.005, 0.003], [0.0, 0.003, 0.003, 0.003], [0.0, 0.0, 0.001, 0.0]])
+    #wanted_output = np.array([[0.0, 3., 3., 3.], [1., 3., 5., 3.], [0.0, 3., 3., 3.], [0.0, 0.0, 1., 0.0]])
     np.testing.assert_array_equal(tested_ouput, wanted_output)
 
 def test_binarize_matrix_without0():

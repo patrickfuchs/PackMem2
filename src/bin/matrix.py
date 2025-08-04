@@ -194,7 +194,7 @@ def fill_matrix(matrix, coordtmp, listX, listY, listZ,
         List from xmin-1 to xmax+1 by step of 1.0
     listY : list
         List from ymin-1 to ymax+1 by step of 1.0
-    listZ : list
+    listZ : numpy array
         List from zmax+1 to z_C2_coord-1 by step of 1.0  OR
         List from z_C2_coord+1 to zmin-1 by step of 1.0
     radius_res : float
@@ -221,52 +221,41 @@ def fill_matrix(matrix, coordtmp, listX, listY, listZ,
     listXM = listX[iX - v : iX + (v + 1)]
     listYM = listY[iY - v : iY + (v + 1)]
     # Limit distance in a radius
-    dist_lim = (SIZE+radius_res) ** 2
+    dist_lim = (SIZE + radius_res) ** 2
     # Limit distance in diagonal
     dist_meet = (SIZE_SIDE + radius_res) ** 2
+
+    # Select valid positions to search in the radius of the distance
+    # from the position of the atom to the slice in Z / X / Y
+    validZ = [z for z in listZ if bfrg.dist_oneAxis(coordtmp[2], z) <= dist_lim]
+    validX = [(ix, x) for ix, x in enumerate(listXM) if bfrg.dist_oneAxis(coordtmp[0], x) <= dist_lim]
+    validY = [(iy, y) for iy, y in enumerate(listYM) if bfrg.dist_oneAxis(coordtmp[1], y) <= dist_lim]
     # Loop on the different z positions of the upper OR lower leaflet
-    for sliceZ in listZ:
-        # Distance from the position of the atom to the slice in Z
-        distZ_to_sliceZ = bfrg.dist_oneAxis(coordtmp[2],sliceZ)
-        # Check that we can search in the all the radius
-        if distZ_to_sliceZ > dist_lim:
-            continue
+    for sliceZ in validZ:
         # Loop on the different cells in x dimension
-        for indX,sliceX in enumerate(listXM):
-            # Distance from the position of the atom to a cell in X
-            distX_to_sliceX = bfrg.dist_oneAxis(coordtmp[0], sliceX)
-            # Check that we can search in the all the radius
-            if distX_to_sliceX > dist_lim:
-                continue
+        for indX, sliceX in validX:
             # Loop on the different cells in y dimension
-            for indY,sliceY in enumerate(listYM):
-                # Distance from the position of the atom to a cell in X
-                distY_to_sliceY = bfrg.dist_oneAxis(coordtmp[1], sliceY)
-                # Check that we can search in the all the radius
-                if distY_to_sliceY > dist_lim:
-                    continue
-                # 
+            for indY, sliceY in validY:
                 X = indX + (iX - v)
                 Y = indY + (iY - v)
                 # Create a list with the coordinates x,y,z of a cell
                 # in a 5 cell radius of the atom
-                coordCenter = [float(sliceX), float(sliceY), float(sliceZ)]
+                coordCenter = np.array([sliceX, sliceY, sliceZ], dtype=float)
                 # Compute the distance between the atom and this position of the matrix
                 distance = bfrg.dist(coordCenter, coordtmp)
                 # If the matrix cell was empty, put 0.0
-                if np.isnan(matrix[X][Y]):
-                    matrix[X][Y]=0.
+                if np.isnan(matrix[X, Y]):
+                    matrix[X, Y] = 0.
+                print(matrix)
                 # Get the value in this cell of the matrix
-                val_mat = matrix[X][Y]
-                # 
                 if distance <= dist_meet:
-                    # If shallow (2) or all (0) defect
-                    if FlagPDtype == 2 or FlagPDtype == 0:
-                        # 
-                        matrix[X][Y] = setDefects(aliph_atoms, val_mat)
-                    # If deep (1) defect
-                    else:
-                        matrix[X][Y] +=1.
+                    print(FlagPDtype)
+                    # If shallow or all defect
+                    if FlagPDtype == "shallow" or FlagPDtype == "all":
+                        matrix[X, Y] = setDefects(aliph_atoms, matrix[X, Y])
+                    # If deep defect
+                    elif FlagPDtype == "deep":
+                        matrix[X, Y] += 1.
     return matrix
 
 def binarize_matrix_without0(matrix, matrix_ini, val1=0, val2=0.99):
