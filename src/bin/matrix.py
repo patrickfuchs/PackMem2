@@ -85,18 +85,18 @@ def get_aliphatic(aliphatic, res_name, atom_name):
         sys.exit()
     return aliphatic[key]
 
-def find_Z(coordZ, listZ):
+def diff_Z(listZ, coordZ):
     """
     Compute the difference between the last value in listZ
     and the Z for one atom
 
     --------------------
     INPUT
-    coordZ : float
-        The z coordinate for one atom
-    listZ : list
+    listZ : numpy array
         List from zmax+1 to z_C2_coord-1 by step of 1.0  OR
         List from z_C2_coord+1 to zmin-1 by step of 1.0
+    coordZ : float
+        The z coordinate for one atom
 
     --------------------
     OUPUT
