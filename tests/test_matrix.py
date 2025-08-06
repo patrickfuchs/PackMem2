@@ -29,7 +29,7 @@ def test_get_aliphatic():
 
 def test_diff_Z():
     listZ = np.array([63.54, 62.54, 61.54, 60.54, 59.54, 58.54, 57.54, 56.54, 55.54, 54.54, 53.54, 52.54, 51.54, 50.54])
-    tested_ouput = round(m.find_Z(52.18, listZ),2)
+    tested_ouput = round(m.diff_Z(listZ, 52.18),2)
     wanted_output = -1.64
     assert(tested_ouput == wanted_output)
 
@@ -63,8 +63,8 @@ def test_fill_matrix():
     listX = np.arange(-1., 6., 1)
     listY = np.arange(-1., 6., 1)
     tested_ouput = m.fill_matrix(Matrix, [0,4,2], listX, listY, np.array([4, 3, 2, 1, 0]), 1.34, 'all', 'a')
-    #wanted_output = np.array([[0.0, 0.003, 0.003, 0.003], [0.001, 0.003, 0.005, 0.003], [0.0, 0.003, 0.003, 0.003], [0.0, 0.0, 0.001, 0.0]])
-    wanted_output = np.array([[0.0, 3., 3., 3.], [1., 3., 5., 3.], [0.0, 3., 3., 3.], [0.0, 0.0, 1., 0.0]])
+    wanted_output = np.array([[0.0, 0.003, 0.003, 0.003], [0.001, 0.003, 0.005, 0.003], [0.0, 0.003, 0.003, 0.003], [0.0, 0.0, 0.001, 0.0]])
+    #wanted_output = np.array([[0.0, 3., 3., 3.], [1., 3., 5., 3.], [0.0, 3., 3., 3.], [0.0, 0.0, 1., 0.0]])
     np.testing.assert_array_equal(tested_ouput, wanted_output)
 
 def test_binarize_matrix_without0():
@@ -93,6 +93,13 @@ def test_modify_matrix():
                 [1, 1, 0, 1, 0],
                 [1, 0, 0, 0, 0]])
     np.testing.assert_array_equal(tested_ouput, wanted_output)
+
+def test_count_edge_area():
+    cluster_edge = np.array([1, 5])
+    area_cluster = {1: 6, 2 : 3, 3 : 2, 4 : 2, 5 : 5}
+    tested_ouput = m.count_edge_area(area_cluster, cluster_edge)
+    wanted_output = 11
+    assert(tested_ouput == wanted_output)
 
 def test_clean_NA_inside():
     list_lab_edge = np.array([1, 5])

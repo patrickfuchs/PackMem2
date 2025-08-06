@@ -248,7 +248,7 @@ if __name__ == '__main__':
             # Upper leaflet ########################
             if res_id in upper_leaflet :
                 # dfZ = z_C2_res - z_atom
-                dfZ = round(m.find_Z(coordtmp[2], upper_listZ[res_id]),2)
+                dfZ = round(m.diff_Z(upper_listZ[res_id], coordtmp[2]),2)
                 # If dfZ < 5
                 # To limit the search around an atom to 5 cells
                 if dfZ < (1. * v):
@@ -261,7 +261,7 @@ if __name__ == '__main__':
             # Lower leaflet ########################
             if res_id in lower_leaflet :
                 # dfZ = z_C2_res - z_atom
-                dfZ = round(m.find_Z(coordtmp[2], lower_listZ[res_id]),2)
+                dfZ = round(m.diff_Z(lower_listZ[res_id], coordtmp[2]),2)
                 # If dfZ > -5
                 # To limit the search around an atom to 5 cells
                 if dfZ > (-1. * v):
@@ -311,8 +311,8 @@ if __name__ == '__main__':
         # If deep (1)
         else:
             # Binarise these matrices, with 0 if deep defect, 1 otherwise
-            Matrix_Upbin = m.binarize_matrix(MatrixUp, Matrix_Upbin, 0.)
-            Matrix_Lobin = m.binarize_matrix(MatrixLo, Matrix_Lobin, 0.)
+            Matrix_Upbin = m.binarize_matrix_without0(MatrixUp, Matrix_Upbin, -0.01, 0.001)
+            Matrix_Lobin = m.binarize_matrix_without0(MatrixLo, Matrix_Lobin, -0.01, 0.001)
 
         # If shallow defects (2)
         if FlagPDtype == 2:
@@ -334,12 +334,8 @@ if __name__ == '__main__':
         clust_edge_Lo = cc.get_clusters_on_the_edge(Matrix_labels_Lo)
 
         # Count area of the edge
-        total_edge_Up = 0
-        for key in clust_edge_Up:
-            total_edge_Up += area_clusters_Up[key]
-        total_edge_Lo = 0
-        for key in clust_edge_Lo:
-            total_edge_Lo += area_clusters_Lo[key]
+        total_edge_Up = m.count_edge_area(area_clusters_Up, clust_edge_Up)
+        total_edge_Lo = m.count_edge_area(area_clusters_Lo, clust_edge_Lo)
         
         # Clean dico defects (without edge)
         area_clusters_Up = d.del_key_dico(area_clusters_Up, clust_edge_Up)
