@@ -21,6 +21,7 @@ EOF
 }
 
 prot=false
+first_frame=0
 
 while getopts "hn:b:e:p" OPTION
 do
