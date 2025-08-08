@@ -157,13 +157,13 @@ def outputTXT_defects_prot(outputname, FlagPDtype, leaflet, dico_labels_group, d
 
     Args:
         outputname (str): The base name of the output file.
-        FlagPDtype (int): Index to select the type of packing defects.
+        FlagPDtype (str): The type of packing defects.
         leaflet (str): The leaflet ('Up' or 'Lo') being processed.
         dico_labels_group (dict): Dictionary where keys are labels and values are 'close' or 'far' based on the distance threshold.
         dico_def_area (dict): Dictionary where keys are labels and values are the areas of the defects.
     """
     flag_to_defect = ["All", "Deep", "Shallow"]
-    outputname = outputname + "_" + leaflet+ "_"+flag_to_defect[FlagPDtype]+"_prot.txt"
+    outputname = outputname + "_" + leaflet+ "_"+ FlagPDtype +"_prot.txt"
 
     if dico_labels_group == 0:
         with open(outputname,"w") as f:
