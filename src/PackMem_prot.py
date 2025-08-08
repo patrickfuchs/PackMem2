@@ -21,7 +21,7 @@ from bin import BasicFunctions as bfrg
 from bin import param as p
 from bin import protdist as pdist
 
-def create_listZ(residues, list_resids, atom_mb, dist_suppl_Z, z_extr, up=True):
+def create_arrayZ(residues, list_resids, atom_mb, dist_suppl_Z, z_extr, up=True):
     """
     Create the listZ array for upper and lower leaflet
     ---------------------------------------------------------------------------
@@ -186,8 +186,9 @@ if __name__ == '__main__':
     else:
         lower_leaflet, upper_leaflet = p.read_ndx(args.indexFile)
 
+
+    ############################## Main loop ##################################
     for ts in u.trajectory[args.start:args.end+1]:
-        print(f"Working on frame {ts.frame:3d}")
         # select all atoms in systems
         system = u.select_atoms(f"resname {args.lipid} or protein")
 
@@ -205,14 +206,15 @@ if __name__ == '__main__':
         x_atoms = system.positions[:,0].round(2)
         y_atoms = system.positions[:,1].round(2)
         z_atoms = system.positions[:,2].round(2)
+        coords = np.stack((x_atoms, y_atoms, z_atoms), axis=1)
         # Get membrane dimension
         xmin, xmax, xmean = l.min_max(x_atoms)
         ymin, ymax, ymean = l.min_max(y_atoms)
         zmin, zmax, zmean = l.min_max(z_atoms)
         
-        upper_listZ = create_listZ(system.residues, upper_leaflet, atom_mb, args.dist_suppl_Z, zmax)
-        lower_listZ = create_listZ(system.residues, lower_leaflet, atom_mb, args.dist_suppl_Z, zmin, up=False)
-                    
+        upper_arrayZ = create_arrayZ(system.residues, upper_leaflet, atom_mb, args.dist_suppl_Z, zmax)
+        lower_arrayZ = create_arrayZ(system.residues, lower_leaflet, atom_mb, args.dist_suppl_Z, zmin, up=False)
+
         # Build a lists from xmin-1 to xmax+1 every 1.0
         listX = l.create_array(int(xmin-1), int(xmax+2), m.SIZE)
         # Build a lists from ymin-1 to ymax+1 every 1.0
@@ -229,57 +231,51 @@ if __name__ == '__main__':
 
         MatrixUp_All = m.initialize_matrix2D(len(listX), len(listY), np.nan)
         MatrixLo_All = m.initialize_matrix2D(len(listX), len(listY), np.nan)
-                    
-        ####################  Compute Matrix    #################
+        
         # Search v cells around coord
-        v = 5
+        v = 5.0
         # For each atoms of lipids
-        for i in range(len(res_ids)):
-            atom_name = system.names[i]
-            res_name = system.resnames[i]
-            res_id = system.resids[i]
-            radius_res=m.get_radius(radius, res_name, atom_name)
-            # Get if the residue is aliphatic or not
-            aliph_atom=m.get_aliphatic(aliphatic, res_name, atom_name)
-            # Get the coordinates X Y Z
-            coordtmp = [x_atoms[i], y_atoms[i], z_atoms[i]]
-            # Upper leaflet ########################
+        for i, (res_id, atom_name, res_name) in enumerate(zip(res_ids, system.names, system.resnames)):
+            radius_res = m.get_radius(radius, res_name, atom_name)
+            aliph_atom = m.get_aliphatic(aliphatic, res_name, atom_name)
+            coordtmp = coords[i]
+            #### Upper leaflet ####
             if res_id in upper_leaflet :
-                # dfZ = z_C2_res - z_atom
-                dfZ = round(m.diff_Z(upper_listZ[res_id], coordtmp[2]),2)
-                # If dfZ < 5
+                # dZ = z_C2_res - z_atom
+                dZ = round(m.diff_Z(upper_arrayZ[res_id], coordtmp[2]), 2)
+                # If dZ < 5.0
                 # To limit the search around an atom to 5 cells
-                if dfZ < (1. * v):
+                if dZ < v:
                     # Fill the matrix with value 0 < a < 1 for aliphatic
                     # Or with > 1 if polar OR deep
                     # Defects = 0
                     MatrixUp_Deep = m.fill_matrix(MatrixUp_Deep, coordtmp, listX, listY,
-                                            upper_listZ[res_id], radius_res,
+                                            upper_arrayZ[res_id], radius_res,
                                             "deep", aliph_atom)
                     MatrixUp_Shallow = m.fill_matrix(MatrixUp_Shallow, coordtmp, listX, listY,
-                                            upper_listZ[res_id], radius_res,
+                                            upper_arrayZ[res_id], radius_res,
                                             "shallow", aliph_atom)
                     MatrixUp_All = m.fill_matrix(MatrixUp_All, coordtmp, listX, listY,
-                                            upper_listZ[res_id], radius_res,
+                                            upper_arrayZ[res_id], radius_res,
                                             "all", aliph_atom)
-            # Lower leaflet ########################
+            #### Lower leaflet ####
             if res_id in lower_leaflet :
-                # dfZ = z_C2_res - z_atom
-                dfZ = round(m.diff_Z(lower_listZ[res_id], coordtmp[2]),2)
-                # If dfZ > -5
+                # dZ = z_C2_res - z_atom
+                dZ = round(m.diff_Z(lower_arrayZ[res_id], coordtmp[2]), 2)
+                # If dfZ > -5.0
                 # To limit the search around an atom to 5 cells
-                if dfZ > (-1. * v):
+                if dZ > -v:
                     # Fill the matrix with value 0 < a < 1 for aliphatic
                     # Or with > 1 if polar OR deep
                     # Defects = 0
                     MatrixLo_Deep = m.fill_matrix(MatrixLo_Deep, coordtmp, listX, listY,
-                                            lower_listZ[res_id], radius_res,
+                                            lower_arrayZ[res_id], radius_res,
                                             "deep", aliph_atom)
                     MatrixLo_Shallow = m.fill_matrix(MatrixLo_Shallow, coordtmp, listX, listY,
-                                            lower_listZ[res_id], radius_res,
+                                            lower_arrayZ[res_id], radius_res,
                                             "shallow", aliph_atom)
                     MatrixLo_All = m.fill_matrix(MatrixLo_All, coordtmp, listX, listY,
-                                            lower_listZ[res_id], radius_res,
+                                            lower_arrayZ[res_id], radius_res,
                                             "all", aliph_atom)
 
 
@@ -287,11 +283,11 @@ if __name__ == '__main__':
         # Preliminary process for shallow defect and problem of the edges 
         # To eliminate shallow defects on edges first: binarize on all defects and storage edges coord
         # Initalise matrices to 0.0
-        MatrixUp_Shallowbin = m.initialize_matrix2D(len(listX),len(listY),0.)
-        MatrixLo_Shallowbin = m.initialize_matrix2D(len(listX),len(listY),0.)
+        MatrixUp_Shallowbin = m.initialize_matrix2D(len(listX), len(listY), 0.)
+        MatrixLo_Shallowbin = m.initialize_matrix2D(len(listX), len(listY), 0.)
         # Binarise these matrices, with 0 for aliphatic atoms + packing defects and 1 otherwise
-        MatrixUp_binM = m.binarize_matrix_without0(MatrixUp_Shallow, MatrixUp_Shallowbin , -0.01, 0.99)
-        MatrixLo_binM = m.binarize_matrix_without0(MatrixLo_Shallow, MatrixLo_Shallowbin, -0.01, 0.99)
+        MatrixUp_Shallowbin = m.binarize_matrix_without0(MatrixUp_Shallow, MatrixUp_Shallowbin, -0.01, 0.99)
+        MatrixLo_Shallowbin = m.binarize_matrix_without0(MatrixLo_Shallow, MatrixLo_Shallowbin, -0.01, 0.99)
     
         # Get temporary packing defects
         # Connect the packing defects + label them + count the area
@@ -299,22 +295,22 @@ if __name__ == '__main__':
             cc.get_connected_components(MatrixUp_Shallowbin)
         MatrixLo_labels_Shallow, rootLo_labels_Shallow, areaLo_clusters_Shallow, coorLo_clusters_Shallow = \
             cc.get_connected_components(MatrixLo_Shallowbin)
-        # Get the cluster on the edge
+        # Get the labels on the edge
         labelsUp_edge_Shallow=cc.get_clusters_on_the_edge(MatrixUp_labels_Shallow)
         labelsLo_edge_Shallow=cc.get_clusters_on_the_edge(MatrixLo_labels_Shallow)
 
 
         # Initalise matrices to 0.0
-        MatrixUp_Deepbin=m.initialize_matrix2D(len(listX),len(listY),0.)
-        MatrixLo_Deepbin=m.initialize_matrix2D(len(listX),len(listY),0.)
-        MatrixUp_Shallowbin=m.initialize_matrix2D(len(listX),len(listY),0.)
-        MatrixLo_Shallowbin=m.initialize_matrix2D(len(listX),len(listY),0.)
-        MatrixUp_Allbin=m.initialize_matrix2D(len(listX),len(listY),0.)
-        MatrixLo_Allbin=m.initialize_matrix2D(len(listX),len(listY),0.)
+        MatrixUp_Deepbin = m.initialize_matrix2D(len(listX), len(listY), 0.)
+        MatrixLo_Deepbin = m.initialize_matrix2D(len(listX), len(listY), 0.)
+        MatrixUp_Shallowbin = m.initialize_matrix2D(len(listX), len(listY), 0.)
+        MatrixLo_Shallowbin = m.initialize_matrix2D(len(listX), len(listY), 0.)
+        MatrixUp_Allbin = m.initialize_matrix2D(len(listX), len(listY), 0.)
+        MatrixLo_Allbin = m.initialize_matrix2D(len(listX), len(listY), 0.)
 
         #### Shallow ####
         # Binarise these matrices, with 0 for aliphatic atoms and 1 otherwise
-        MatrixUp_Shallowbin = m.binarize_matrix_without0(MatrixUp_Shallow, MatrixUp_Shallowbin , 0, 0.99)
+        MatrixUp_Shallowbin = m.binarize_matrix_without0(MatrixUp_Shallow, MatrixUp_Shallowbin, 0, 0.99)
         MatrixLo_Shallowbin = m.binarize_matrix_without0(MatrixLo_Shallow, MatrixLo_Shallowbin, 0, 0.99)
         # Modify the binary matrix to take account edges (determined by all packing defects)
         # The clusters that had their labels on the edge are put to 0.0
@@ -339,13 +335,15 @@ if __name__ == '__main__':
         coorLo_clusters_Shallow = d.del_key_dico(coorLo_clusters_Shallow, labelsLo_edge_Shallow)
         # Eliminate nan inside (deep not shallow defect)
         MatrixUp_labels_Shallow, totalUp_edge_Shallow, clustPb_Up_Shallow = \
-            m.clean_NA_inside(MatrixUp_labels_Shallow, labelsUp_edge_Shallow, MatrixUp_Shallow, totalUp_edge_Shallow)
+            m.clean_NA_inside(MatrixUp_labels_Shallow, labelsUp_edge_Shallow,
+                              MatrixUp_Shallow, totalUp_edge_Shallow)
         rootUp_labels_Shallow, areaUp_clusters_Shallow, coorUp_clusters_Shallow = \
             cc.delete_NApoints_inside(clustPb_Up_Shallow, MatrixUp_labels_Shallow,
                                     rootUp_labels_Shallow, areaUp_clusters_Shallow)
 
         MatrixLo_labels_Shallow, totalLo_edge_Shallow, clustPb_Lo_Shallow = \
-            m.clean_NA_inside(MatrixLo_labels_Shallow, labelsLo_edge_Shallow, MatrixLo_Shallow, totalLo_edge_Shallow)
+            m.clean_NA_inside(MatrixLo_labels_Shallow, labelsLo_edge_Shallow,
+                              MatrixLo_Shallow, totalLo_edge_Shallow)
         rootLo_labels_Shallow, areaLo_clusters_Shallow, coorLo_clusters_Shallow = \
             cc.delete_NApoints_inside(clustPb_Lo_Shallow, MatrixLo_labels_Shallow,
                                     rootLo_labels_Shallow, areaLo_clusters_Shallow)
@@ -358,7 +356,7 @@ if __name__ == '__main__':
 
         #### All ####
         # Binarise these matrices, with 0 for aliphatic atoms + packing defects and 1 otherwise
-        MatrixUp_Allbin = m.binarize_matrix_without0(MatrixUp_All, MatrixUp_Allbin , -0.01, 0.99)
+        MatrixUp_Allbin = m.binarize_matrix_without0(MatrixUp_All, MatrixUp_Allbin, -0.01, 0.99)
         MatrixLo_Allbin = m.binarize_matrix_without0(MatrixLo_All, MatrixLo_Allbin, -0.01, 0.99)
         # Packing defects determination
         # Connect the packing defects + label them + count the area
@@ -401,8 +399,7 @@ if __name__ == '__main__':
         areaLo_clusters_Deep = d.del_key_dico(areaLo_clusters_Deep, labelsLo_edge_Deep)
         coorLo_clusters_Deep = d.del_key_dico(coorLo_clusters_Deep, labelsLo_edge_Deep)
 
-        
-        
+
         ####################  Output text file  #################
         # Compute the total area of the matrix
         total_size = len(listX) * len(listY)
@@ -426,8 +423,8 @@ if __name__ == '__main__':
         # final matrix values PD (X,Y) with Z cooresponding to the max(Upper/lowerZlevel)
         if args.pdbout :
             # Get the max/min of the z_coord+1
-            valzmax=float(d.max_value_dico(upper_listZ))
-            valzmin=float(d.min_value_dico(lower_listZ))
+            valzmax=float(d.max_value_dico(upper_arrayZ))
+            valzmin=float(d.min_value_dico(lower_arrayZ))
 
             # Write the leaflets into a PDB
             # To ignore the warnings when writing a PDB
@@ -436,7 +433,7 @@ if __name__ == '__main__':
             u.select_atoms(f"resid {upper_leaflet[0]}:{upper_leaflet[-1]}").write(f"{args.outputname}{ts.frame}_Upper_leaflet.pdb")
             u.select_atoms(f"resid {lower_leaflet[0]}:{lower_leaflet[-1]}").write(f"{args.outputname}{ts.frame}_Lower_leaflet.pdb")
             
-            # Write the Matrix (each cell) into a PDB 
+            # Write the Matrix (each cell) into a PDB
             pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "deep", "Up", ts.frame,
                                     listX, listY, valzmax, MatrixUp_Deep)
             pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "deep", "Lo", ts.frame,
@@ -471,7 +468,8 @@ if __name__ == '__main__':
             protein = u.select_atoms("protein")
             pos_prot = protein.positions
 
-            # Label 1 corresponds to the void around the simulation, so we remove it.
+            # Label 1 corresponds to the void around the simulation
+            # So we replace it by 0
             MatrixUp_labels_Deep = np.where(MatrixUp_labels_Deep == 1, 0, MatrixUp_labels_Deep)
             MatrixLo_labels_Deep = np.where(MatrixLo_labels_Deep == 1, 0, MatrixLo_labels_Deep)
             MatrixUp_labels_Shallow = np.where(MatrixUp_labels_Shallow == 1, 0, MatrixUp_labels_Shallow)
