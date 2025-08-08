@@ -15,7 +15,7 @@ Options to specify input files:
     -e The last frame of the PackMem analysis
 
 OPTIONS:
-    -p If there is a protein (Dafult : false)
+    -p If there is a protein (Default : false)
 
 EOF
 }
@@ -66,33 +66,33 @@ done
 for pdbnum in $(seq ${first_frame} ${last_frame})
 do
     # Accumulate packing defects of the current frame in Total_*.txt files per leaflet
-     cat  ${prefix}${pdbnum}_Up_Deep_result.txt >> Total_Up_${prefix}_deep.txt
-     cat  ${prefix}${pdbnum}_Lo_Deep_result.txt >> Total_Lo_${prefix}_deep.txt
-     cat  ${prefix}${pdbnum}_Up_Shallow_result.txt >> Total_Up_${prefix}_shallow.txt
-     cat  ${prefix}${pdbnum}_Lo_Shallow_result.txt >> Total_Lo_${prefix}_shallow.txt
-     cat  ${prefix}${pdbnum}_Up_All_result.txt >> Total_Up_${prefix}_all.txt
-     cat  ${prefix}${pdbnum}_Lo_All_result.txt >> Total_Lo_${prefix}_all.txt
+    cat  ${prefix}${pdbnum}_Up_deep_result.txt >> Total_Up_${prefix}_deep.txt
+    cat  ${prefix}${pdbnum}_Lo_deep_result.txt >> Total_Lo_${prefix}_deep.txt
+    cat  ${prefix}${pdbnum}_Up_shallow_result.txt >> Total_Up_${prefix}_shallow.txt
+    cat  ${prefix}${pdbnum}_Lo_shallow_result.txt >> Total_Lo_${prefix}_shallow.txt
+    cat  ${prefix}${pdbnum}_Up_all_result.txt >> Total_Up_${prefix}_all.txt
+    cat  ${prefix}${pdbnum}_Lo_all_result.txt >> Total_Lo_${prefix}_all.txt
 
     # we no longer need the defects of the current frame
-    rm -f ${prefix}${pdbnum}_Up_Deep_result.txt
-    rm -f ${prefix}${pdbnum}_Lo_Deep_result.txt
-    rm -f ${prefix}${pdbnum}_Up_Shallow_result.txt
-    rm -f ${prefix}${pdbnum}_Lo_Shallow_result.txt
-    rm -f ${prefix}${pdbnum}_Up_All_result.txt
-    rm -f ${prefix}${pdbnum}_Lo_All_result.txt
+    rm -f ${prefix}${pdbnum}_Up_deep_result.txt
+    rm -f ${prefix}${pdbnum}_Lo_deep_result.txt
+    rm -f ${prefix}${pdbnum}_Up_shallow_result.txt
+    rm -f ${prefix}${pdbnum}_Lo_shallow_result.txt
+    rm -f ${prefix}${pdbnum}_Up_all_result.txt
+    rm -f ${prefix}${pdbnum}_Lo_all_result.txt
 done
 
 if [ ${prot} = true ]
 then
     # Accumulate packing defects of the current frame in Total_*.txt files per leaflet
-     cat  ${prefix}${pdbnum}_Up_All_prot.txt >> Total_Up_${prefix}_all_prot.txt
-     cat  ${prefix}${pdbnum}_Up_Deep_prot.txt >> Total_Up_${prefix}_deep_prot.txt
-     cat  ${prefix}${pdbnum}_Up_Shallow_prot.txt >> Total_Up_${prefix}_shallow_prot.txt
+    cat  ${prefix}${pdbnum}_Up_all_prot.txt >> Total_Up_${prefix}_all_prot.txt
+    cat  ${prefix}${pdbnum}_Up_deep_prot.txt >> Total_Up_${prefix}_deep_prot.txt
+    cat  ${prefix}${pdbnum}_Up_shallow_prot.txt >> Total_Up_${prefix}_shallow_prot.txt
 
     # we no longer need the defects of the current frame
-     rm -f ${prefix}${pdbnum}_Up_All_prot.txt
-     rm -f ${prefix}${pdbnum}_Up_Deep_prot.txt
-     rm -f ${prefix}${pdbnum}_Up_Shallow_prot.txt
+    rm -f ${prefix}${pdbnum}_Up_all_prot.txt
+    rm -f ${prefix}${pdbnum}_Up_deep_prot.txt
+    rm -f ${prefix}${pdbnum}_Up_shallow_prot.txt
 fi
 
 # Concatenate the packing defects statistics of the lower and upper leaflets
