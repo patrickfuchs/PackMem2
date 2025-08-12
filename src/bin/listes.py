@@ -6,6 +6,29 @@ import numpy as np
 
 from bin import matrix as m
 
+def get_glyc_lipids(lipid_list, RESNAME_GLYC):
+    """
+    Get the glycerol atom name(s) for each lipid in the bilayer
+
+    ---------------------------------------------------------------------------
+    INPUT:
+    lipid_list :  list
+        Contains the name of every lipid(s) in the bilayer given by the user
+    RESNAME_GLYC : dictionary
+        Contains as keys to lipid name and as keys the glycerol atom name
+    
+    ---------------------------------------------------------------------------
+    OUTPUT:
+    str
+        The glycerol atom name for each lipid given   
+    """
+    atom_mb =  []
+    for lip in lipid_list:
+        atom_mb.append(RESNAME_GLYC[lip])
+    atom_mb = set(atom_mb)
+    atom_mb = ' '.join(atom_mb)
+    return atom_mb
+
 def create_array(v1, v2, step):
     """
     Create numpy array from v1 to v2 by step step
