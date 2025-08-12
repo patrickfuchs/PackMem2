@@ -58,6 +58,9 @@ if __name__ == '__main__':
             ATOM      5   H1 DEF     3       6.000  85.000  56.940  1.00  3.00
             ATOM      5   H1 DEF     3       6.000  86.000  56.940  1.00  3.00
             ATOM      6   H1 DEF     3       7.000  86.000  56.940  1.00  3.00
+            
+        if -prot option:
+            Prot_outputnameFrame_Up/Lo_Deep/Shallow/All_prot.txt
     """
     ####### PARAMETRES et INPUT #####
     try:
