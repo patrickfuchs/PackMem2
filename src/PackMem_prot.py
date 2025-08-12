@@ -129,16 +129,19 @@ if __name__ == '__main__':
 
     ######### LOAD UNIVERSE  #########
     u = mda.Universe(args.topo, args.traj)
+    # If multiple lipids
+    lipid_names = args.lipid.replace('_', ' ')
     # select the lipids in system
-    system = u.select_atoms(f"resname {args.lipid}")
+    lipids = u.select_atoms(f"resname {lipid_names}")
     
 
     ######### Extract UPPER/LOWER leaflet ##########
-    atom_mb = RESNAME_GLYC[args.lipid]
+    # Get the glycerol atom name(s)
+    glyc_mb = l.get_glyc_lipids(args.lipid.split('_'), RESNAME_GLYC)
     # If no index file seperating the leaflets
     if args.indexFile == None:
         # Create lists of the residue number  for upper and lower leaflets
-        L = LeafletFinder(system, f'name {atom_mb}')
+        L = LeafletFinder(lipids, f'name {glyc_mb}')
         upper_leaflet = L.groups(0).resids
         lower_leaflet = L.groups(1).resids
     else:
@@ -170,8 +173,8 @@ if __name__ == '__main__':
         ymin, ymax, ymean = l.min_max(y_atoms)
         zmin, zmax, zmean = l.min_max(z_atoms)
         
-        upper_arrayZ = l.create_arrayZ(system.residues, upper_leaflet, atom_mb, args.dist_suppl_Z, zmax)
-        lower_arrayZ = l.create_arrayZ(system.residues, lower_leaflet, atom_mb, args.dist_suppl_Z, zmin, up=False)
+        upper_arrayZ = l.create_arrayZ(system.residues, upper_leaflet, glyc_mb, args.dist_suppl_Z, zmax)
+        lower_arrayZ = l.create_arrayZ(system.residues, lower_leaflet, glyc_mb, args.dist_suppl_Z, zmin, up=False)
 
         # Build a lists from xmin-1 to xmax+1 every 1.0
         listX = l.create_array(int(xmin-1), int(xmax+2), m.SIZE)
