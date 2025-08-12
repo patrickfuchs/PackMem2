@@ -58,15 +58,14 @@ if __name__ == '__main__':
             ATOM      5   H1 DEF     3       6.000  85.000  56.940  1.00  3.00
             ATOM      5   H1 DEF     3       6.000  86.000  56.940  1.00  3.00
             ATOM      6   H1 DEF     3       7.000  86.000  56.940  1.00  3.00
-            
+
         if -prot option:
             Prot_outputnameFrame_Up/Lo_Deep/Shallow/All_prot.txt
     """
     ####### PARAMETRES et INPUT #####
     try:
         outputname = "output"
-        pdbout = 0
-        parser = argparse.ArgumentParser(description = 'Arguments for the app')
+        parser = argparse.ArgumentParser(description = 'Arguments for PackMem_prot.py')
         parser.add_argument('-f', action='store', dest='traj',
                             help = 'Trajectory file (.xtc)')
         parser.add_argument('-s', action='store', dest='topo',
