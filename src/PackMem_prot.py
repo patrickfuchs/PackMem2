@@ -176,22 +176,22 @@ if __name__ == '__main__':
         upper_arrayZ = l.create_arrayZ(system.residues, upper_leaflet, glyc_mb, args.dist_suppl_Z, zmax)
         lower_arrayZ = l.create_arrayZ(system.residues, lower_leaflet, glyc_mb, args.dist_suppl_Z, zmin, up=False)
 
-        # Build a lists from xmin-1 to xmax+1 every 1.0
-        listX = l.create_array(int(xmin-1), int(xmax+2), m.SIZE)
-        # Build a lists from ymin-1 to ymax+1 every 1.0
-        listY = l.create_array(int(ymin-1), int(ymax+2), m.SIZE)
+        # Build an array from xmin-1 to xmax+1 every 1.0
+        arrayX = l.create_array(int(xmin-1), int(xmax+2), m.SIZE)
+        # Build an array from ymin-1 to ymax+1 every 1.0
+        arrayY = l.create_array(int(ymin-1), int(ymax+2), m.SIZE)
 
 
         ####################  Compute Matrix    #################
-        # Initialize 2 matrixes for Upper and Lower leaflet of length listX,listY
-        MatrixUp_Deep = m.initialize_matrix2D(len(listX), len(listY), np.nan)
-        MatrixLo_Deep = m.initialize_matrix2D(len(listX), len(listY), np.nan)
+        # Initialize 2 matrixes for Upper and Lower leaflet of length arrayX,arrayY
+        MatrixUp_Deep = m.initialize_matrix2D(len(arrayX), len(arrayY), np.nan)
+        MatrixLo_Deep = m.initialize_matrix2D(len(arrayX), len(arrayY), np.nan)
 
-        MatrixUp_Shallow = m.initialize_matrix2D(len(listX), len(listY), np.nan)
-        MatrixLo_Shallow = m.initialize_matrix2D(len(listX), len(listY), np.nan)
+        MatrixUp_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), np.nan)
+        MatrixLo_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), np.nan)
 
-        MatrixUp_All = m.initialize_matrix2D(len(listX), len(listY), np.nan)
-        MatrixLo_All = m.initialize_matrix2D(len(listX), len(listY), np.nan)
+        MatrixUp_All = m.initialize_matrix2D(len(arrayX), len(arrayY), np.nan)
+        MatrixLo_All = m.initialize_matrix2D(len(arrayX), len(arrayY), np.nan)
         
         # Search v cells around coord
         v = 5.0
@@ -210,13 +210,13 @@ if __name__ == '__main__':
                     # Fill the matrix with value 0 < a < 1 for aliphatic
                     # Or with > 1 if polar OR deep
                     # Defects = 0
-                    MatrixUp_Deep = m.fill_matrix(MatrixUp_Deep, coordtmp, listX, listY,
+                    MatrixUp_Deep = m.fill_matrix(MatrixUp_Deep, coordtmp, arrayX, arrayY,
                                             upper_arrayZ[res_id], radius_res,
                                             "deep", aliph_atom)
-                    MatrixUp_Shallow = m.fill_matrix(MatrixUp_Shallow, coordtmp, listX, listY,
+                    MatrixUp_Shallow = m.fill_matrix(MatrixUp_Shallow, coordtmp, arrayX, arrayY,
                                             upper_arrayZ[res_id], radius_res,
                                             "shallow", aliph_atom)
-                    MatrixUp_All = m.fill_matrix(MatrixUp_All, coordtmp, listX, listY,
+                    MatrixUp_All = m.fill_matrix(MatrixUp_All, coordtmp, arrayX, arrayY,
                                             upper_arrayZ[res_id], radius_res,
                                             "all", aliph_atom)
             #### Lower leaflet ####
@@ -229,13 +229,13 @@ if __name__ == '__main__':
                     # Fill the matrix with value 0 < a < 1 for aliphatic
                     # Or with > 1 if polar OR deep
                     # Defects = 0
-                    MatrixLo_Deep = m.fill_matrix(MatrixLo_Deep, coordtmp, listX, listY,
+                    MatrixLo_Deep = m.fill_matrix(MatrixLo_Deep, coordtmp, arrayX, arrayY,
                                             lower_arrayZ[res_id], radius_res,
                                             "deep", aliph_atom)
-                    MatrixLo_Shallow = m.fill_matrix(MatrixLo_Shallow, coordtmp, listX, listY,
+                    MatrixLo_Shallow = m.fill_matrix(MatrixLo_Shallow, coordtmp, arrayX, arrayY,
                                             lower_arrayZ[res_id], radius_res,
                                             "shallow", aliph_atom)
-                    MatrixLo_All = m.fill_matrix(MatrixLo_All, coordtmp, listX, listY,
+                    MatrixLo_All = m.fill_matrix(MatrixLo_All, coordtmp, arrayX, arrayY,
                                             lower_arrayZ[res_id], radius_res,
                                             "all", aliph_atom)
 
@@ -244,8 +244,8 @@ if __name__ == '__main__':
         # Preliminary process for shallow defect and problem of the edges 
         # To eliminate shallow defects on edges first: binarize on all defects and storage edges coord
         # Initalise matrices to 0.0
-        MatrixUp_Shallowbin = m.initialize_matrix2D(len(listX), len(listY), 0.)
-        MatrixLo_Shallowbin = m.initialize_matrix2D(len(listX), len(listY), 0.)
+        MatrixUp_Shallowbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
+        MatrixLo_Shallowbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
         # Binarise these matrices, with 0 for aliphatic atoms + packing defects and 1 otherwise
         MatrixUp_Shallowbin = m.binarize_matrix_without0(MatrixUp_Shallow, MatrixUp_Shallowbin, -0.01, 0.99)
         MatrixLo_Shallowbin = m.binarize_matrix_without0(MatrixLo_Shallow, MatrixLo_Shallowbin, -0.01, 0.99)
@@ -262,12 +262,12 @@ if __name__ == '__main__':
 
 
         # Initalise matrices to 0.0
-        MatrixUp_Deepbin = m.initialize_matrix2D(len(listX), len(listY), 0.)
-        MatrixLo_Deepbin = m.initialize_matrix2D(len(listX), len(listY), 0.)
-        MatrixUp_Shallowbin = m.initialize_matrix2D(len(listX), len(listY), 0.)
-        MatrixLo_Shallowbin = m.initialize_matrix2D(len(listX), len(listY), 0.)
-        MatrixUp_Allbin = m.initialize_matrix2D(len(listX), len(listY), 0.)
-        MatrixLo_Allbin = m.initialize_matrix2D(len(listX), len(listY), 0.)
+        MatrixUp_Deepbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
+        MatrixLo_Deepbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
+        MatrixUp_Shallowbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
+        MatrixLo_Shallowbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
+        MatrixUp_Allbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
+        MatrixLo_Allbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
 
         #### Shallow ####
         # Binarise these matrices, with 0 for aliphatic atoms and 1 otherwise
@@ -363,21 +363,21 @@ if __name__ == '__main__':
 
         ####################  Output text file  #################
         # Compute the total area of the matrix
-        total_size = len(listX) * len(listY)
+        total_size = len(arrayX) * len(arrayY)
         pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "deep", "Up", areaUp_clusters_Deep, 
-                            coorUp_clusters_Deep, total_size, totalUp_edge_Deep, listX, listY)
+                            coorUp_clusters_Deep, total_size, totalUp_edge_Deep, arrayX, arrayY)
         pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "deep", "Lo", areaLo_clusters_Deep, 
-                            coorLo_clusters_Deep, total_size, totalLo_edge_Deep, listX, listY)
+                            coorLo_clusters_Deep, total_size, totalLo_edge_Deep, arrayX, arrayY)
         
         pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "shallow", "Up", areaUp_clusters_Shallow, 
-                            coorUp_clusters_Shallow, total_size, totalUp_edge_Shallow, listX, listY)
+                            coorUp_clusters_Shallow, total_size, totalUp_edge_Shallow, arrayX, arrayY)
         pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "shallow", "Lo", areaLo_clusters_Shallow, 
-                            coorLo_clusters_Shallow, total_size, totalLo_edge_Shallow, listX, listY)
+                            coorLo_clusters_Shallow, total_size, totalLo_edge_Shallow, arrayX, arrayY)
         
         pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "all", "Up", areaUp_clusters_All, 
-                            coorUp_clusters_All, total_size, totalUp_edge_All, listX, listY)
+                            coorUp_clusters_All, total_size, totalUp_edge_All, arrayX, arrayY)
         pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "all", "Lo", areaLo_clusters_All, 
-                            coorLo_clusters_All, total_size, totalLo_edge_All, listX, listY)
+                            coorLo_clusters_All, total_size, totalLo_edge_All, arrayX, arrayY)
 
 
         ####################  Output PDB files  #################
@@ -396,31 +396,31 @@ if __name__ == '__main__':
             
             # Write the Matrix (each cell) into a PDB
             pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "deep", "Up", ts.frame,
-                                    listX, listY, valzmax, MatrixUp_Deep)
+                                    arrayX, arrayY, valzmax, MatrixUp_Deep)
             pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "deep", "Lo", ts.frame,
-                                    listX, listY, valzmin, MatrixLo_Deep)
+                                    arrayX, arrayY, valzmin, MatrixLo_Deep)
             pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "shallow", "Up", ts.frame,
-                                    listX, listY, valzmax, MatrixUp_Shallow)
+                                    arrayX, arrayY, valzmax, MatrixUp_Shallow)
             pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "shallow", "Lo", ts.frame,
-                                    listX, listY, valzmin, MatrixLo_Shallow)
+                                    arrayX, arrayY, valzmin, MatrixLo_Shallow)
             pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "all", "Up", ts.frame,
-                                    listX, listY, valzmax, MatrixUp_All)
+                                    arrayX, arrayY, valzmax, MatrixUp_All)
             pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "all", "Lo", ts.frame,
-                                    listX, listY, valzmin, MatrixLo_All)
+                                    arrayX, arrayY, valzmin, MatrixLo_All)
             
             # Write the defects into a PDB
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "deep", "Up", ts.frame,
-                                listX, listY, valzmax, MatrixUp_labels_Deep, labelsUp_edge_Deep)
+                                arrayX, arrayY, valzmax, MatrixUp_labels_Deep, labelsUp_edge_Deep)
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "deep", "Lo", ts.frame,
-                                listX, listY, valzmin, MatrixLo_labels_Deep, labelsLo_edge_Deep)
+                                arrayX, arrayY, valzmin, MatrixLo_labels_Deep, labelsLo_edge_Deep)
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "shallow", "Up", ts.frame,
-                                listX, listY, valzmax, MatrixUp_labels_Shallow, labelsUp_edge_Shallow)
+                                arrayX, arrayY, valzmax, MatrixUp_labels_Shallow, labelsUp_edge_Shallow)
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "shallow", "Lo", ts.frame,
-                                listX, listY, valzmin, MatrixLo_labels_Shallow, labelsLo_edge_Shallow)
+                                arrayX, arrayY, valzmin, MatrixLo_labels_Shallow, labelsLo_edge_Shallow)
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "all", "Up", ts.frame,
-                                listX, listY, valzmax, MatrixUp_labels_All, labelsUp_edge_All)
+                                arrayX, arrayY, valzmax, MatrixUp_labels_All, labelsUp_edge_All)
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "all", "Lo", ts.frame,
-                                listX, listY, valzmin, MatrixLo_labels_All, labelsLo_edge_All)
+                                arrayX, arrayY, valzmin, MatrixLo_labels_All, labelsLo_edge_All)
         
 
         ####################  Distance from the protein  #################
@@ -439,20 +439,20 @@ if __name__ == '__main__':
             MatrixLo_labels_All = np.where(MatrixLo_labels_All == 1, 0, MatrixLo_labels_All)
 
             # Create empty arrays
-            MatrixUp_prot_Deep = m.initialize_matrix2D(len(listX), len(listY), 0)
-            MatrixLo_prot_Deep = m.initialize_matrix2D(len(listX), len(listY), 0)
-            MatrixUp_prot_Shallow = m.initialize_matrix2D(len(listX), len(listY), 0)
-            MatrixLo_prot_Shallow = m.initialize_matrix2D(len(listX), len(listY), 0)
-            MatrixUp_prot_All = m.initialize_matrix2D(len(listX), len(listY), 0)
-            MatrixLo_prot_All = m.initialize_matrix2D(len(listX), len(listY), 0)
+            MatrixUp_prot_Deep = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
+            MatrixLo_prot_Deep = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
+            MatrixUp_prot_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
+            MatrixLo_prot_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
+            MatrixUp_prot_All = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
+            MatrixLo_prot_All = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
 
             # Find where the protein is in the matrix
-            MatrixUp_prot_Deep = pdist.find_protein(MatrixUp_prot_Deep, 'up', protein, listX, listY, zmean)
-            MatrixUp_prot_Shallow = pdist.find_protein(MatrixUp_prot_Shallow, 'up', protein, listX, listY, zmean)
-            MatrixUp_prot_All = pdist.find_protein(MatrixUp_prot_All, 'up', protein, listX, listY, zmean)
-            MatrixLo_prot_Deep = pdist.find_protein(MatrixLo_prot_Deep, 'lo', protein, listX, listY, zmean)
-            MatrixLo_prot_Shallow = pdist.find_protein(MatrixLo_prot_Shallow, 'lo', protein, listX, listY, zmean)
-            MatrixLo_prot_All = pdist.find_protein(MatrixLo_prot_All, 'lo', protein, listX, listY, zmean)
+            MatrixUp_prot_Deep = pdist.find_protein(MatrixUp_prot_Deep, 'up', protein, arrayX, arrayY, zmean)
+            MatrixUp_prot_Shallow = pdist.find_protein(MatrixUp_prot_Shallow, 'up', protein, arrayX, arrayY, zmean)
+            MatrixUp_prot_All = pdist.find_protein(MatrixUp_prot_All, 'up', protein, arrayX, arrayY, zmean)
+            MatrixLo_prot_Deep = pdist.find_protein(MatrixLo_prot_Deep, 'lo', protein, arrayX, arrayY, zmean)
+            MatrixLo_prot_Shallow = pdist.find_protein(MatrixLo_prot_Shallow, 'lo', protein, arrayX, arrayY, zmean)
+            MatrixLo_prot_All = pdist.find_protein(MatrixLo_prot_All, 'lo', protein, arrayX, arrayY, zmean)
             
 
             # If there are proteins on the upper leaflet
