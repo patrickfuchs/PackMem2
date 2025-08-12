@@ -21,87 +21,43 @@ from bin import BasicFunctions as bfrg
 from bin import param as p
 from bin import protdist as pdist
 
-def create_arrayZ(residues, list_resids, atom_mb, dist_suppl_Z, z_extr, up=True):
-    """
-    Create the listZ array for upper and lower leaflet
-    ---------------------------------------------------------------------------
-    INPUT:
-    residues : MDAnalysis ResidueGroup
-        Contains the names of all the residues selected
-    list_resids : numpy array
-        Contains all the residue numbers selected
-    atom_mb : str
-        Name of the reference atom for the lipids (C2)
-    dist_suppl_Z : float
-        Supplementary distance from the z coord
-    z_extr : float
-        Either maximum or minimum value of z coord
-    up : boolean
-        If we are on the upper leaflet
-    ---------------------------------------------------------------------------
-    OUTPUT:
-    numpy array
-        Contains floats ranging from z_coord to zmin
-        or from zmax to z_coord by 1.0 steps
-    """
-    leaflet_listZ = {}
-    for resid in list_resids:
-        # Get the residue at a given residue number (resid)
-        residue = residues[residues.resids == resid][0]
-        # Get the atom given in the parameter file
-        atom = residue.atoms[residue.atoms.names == atom_mb][0]
-        # Get the z of this atom
-        z_coord = atom.position[2]
-        if up:
-            tmp = l.create_array(round(z_coord - dist_suppl_Z, 2),
-                                        round(z_extr +1.0, 2), m.SIZE)
-        else:
-            tmp = l.create_array(round(z_coord + dist_suppl_Z, 2),
-                                            round(z_extr - 1.0, 2), -m.SIZE)
-        # Reverse it
-        tmp = np.flip(tmp)
-        leaflet_listZ[resid] = tmp
-    return leaflet_listZ
-
 ##########################################################################################
 ##### main
 if __name__ == '__main__':
-    
     """
     Python
-    Script to compute Packing defect in flat bilayers, Use pdb file (from for example editconf) 
-    be careful to PBC to create pdb file
-    Lipids parameters adapted to Berger lipid FF (with corrections). Be careful to the atoms name if you use other lipids
-    Lipids parameters from CHarmm36 FF (with Klauda corrections). Be careful to the atoms name if you use other lipids
-    Lipids parameters from Martini FF. Be careful to the atoms name if you use other lipids
+    Script to compute Packing defect in flat bilayers
+    Lipids parameters adapted to either Berger lipid (with corrections), CHARMM36 (with Klauda corrections) or Martini FF. Be careful to the atoms name if you use other lipids
     fileRadius.txt example:
     DOPC  C02 1.875 a (aliphatic)
     DOPC  O8  1.48 n (non aliphatic)
     DOPC  C25 1.98 n (non aliphatic)
+
     Output files:
-    outputname_Up/Lo_Shallow/Deep/All_result.txt
-    ## MatrixSize  9646  9801         # Membrane matrix size, Total matrix size
-    ## Total   51   582 11.41 6.034   # number of packing defects, total area of packing defects, average size, pourcent of membrane (Membrane matrix size)
-    1    1    77.00     2.00    # for each packing defect num size x_position (first pixel) y_mean (first pixel)
-    2    1    21.00     3.00 
-    3    8    59.12     7.00 
+        outputname_Up/Lo_Shallow/Deep/All_result.txt
+        ## MatrixSize  9646  9801         # Membrane matrix size, Total matrix size
+        ## Total   51   582 11.41 6.034   # number of packing defects, total area of packing defects, average size, pourcent of membrane (Membrane matrix size)
+        1    1    77.00     2.00          # for each packing defect num size x_position (first pixel) y_mean (first pixel)
+        2    1    21.00     3.00 
+        3    8    59.12     7.00 
 
-    outputname_TotalUp/Lo_Shallow/Deep/All.pdb # PDB format only if verbose
-    Matrix x,y with, for each cell, the value of "packing defect" (in B_factor column, the last column) 
-    if 0 = Deep packing defects The value increases with the number of atoms in the cell.
-    if >0 and < 1 = Shallow defect
-    if -1 = Edge
-    ATOM      3   H1 EDG     3       4.000  54.000  56.940  1.00 -1.00
-    ATOM      3   H1 MAT     3       4.000  54.000  56.940  1.00  0.00
-    ATOM      3   H1 MAT     3       4.000  54.000  56.940  1.00  0.00
+        if -pdb option:
+            outputname_TotalUp/Lo_Shallow/Deep/All.pdb 
+            Matrix x,y with, for each cell, the value of "packing defect" (in B_factor column, the last column) 
+            if 0 = Deep packing defects The value increases with the number of atoms in the cell.
+            if > 0 and < 1 = Shallow defect
+            if -1 = Edge
+            ATOM      3   H1 EDG     3       4.000  54.000  56.940  1.00 -1.00
+            ATOM      3   H1 MAT     3       4.000  54.000  56.940  1.00  0.00
+            ATOM      3   H1 MAT     3       4.000  54.000  56.940  1.00  0.00
 
-    outputname+"_DefectUp/Lo_Shallow/Deep/All.pdb # PDB format only if verbose
-    Packing defects in pdb format:
-    the residue number corresponds to the different packing defects.
-    ATOM      5   H1 DEF     2       6.000  22.000  56.940  1.00  2.00
-    ATOM      5   H1 DEF     3       6.000  85.000  56.940  1.00  3.00
-    ATOM      5   H1 DEF     3       6.000  86.000  56.940  1.00  3.00
-    ATOM      6   H1 DEF     3       7.000  86.000  56.940  1.00  3.00
+            outputname+"_DefectUp/Lo_Shallow/Deep/All.pdb
+            Packing defects in pdb format:
+            the residue number corresponds to the different packing defects.
+            ATOM      5   H1 DEF     2       6.000  22.000  56.940  1.00  2.00
+            ATOM      5   H1 DEF     3       6.000  85.000  56.940  1.00  3.00
+            ATOM      5   H1 DEF     3       6.000  86.000  56.940  1.00  3.00
+            ATOM      6   H1 DEF     3       7.000  86.000  56.940  1.00  3.00
     """
     ####### PARAMETRES et INPUT #####
     try:
