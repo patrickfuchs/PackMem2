@@ -197,7 +197,7 @@ if __name__ == '__main__':
         v = 5.0
         # For each atoms of lipids
         for i, (res_id, atom_name, res_name) in enumerate(zip(res_ids, system.names, system.resnames)):
-            radius_res = m.get_radius(radius, res_name, atom_name)
+            radius_atm = m.get_radius(radius, res_name, atom_name)
             aliph_atom = m.get_aliphatic(aliphatic, res_name, atom_name)
             coordtmp = coords[i]
             #### Upper leaflet ####
@@ -211,13 +211,13 @@ if __name__ == '__main__':
                     # Or with > 1 if polar OR deep
                     # Defects = 0
                     MatrixUp_Deep = m.fill_matrix(MatrixUp_Deep, coordtmp, arrayX, arrayY,
-                                            upper_arrayZ[res_id], radius_res,
+                                            upper_arrayZ[res_id], radius_atm,
                                             "deep", aliph_atom)
                     MatrixUp_Shallow = m.fill_matrix(MatrixUp_Shallow, coordtmp, arrayX, arrayY,
-                                            upper_arrayZ[res_id], radius_res,
+                                            upper_arrayZ[res_id], radius_atm,
                                             "shallow", aliph_atom)
                     MatrixUp_All = m.fill_matrix(MatrixUp_All, coordtmp, arrayX, arrayY,
-                                            upper_arrayZ[res_id], radius_res,
+                                            upper_arrayZ[res_id], radius_atm,
                                             "all", aliph_atom)
             #### Lower leaflet ####
             if res_id in lower_leaflet :
@@ -230,13 +230,13 @@ if __name__ == '__main__':
                     # Or with > 1 if polar OR deep
                     # Defects = 0
                     MatrixLo_Deep = m.fill_matrix(MatrixLo_Deep, coordtmp, arrayX, arrayY,
-                                            lower_arrayZ[res_id], radius_res,
+                                            lower_arrayZ[res_id], radius_atm,
                                             "deep", aliph_atom)
                     MatrixLo_Shallow = m.fill_matrix(MatrixLo_Shallow, coordtmp, arrayX, arrayY,
-                                            lower_arrayZ[res_id], radius_res,
+                                            lower_arrayZ[res_id], radius_atm,
                                             "shallow", aliph_atom)
                     MatrixLo_All = m.fill_matrix(MatrixLo_All, coordtmp, arrayX, arrayY,
-                                            lower_arrayZ[res_id], radius_res,
+                                            lower_arrayZ[res_id], radius_atm,
                                             "all", aliph_atom)
 
 
