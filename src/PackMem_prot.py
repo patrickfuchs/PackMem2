@@ -462,9 +462,9 @@ if __name__ == '__main__':
                 # dictionnary label coords {lab1 = [(x1, y1), (x2, y2), ...],
                 #                           lab2 = [(x1, y1), (x2, y2), ...], 
                 #                           ...                              }
-                labelsUp_coor_Deep = pdist.find_pd_border(MatrixUp_labels_Deep)
-                labelsUp_coor_Shallow = pdist.find_pd_border(MatrixUp_labels_Shallow)
-                labelsUp_coor_All = pdist.find_pd_border(MatrixUp_labels_All)
+                coor_label_bordersUp_Deep = pdist.find_pd_border(MatrixUp_labels_Deep)
+                coor_label_bordersUp_Shallow = pdist.find_pd_border(MatrixUp_labels_Shallow)
+                coor_label_bordersUp_All = pdist.find_pd_border(MatrixUp_labels_All)
 
                 # Get the coordinates of the matrix where the edges of the protein are located.
                 # list of tuples [(x1, y1), (x2, y2), ...]
@@ -474,9 +474,9 @@ if __name__ == '__main__':
 
                 # Assign distance group for each packing defect, "far" or "close". Default threshold = 10 A.
                 # dict {lab1 : 'group', lab2 : 'group', ... }
-                DefectsUp_labels_group_Deep = pdist.assign_dist_group(edgeUp_coor_prot_Deep, labelsUp_coor_Deep, 10)
-                DefectsUp_labels_group_Shallow = pdist.assign_dist_group(edgeUp_coor_prot_Shallow, labelsUp_coor_Shallow, 10)
-                DefectsUp_labels_group_All = pdist.assign_dist_group(edgeUp_coor_prot_All, labelsUp_coor_All, 10)
+                DefectsUp_labels_group_Deep = pdist.assign_dist_group(edgeUp_coor_prot_Deep, coor_label_bordersUp_Deep, 10)
+                DefectsUp_labels_group_Shallow = pdist.assign_dist_group(edgeUp_coor_prot_Shallow, coor_label_bordersUp_Shallow, 10)
+                DefectsUp_labels_group_All = pdist.assign_dist_group(edgeUp_coor_prot_All, coor_label_bordersUp_All, 10)
 
                 # Write the result in a text file
                 # format : label,dist_group,area
@@ -486,17 +486,17 @@ if __name__ == '__main__':
 
             # If there are proteins on the lower leaflet
             elif len(np.argwhere(MatrixLo_prot_All > 0)) > 0:
-                labelsLo_coor_Deep = pdist.find_pd_border(MatrixLo_labels_Deep)
-                labelsLo_coor_Shallow = pdist.find_pd_border(MatrixLo_labels_Shallow)
-                labelsLo_coor_All = pdist.find_pd_border(MatrixLo_labels_All)
+                coor_label_bordersLo_Deep = pdist.find_pd_border(MatrixLo_labels_Deep)
+                coor_label_bordersLo_Shallow = pdist.find_pd_border(MatrixLo_labels_Shallow)
+                coor_label_bordersLo_All = pdist.find_pd_border(MatrixLo_labels_All)
 
                 edgeLo_coor_prot_Deep = pdist.find_prot_border(MatrixLo_prot_Deep)
                 edgeLo_coor_prot_Shallow = pdist.find_prot_border(MatrixLo_prot_Shallow)
                 edgeLo_coor_prot_All = pdist.find_prot_border(MatrixLo_prot_All)
 
-                DefectsLo_labels_group_Deep = pdist.assign_dist_group(edgeLo_coor_prot_Deep, labelsLo_coor_Deep, 10)
-                DefectsLo_labels_group_Shallow = pdist.assign_dist_group(edgeLo_coor_prot_Shallow, labelsLo_coor_Shallow, 10)
-                DefectsLo_labels_group_All = pdist.assign_dist_group(edgeLo_coor_prot_All, labelsLo_coor_All, 10)
+                DefectsLo_labels_group_Deep = pdist.assign_dist_group(edgeLo_coor_prot_Deep, coor_label_bordersLo_Deep, 10)
+                DefectsLo_labels_group_Shallow = pdist.assign_dist_group(edgeLo_coor_prot_Shallow, coor_label_bordersLo_Shallow, 10)
+                DefectsLo_labels_group_All = pdist.assign_dist_group(edgeLo_coor_prot_All, coor_label_bordersLo_All, 10)
 
                 pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}", "deep", "Lo", DefectsLo_labels_group_Deep, area_labelsLo_Deep)
                 pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}", "shallow", "Lo", DefectsLo_labels_group_Shallow, area_labelsLo_Shallow)
