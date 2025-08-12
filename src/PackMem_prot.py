@@ -151,14 +151,14 @@ if __name__ == '__main__':
     ############################## Main loop ##################################
     for ts in u.trajectory[args.start:args.end+1]:
         # select all atoms in systems
-        system = u.select_atoms(f"resname {args.lipid} or protein")
+        system = u.select_atoms(f"resname {lipid_names} or protein")
 
         # Get all the residues in the membrane
         res_ids = system.resids
-        dicoMb = list(set(res_ids))
+        md_uniq_ids = list(set(res_ids))
 
         # If there are a lot of lipids (> 9999)
-        if len(dicoMb) > 9999:
+        if len(md_uniq_ids) > 9999:
             print("The number of lipids in your membrane is very high (>9999)!")
             print("Please check that you only give to PackMem your membrane (+ protein)")
             sys.exit()
