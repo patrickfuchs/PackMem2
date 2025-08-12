@@ -363,29 +363,29 @@ if __name__ == '__main__':
 
         ####################  Output text file  #################
         # Compute the total area of the matrix
-        total_size = len(arrayX) * len(arrayY)
+        total_area = len(arrayX) * len(arrayY)
         pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "deep", "Up", area_labelsUp_Deep, 
-                            firstCoorUp_labels_Deep, total_size, area_edgeUp_Deep, arrayX, arrayY)
+                            firstCoorUp_labels_Deep, total_area, area_edgeUp_Deep, arrayX, arrayY)
         pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "deep", "Lo", area_labelsLo_Deep, 
-                            firstCoorLo_labels_Deep, total_size, area_edgeLo_Deep, arrayX, arrayY)
+                            firstCoorLo_labels_Deep, total_area, area_edgeLo_Deep, arrayX, arrayY)
         
         pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "shallow", "Up", area_labelsUp_Shallow, 
-                            firstCoorUp_labels_Shallow, total_size, area_edgeUp_Shallow, arrayX, arrayY)
+                            firstCoorUp_labels_Shallow, total_area, area_edgeUp_Shallow, arrayX, arrayY)
         pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "shallow", "Lo", area_labelsLo_Shallow, 
-                            firstCoorLo_labels_Shallow, total_size, area_edgeLo_Shallow, arrayX, arrayY)
+                            firstCoorLo_labels_Shallow, total_area, area_edgeLo_Shallow, arrayX, arrayY)
         
         pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "all", "Up", area_labelsUp_All, 
-                            firstCoorUp_labels_All, total_size, area_edgeUp_All, arrayX, arrayY)
+                            firstCoorUp_labels_All, total_area, area_edgeUp_All, arrayX, arrayY)
         pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "all", "Lo", area_labelsLo_All, 
-                            firstCoorLo_labels_All, total_size, area_edgeLo_All, arrayX, arrayY)
+                            firstCoorLo_labels_All, total_area, area_edgeLo_All, arrayX, arrayY)
 
 
         ####################  Output PDB files  #################
         # final matrix values PD (X,Y) with Z cooresponding to the max(Upper/lowerZlevel)
         if args.pdbout :
             # Get the max/min of the z_coord+1
-            valzmax=float(d.max_value_dico(upper_arrayZ))
-            valzmin=float(d.min_value_dico(lower_arrayZ))
+            valZmax=float(d.max_value_dico(upper_arrayZ))
+            valZmin=float(d.min_value_dico(lower_arrayZ))
 
             # Write the leaflets into a PDB
             # To ignore the warnings when writing a PDB
@@ -396,31 +396,31 @@ if __name__ == '__main__':
             
             # Write the Matrix (each cell) into a PDB
             pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "deep", "Up", ts.frame,
-                                    arrayX, arrayY, valzmax, MatrixUp_Deep)
+                                    arrayX, arrayY, valZmax, MatrixUp_Deep)
             pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "deep", "Lo", ts.frame,
-                                    arrayX, arrayY, valzmin, MatrixLo_Deep)
+                                    arrayX, arrayY, valZmin, MatrixLo_Deep)
             pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "shallow", "Up", ts.frame,
-                                    arrayX, arrayY, valzmax, MatrixUp_Shallow)
+                                    arrayX, arrayY, valZmax, MatrixUp_Shallow)
             pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "shallow", "Lo", ts.frame,
-                                    arrayX, arrayY, valzmin, MatrixLo_Shallow)
+                                    arrayX, arrayY, valZmin, MatrixLo_Shallow)
             pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "all", "Up", ts.frame,
-                                    arrayX, arrayY, valzmax, MatrixUp_All)
+                                    arrayX, arrayY, valZmax, MatrixUp_All)
             pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "all", "Lo", ts.frame,
-                                    arrayX, arrayY, valzmin, MatrixLo_All)
+                                    arrayX, arrayY, valZmin, MatrixLo_All)
             
             # Write the defects into a PDB
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "deep", "Up", ts.frame,
-                                arrayX, arrayY, valzmax, MatrixUp_labels_Deep, edge_labelsUp_Deep)
+                                arrayX, arrayY, valZmax, MatrixUp_labels_Deep, edge_labelsUp_Deep)
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "deep", "Lo", ts.frame,
-                                arrayX, arrayY, valzmin, MatrixLo_labels_Deep, edge_labelsLo_Deep)
+                                arrayX, arrayY, valZmin, MatrixLo_labels_Deep, edge_labelsLo_Deep)
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "shallow", "Up", ts.frame,
-                                arrayX, arrayY, valzmax, MatrixUp_labels_Shallow, edge_labelsUp_Shallow)
+                                arrayX, arrayY, valZmax, MatrixUp_labels_Shallow, edge_labelsUp_Shallow)
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "shallow", "Lo", ts.frame,
-                                arrayX, arrayY, valzmin, MatrixLo_labels_Shallow, edge_labelsLo_Shallow)
+                                arrayX, arrayY, valZmin, MatrixLo_labels_Shallow, edge_labelsLo_Shallow)
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "all", "Up", ts.frame,
-                                arrayX, arrayY, valzmax, MatrixUp_labels_All, edge_labelsUp_All)
+                                arrayX, arrayY, valZmax, MatrixUp_labels_All, edge_labelsUp_All)
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "all", "Lo", ts.frame,
-                                arrayX, arrayY, valzmin, MatrixLo_labels_All, edge_labelsLo_All)
+                                arrayX, arrayY, valZmin, MatrixLo_labels_All, edge_labelsLo_All)
         
 
         ####################  Distance from the protein  #################
