@@ -257,8 +257,8 @@ if __name__ == '__main__':
         MatrixLo_labels_Shallow, set_labelsLo_Shallow, area_labelsLo_Shallow, firstCoorLo_labels_Shallow = \
             cc.get_connected_components(MatrixLo_Shallowbin)
         # Get the labels on the edge
-        labelsUp_edge_Shallow=cc.get_clusters_on_the_edge(MatrixUp_labels_Shallow)
-        labelsLo_edge_Shallow=cc.get_clusters_on_the_edge(MatrixLo_labels_Shallow)
+        edge_labelsUp_Shallow=cc.get_clusters_on_the_edge(MatrixUp_labels_Shallow)
+        edge_labelsLo_Shallow=cc.get_clusters_on_the_edge(MatrixLo_labels_Shallow)
 
 
         # Initalise matrices to 0.0
@@ -275,8 +275,8 @@ if __name__ == '__main__':
         MatrixLo_Shallowbin = m.binarize_matrix_without0(MatrixLo_Shallow, MatrixLo_Shallowbin, 0, 0.99)
         # Modify the binary matrix to take account edges (determined by all packing defects)
         # The clusters that had their labels on the edge are put to 0.0
-        MatrixUp_Shallowbin = m.modify_matrix(MatrixUp_labels_Shallow, MatrixUp_Shallowbin, labelsUp_edge_Shallow)
-        MatrixLo_Shallowbin = m.modify_matrix(MatrixLo_labels_Shallow, MatrixLo_Shallowbin, labelsLo_edge_Shallow)
+        MatrixUp_Shallowbin = m.modify_matrix(MatrixUp_labels_Shallow, MatrixUp_Shallowbin, edge_labelsUp_Shallow)
+        MatrixLo_Shallowbin = m.modify_matrix(MatrixLo_labels_Shallow, MatrixLo_Shallowbin, edge_labelsLo_Shallow)
         # Packing defects determination
         # Connect the packing defects + label them + count the area
         MatrixUp_labels_Shallow, set_labelsUp_Shallow, area_labelsUp_Shallow, firstCoorUp_labels_Shallow = \
@@ -284,35 +284,35 @@ if __name__ == '__main__':
         MatrixLo_labels_Shallow, set_labelsLo_Shallow, area_labelsLo_Shallow, firstCoorLo_labels_Shallow = \
             cc.get_connected_components(MatrixLo_Shallowbin)
         # Get cluster on the edge
-        labelsUp_edge_Shallow = cc.get_clusters_on_the_edge(MatrixUp_labels_Shallow)
-        labelsLo_edge_Shallow = cc.get_clusters_on_the_edge(MatrixLo_labels_Shallow)
+        edge_labelsUp_Shallow = cc.get_clusters_on_the_edge(MatrixUp_labels_Shallow)
+        edge_labelsLo_Shallow = cc.get_clusters_on_the_edge(MatrixLo_labels_Shallow)
         # Count area of the edge
-        totalUp_edge_Shallow = m.count_edge_area(area_labelsUp_Shallow, labelsUp_edge_Shallow)
-        totalLo_edge_Shallow = m.count_edge_area(area_labelsLo_Shallow, labelsLo_edge_Shallow)
+        totalUp_edge_Shallow = m.count_edge_area(area_labelsUp_Shallow, edge_labelsUp_Shallow)
+        totalLo_edge_Shallow = m.count_edge_area(area_labelsLo_Shallow, edge_labelsLo_Shallow)
         # Clean dico defects (without edge)
-        area_labelsUp_Shallow = d.del_key_dico(area_labelsUp_Shallow, labelsUp_edge_Shallow)
-        firstCoorUp_labels_Shallow = d.del_key_dico(firstCoorUp_labels_Shallow, labelsUp_edge_Shallow)
-        area_labelsLo_Shallow = d.del_key_dico(area_labelsLo_Shallow, labelsLo_edge_Shallow)
-        firstCoorLo_labels_Shallow = d.del_key_dico(firstCoorLo_labels_Shallow, labelsLo_edge_Shallow)
+        area_labelsUp_Shallow = d.del_key_dico(area_labelsUp_Shallow, edge_labelsUp_Shallow)
+        firstCoorUp_labels_Shallow = d.del_key_dico(firstCoorUp_labels_Shallow, edge_labelsUp_Shallow)
+        area_labelsLo_Shallow = d.del_key_dico(area_labelsLo_Shallow, edge_labelsLo_Shallow)
+        firstCoorLo_labels_Shallow = d.del_key_dico(firstCoorLo_labels_Shallow, edge_labelsLo_Shallow)
         # Eliminate nan inside (deep not shallow defect)
         MatrixUp_labels_Shallow, totalUp_edge_Shallow, clustPb_Up_Shallow = \
-            m.clean_NA_inside(MatrixUp_labels_Shallow, labelsUp_edge_Shallow,
+            m.clean_NA_inside(MatrixUp_labels_Shallow, edge_labelsUp_Shallow,
                               MatrixUp_Shallow, totalUp_edge_Shallow)
         set_labelsUp_Shallow, area_labelsUp_Shallow, firstCoorUp_labels_Shallow = \
             cc.delete_NApoints_inside(clustPb_Up_Shallow, MatrixUp_labels_Shallow,
                                     set_labelsUp_Shallow, area_labelsUp_Shallow)
 
         MatrixLo_labels_Shallow, totalLo_edge_Shallow, clustPb_Lo_Shallow = \
-            m.clean_NA_inside(MatrixLo_labels_Shallow, labelsLo_edge_Shallow,
+            m.clean_NA_inside(MatrixLo_labels_Shallow, edge_labelsLo_Shallow,
                               MatrixLo_Shallow, totalLo_edge_Shallow)
         set_labelsLo_Shallow, area_labelsLo_Shallow, firstCoorLo_labels_Shallow = \
             cc.delete_NApoints_inside(clustPb_Lo_Shallow, MatrixLo_labels_Shallow,
                                     set_labelsLo_Shallow, area_labelsLo_Shallow)
         # Reclean dico defects (without edge)
-        area_labelsUp_Shallow = d.del_key_dico(area_labelsUp_Shallow, labelsUp_edge_Shallow)
-        firstCoorUp_labels_Shallow = d.del_key_dico(firstCoorUp_labels_Shallow, labelsUp_edge_Shallow)
-        area_labelsLo_Shallow = d.del_key_dico(area_labelsLo_Shallow, labelsLo_edge_Shallow)
-        firstCoorLo_labels_Shallow = d.del_key_dico(firstCoorLo_labels_Shallow, labelsLo_edge_Shallow)
+        area_labelsUp_Shallow = d.del_key_dico(area_labelsUp_Shallow, edge_labelsUp_Shallow)
+        firstCoorUp_labels_Shallow = d.del_key_dico(firstCoorUp_labels_Shallow, edge_labelsUp_Shallow)
+        area_labelsLo_Shallow = d.del_key_dico(area_labelsLo_Shallow, edge_labelsLo_Shallow)
+        firstCoorLo_labels_Shallow = d.del_key_dico(firstCoorLo_labels_Shallow, edge_labelsLo_Shallow)
 
 
         #### All ####
@@ -326,16 +326,16 @@ if __name__ == '__main__':
         MatrixLo_labels_All, set_labelsLo_All, area_labelsLo_All, firstCoorLo_labels_All = \
             cc.get_connected_components(MatrixLo_Allbin)
         # Get cluster on the edge
-        labelsUp_edge_All = cc.get_clusters_on_the_edge(MatrixUp_labels_All)
-        labelsLo_edge_All = cc.get_clusters_on_the_edge(MatrixLo_labels_All)
+        edge_labelsUp_All = cc.get_clusters_on_the_edge(MatrixUp_labels_All)
+        edge_labelsLo_All = cc.get_clusters_on_the_edge(MatrixLo_labels_All)
         # Count area of the edge
-        totalUp_edge_All = m.count_edge_area(area_labelsUp_All, labelsUp_edge_All)
-        totalLo_edge_All = m.count_edge_area(area_labelsLo_All, labelsLo_edge_All)
+        totalUp_edge_All = m.count_edge_area(area_labelsUp_All, edge_labelsUp_All)
+        totalLo_edge_All = m.count_edge_area(area_labelsLo_All, edge_labelsLo_All)
         # Clean dico defects (without edge)
-        area_labelsUp_All = d.del_key_dico(area_labelsUp_All, labelsUp_edge_All)
-        firstCoorUp_labels_All = d.del_key_dico(firstCoorUp_labels_All, labelsUp_edge_All)
-        area_labelsLo_All = d.del_key_dico(area_labelsLo_All, labelsLo_edge_All)
-        firstCoorLo_labels_All = d.del_key_dico(firstCoorLo_labels_All, labelsLo_edge_All)
+        area_labelsUp_All = d.del_key_dico(area_labelsUp_All, edge_labelsUp_All)
+        firstCoorUp_labels_All = d.del_key_dico(firstCoorUp_labels_All, edge_labelsUp_All)
+        area_labelsLo_All = d.del_key_dico(area_labelsLo_All, edge_labelsLo_All)
+        firstCoorLo_labels_All = d.del_key_dico(firstCoorLo_labels_All, edge_labelsLo_All)
 
 
         #### Deep ####
@@ -349,16 +349,16 @@ if __name__ == '__main__':
         MatrixLo_labels_Deep, set_labelsLo_Deep, area_labelsLo_Deep, firstCoorLo_labels_Deep = \
             cc.get_connected_components(MatrixLo_Deepbin)
         # Get cluster on the edge
-        labelsUp_edge_Deep = cc.get_clusters_on_the_edge(MatrixUp_labels_Deep)
-        labelsLo_edge_Deep = cc.get_clusters_on_the_edge(MatrixLo_labels_Deep)
+        edge_labelsUp_Deep = cc.get_clusters_on_the_edge(MatrixUp_labels_Deep)
+        edge_labelsLo_Deep = cc.get_clusters_on_the_edge(MatrixLo_labels_Deep)
         # Count area of the edge
-        totalUp_edge_Deep = m.count_edge_area(area_labelsUp_Deep, labelsUp_edge_Deep)
-        totalLo_edge_Deep = m.count_edge_area(area_labelsLo_Deep, labelsLo_edge_Deep)
+        totalUp_edge_Deep = m.count_edge_area(area_labelsUp_Deep, edge_labelsUp_Deep)
+        totalLo_edge_Deep = m.count_edge_area(area_labelsLo_Deep, edge_labelsLo_Deep)
         # Clean dico defects (without edge)
-        area_labelsUp_Deep = d.del_key_dico(area_labelsUp_Deep, labelsUp_edge_Deep)
-        firstCoorUp_labels_Deep = d.del_key_dico(firstCoorUp_labels_Deep, labelsUp_edge_Deep)
-        area_labelsLo_Deep = d.del_key_dico(area_labelsLo_Deep, labelsLo_edge_Deep)
-        firstCoorLo_labels_Deep = d.del_key_dico(firstCoorLo_labels_Deep, labelsLo_edge_Deep)
+        area_labelsUp_Deep = d.del_key_dico(area_labelsUp_Deep, edge_labelsUp_Deep)
+        firstCoorUp_labels_Deep = d.del_key_dico(firstCoorUp_labels_Deep, edge_labelsUp_Deep)
+        area_labelsLo_Deep = d.del_key_dico(area_labelsLo_Deep, edge_labelsLo_Deep)
+        firstCoorLo_labels_Deep = d.del_key_dico(firstCoorLo_labels_Deep, edge_labelsLo_Deep)
 
 
         ####################  Output text file  #################
@@ -410,17 +410,17 @@ if __name__ == '__main__':
             
             # Write the defects into a PDB
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "deep", "Up", ts.frame,
-                                arrayX, arrayY, valzmax, MatrixUp_labels_Deep, labelsUp_edge_Deep)
+                                arrayX, arrayY, valzmax, MatrixUp_labels_Deep, edge_labelsUp_Deep)
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "deep", "Lo", ts.frame,
-                                arrayX, arrayY, valzmin, MatrixLo_labels_Deep, labelsLo_edge_Deep)
+                                arrayX, arrayY, valzmin, MatrixLo_labels_Deep, edge_labelsLo_Deep)
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "shallow", "Up", ts.frame,
-                                arrayX, arrayY, valzmax, MatrixUp_labels_Shallow, labelsUp_edge_Shallow)
+                                arrayX, arrayY, valzmax, MatrixUp_labels_Shallow, edge_labelsUp_Shallow)
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "shallow", "Lo", ts.frame,
-                                arrayX, arrayY, valzmin, MatrixLo_labels_Shallow, labelsLo_edge_Shallow)
+                                arrayX, arrayY, valzmin, MatrixLo_labels_Shallow, edge_labelsLo_Shallow)
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "all", "Up", ts.frame,
-                                arrayX, arrayY, valzmax, MatrixUp_labels_All, labelsUp_edge_All)
+                                arrayX, arrayY, valzmax, MatrixUp_labels_All, edge_labelsUp_All)
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "all", "Lo", ts.frame,
-                                arrayX, arrayY, valzmin, MatrixLo_labels_All, labelsLo_edge_All)
+                                arrayX, arrayY, valzmin, MatrixLo_labels_All, edge_labelsLo_All)
         
 
         ####################  Distance from the protein  #################
