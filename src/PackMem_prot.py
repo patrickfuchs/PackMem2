@@ -269,6 +269,29 @@ if __name__ == '__main__':
         MatrixUp_Allbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
         MatrixLo_Allbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
 
+        #### Deep ####
+        # Binarise these matrices, with 0 if deep defect, 1 otherwise
+        MatrixUp_Deepbin = m.binarize_matrix_without0(MatrixUp_Deep, MatrixUp_Deepbin, -0.01, 0.001)
+        MatrixLo_Deepbin = m.binarize_matrix_without0(MatrixLo_Deep, MatrixLo_Deepbin, -0.01, 0.001)
+        # Packing defects determination
+        # Connect the packing defects + label them + count the area
+        MatrixUp_labels_Deep, set_labelsUp_Deep, area_labelsUp_Deep, firstCoorUp_labels_Deep = \
+            cc.get_connected_components(MatrixUp_Deepbin)
+        MatrixLo_labels_Deep, set_labelsLo_Deep, area_labelsLo_Deep, firstCoorLo_labels_Deep = \
+            cc.get_connected_components(MatrixLo_Deepbin)
+        # Get cluster on the edge
+        edge_labelsUp_Deep = cc.get_clusters_on_the_edge(MatrixUp_labels_Deep)
+        edge_labelsLo_Deep = cc.get_clusters_on_the_edge(MatrixLo_labels_Deep)
+        # Count area of the edge
+        area_edgeUp_Deep = m.count_edge_area(area_labelsUp_Deep, edge_labelsUp_Deep)
+        area_edgeLo_Deep = m.count_edge_area(area_labelsLo_Deep, edge_labelsLo_Deep)
+        # Clean dico defects (without edge)
+        area_labelsUp_Deep = d.del_key_dico(area_labelsUp_Deep, edge_labelsUp_Deep)
+        firstCoorUp_labels_Deep = d.del_key_dico(firstCoorUp_labels_Deep, edge_labelsUp_Deep)
+        area_labelsLo_Deep = d.del_key_dico(area_labelsLo_Deep, edge_labelsLo_Deep)
+        firstCoorLo_labels_Deep = d.del_key_dico(firstCoorLo_labels_Deep, edge_labelsLo_Deep)
+        
+
         #### Shallow ####
         # Binarise these matrices, with 0 for aliphatic atoms and 1 otherwise
         MatrixUp_Shallowbin = m.binarize_matrix_without0(MatrixUp_Shallow, MatrixUp_Shallowbin, 0, 0.99)
@@ -336,29 +359,6 @@ if __name__ == '__main__':
         firstCoorUp_labels_All = d.del_key_dico(firstCoorUp_labels_All, edge_labelsUp_All)
         area_labelsLo_All = d.del_key_dico(area_labelsLo_All, edge_labelsLo_All)
         firstCoorLo_labels_All = d.del_key_dico(firstCoorLo_labels_All, edge_labelsLo_All)
-
-
-        #### Deep ####
-        # Binarise these matrices, with 0 if deep defect, 1 otherwise
-        MatrixUp_Deepbin = m.binarize_matrix_without0(MatrixUp_Deep, MatrixUp_Deepbin, -0.01, 0.001)
-        MatrixLo_Deepbin = m.binarize_matrix_without0(MatrixLo_Deep, MatrixLo_Deepbin, -0.01, 0.001)
-        # Packing defects determination
-        # Connect the packing defects + label them + count the area
-        MatrixUp_labels_Deep, set_labelsUp_Deep, area_labelsUp_Deep, firstCoorUp_labels_Deep = \
-            cc.get_connected_components(MatrixUp_Deepbin)
-        MatrixLo_labels_Deep, set_labelsLo_Deep, area_labelsLo_Deep, firstCoorLo_labels_Deep = \
-            cc.get_connected_components(MatrixLo_Deepbin)
-        # Get cluster on the edge
-        edge_labelsUp_Deep = cc.get_clusters_on_the_edge(MatrixUp_labels_Deep)
-        edge_labelsLo_Deep = cc.get_clusters_on_the_edge(MatrixLo_labels_Deep)
-        # Count area of the edge
-        area_edgeUp_Deep = m.count_edge_area(area_labelsUp_Deep, edge_labelsUp_Deep)
-        area_edgeLo_Deep = m.count_edge_area(area_labelsLo_Deep, edge_labelsLo_Deep)
-        # Clean dico defects (without edge)
-        area_labelsUp_Deep = d.del_key_dico(area_labelsUp_Deep, edge_labelsUp_Deep)
-        firstCoorUp_labels_Deep = d.del_key_dico(firstCoorUp_labels_Deep, edge_labelsUp_Deep)
-        area_labelsLo_Deep = d.del_key_dico(area_labelsLo_Deep, edge_labelsLo_Deep)
-        firstCoorLo_labels_Deep = d.del_key_dico(firstCoorLo_labels_Deep, edge_labelsLo_Deep)
 
 
         ####################  Output text file  #################
