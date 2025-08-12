@@ -295,18 +295,18 @@ if __name__ == '__main__':
         area_labelsLo_Shallow = d.del_key_dico(area_labelsLo_Shallow, edge_labelsLo_Shallow)
         firstCoorLo_labels_Shallow = d.del_key_dico(firstCoorLo_labels_Shallow, edge_labelsLo_Shallow)
         # Eliminate nan inside (deep not shallow defect)
-        MatrixUp_labels_Shallow, area_edgeUp_Shallow, clustPb_Up_Shallow = \
+        MatrixUp_labels_Shallow, area_edgeUp_Shallow, labelsPb_Up_Shallow = \
             m.clean_NA_inside(MatrixUp_labels_Shallow, edge_labelsUp_Shallow,
                               MatrixUp_Shallow, area_edgeUp_Shallow)
         set_labelsUp_Shallow, area_labelsUp_Shallow, firstCoorUp_labels_Shallow = \
-            cc.delete_NApoints_inside(clustPb_Up_Shallow, MatrixUp_labels_Shallow,
+            cc.delete_NApoints_inside(labelsPb_Up_Shallow, MatrixUp_labels_Shallow,
                                     set_labelsUp_Shallow, area_labelsUp_Shallow)
 
-        MatrixLo_labels_Shallow, area_edgeLo_Shallow, clustPb_Lo_Shallow = \
+        MatrixLo_labels_Shallow, area_edgeLo_Shallow, labelsPb_Lo_Shallow = \
             m.clean_NA_inside(MatrixLo_labels_Shallow, edge_labelsLo_Shallow,
                               MatrixLo_Shallow, area_edgeLo_Shallow)
         set_labelsLo_Shallow, area_labelsLo_Shallow, firstCoorLo_labels_Shallow = \
-            cc.delete_NApoints_inside(clustPb_Lo_Shallow, MatrixLo_labels_Shallow,
+            cc.delete_NApoints_inside(labelsPb_Lo_Shallow, MatrixLo_labels_Shallow,
                                     set_labelsLo_Shallow, area_labelsLo_Shallow)
         # Reclean dico defects (without edge)
         area_labelsUp_Shallow = d.del_key_dico(area_labelsUp_Shallow, edge_labelsUp_Shallow)
