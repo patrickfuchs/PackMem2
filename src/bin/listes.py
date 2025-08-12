@@ -4,6 +4,8 @@
 
 import numpy as np
 
+from bin import matrix as m
+
 def create_array(v1, v2, step):
     """
     Create numpy array from v1 to v2 by step step
@@ -51,10 +53,10 @@ def create_arrayZ(residues, list_resids, atom_mb, dist_suppl_Z, z_extr, up=True)
         # Get the z of this atom
         z_coord = atom.position[2]
         if up:
-            tmp = l.create_array(round(z_coord - dist_suppl_Z, 2),
+            tmp = create_array(round(z_coord - dist_suppl_Z, 2),
                                         round(z_extr +1.0, 2), m.SIZE)
         else:
-            tmp = l.create_array(round(z_coord + dist_suppl_Z, 2),
+            tmp = create_array(round(z_coord + dist_suppl_Z, 2),
                                             round(z_extr - 1.0, 2), -m.SIZE)
         # Reverse it
         tmp = np.flip(tmp)

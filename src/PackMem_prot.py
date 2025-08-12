@@ -170,8 +170,8 @@ if __name__ == '__main__':
         ymin, ymax, ymean = l.min_max(y_atoms)
         zmin, zmax, zmean = l.min_max(z_atoms)
         
-        upper_arrayZ = create_arrayZ(system.residues, upper_leaflet, atom_mb, args.dist_suppl_Z, zmax)
-        lower_arrayZ = create_arrayZ(system.residues, lower_leaflet, atom_mb, args.dist_suppl_Z, zmin, up=False)
+        upper_arrayZ = l.create_arrayZ(system.residues, upper_leaflet, atom_mb, args.dist_suppl_Z, zmax)
+        lower_arrayZ = l.create_arrayZ(system.residues, lower_leaflet, atom_mb, args.dist_suppl_Z, zmin, up=False)
 
         # Build a lists from xmin-1 to xmax+1 every 1.0
         listX = l.create_array(int(xmin-1), int(xmax+2), m.SIZE)
