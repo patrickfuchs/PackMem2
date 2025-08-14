@@ -1,6 +1,7 @@
 import pytest
 import sys
 import os
+import numpy as np
 
 # Add the parent rep to the sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
@@ -86,5 +87,5 @@ def test_read_ndx(tmp_path):
     tested_output = p.read_ndx(indexfile)
     wanted_outputUp = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     wanted_outputLo = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-    assert tested_output[0] == wanted_outputUp
-    assert tested_output[1] == wanted_outputLo
+    np.testing.assert_array_equal(tested_output[0], wanted_outputUp)
+    np.testing.assert_array_equal(tested_output[1], wanted_outputLo)
