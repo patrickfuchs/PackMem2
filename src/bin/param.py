@@ -3,7 +3,6 @@
 
 import argparse
 import os
-import re
 from bin import BasicFunctions as bfrg
 
 def file_present(filename):
@@ -94,31 +93,25 @@ def dict_2columns(list_str):
         dic[data[0]] = data[1]
     return dic
 
-def get_dict_keys(dic):
+def set_params(filename):
     """
-    Get the keys of a dictionary.
+    Read the parameter file and return a dictionary of the information.
 
     --------------------
     INPUT
-    dic: dictionary
-        Contains lipid names as key and central atom as values
+    filename: str
+        Name of the parameter file
     
     --------------------
     OUTPUT
-    list
-        Contains all the keys of the input dictionary
+    dictionary
+        Contains the name of the lipids as key and their central atoms as value
     """
-    return list(dic.keys())
-
-# read the parameters file and return 3 tables
-#lis le fichier de paramètres en renvoir 3 tableaux
-#tab2 : Glycerol atoms by lipid type
-#tab3 : Dictionary of aliphatic atoms for each lipid type
-def set_params(filename):
+    # Read the file
     lines = bfrg.read_file(filename)
-    resname_glyc = dict_2columns(lines[103:])
-    lipid = get_dict_keys(resname_glyc)
-    return(resname_glyc, lipid)
+    # Create a dictionary from the file
+    resname_glyc = dict_2columns(lines)
+    return resname_glyc
 
 #return the lines number for each lipid
 def limits_lip(tab):

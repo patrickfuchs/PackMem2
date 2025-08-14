@@ -72,8 +72,10 @@ def test_dict_2columns():
     wanted_output = {"DOPC": "C2", "DMPG": "C2", "POPC": "C2"}
     assert tested_ouput == wanted_output
 
-def test_get_dict_keys():
-    dictionary = {"DOPC": "C2", "DMPG": "C2", "POPC": "C2"}
-    tested_ouput = p.get_dict_keys(dictionary)
-    wanted_output = ["DOPC", "DMPG", "POPC"]
-    assert  tested_ouput  == wanted_output
+def test_set_params(tmp_path):
+    filename = tmp_path / "param.txt"
+    for f in [filename]:
+        f.write_text('DOP C2\nDOE C2\n')
+    tested_output = p.set_params(filename)
+    wanted_output = {'DOP': 'C2', 'DOE': 'C2'}
+    assert tested_output == wanted_output
