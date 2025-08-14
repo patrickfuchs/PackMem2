@@ -5,7 +5,6 @@
 import argparse
 import os
 import numpy as np
-from bin import BasicFunctions as bfrg
 
 def file_present(filename):
     """
@@ -119,7 +118,7 @@ def set_params(filename):
         Contains the name of the lipids as key and their central atoms as value
     """
     # Read the file
-    lines = bfrg.read_file(filename)
+    lines = read_file(filename)
     # Create a dictionary from the file
     resname_glyc = dict_2columns(lines)
     return resname_glyc

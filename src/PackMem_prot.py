@@ -16,7 +16,6 @@ from bin import matrix as m
 from bin import pdb as pdb
 from bin import connected_component as cc
 from bin import dico as d
-from bin import BasicFunctions as bfrg
 from bin import param as p
 from bin import protdist as pdist
 
@@ -75,10 +74,10 @@ if __name__ == '__main__':
     RESNAME_GLYC = p.set_params(args.paramFile)
     # {'ALA N': 1.85, 'ALA HN': 0.22, 'ALA HT1': 0.22, etc}
     # for the amino acids then the lipids
-    radius = bfrg.read_radius(args.filesrad)
+    radius = p.read_radius(args.filesrad)
     # {'ALA N': 'n', 'ALA HN': 'n', 'ALA HT1': 'n', etc }
     # for the amino acids then the lipids
-    aliphatic = bfrg.read_aliphatic(args.filesrad)
+    aliphatic = p.read_aliphatic(args.filesrad)
 
 
     ######### LOAD UNIVERSE  #########
