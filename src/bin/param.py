@@ -3,8 +3,8 @@
 
 import argparse
 import os
-from bin import BasicFunctions as bfrg
 import re
+from bin import BasicFunctions as bfrg
 
 def file_present(filename):
     """
@@ -73,24 +73,6 @@ def get_args():
     
     return args
 
-# read the parameters file and return 3 tables
-#lis le fichier de paramètres en renvoir 3 tableaux
-#tab1 : correspondence between PDB name and Lipid name in the script
-#tab2 : Glycerol atoms by lipid type
-#tab3 : Dictionary of aliphatic atoms for each lipid type
-def set_params(filename):
-    lines = bfrg.read_file(filename)
-    searchRegex = re.compile("^#").search
-    limits = filterPick(lines, searchRegex)
-    tab_limits = limits_list(lines, limits)
-    lines_tab = split_list(lines, tab_limits)
-    tab1, tab2 = lines_tab[0], lines_tab[1]
-    dict_3L = dict_2columns(tab1)
-    resname_glyc = dict_2columns(tab2)
-    lipid=dict_lipid(dict_3L)
-    return(dict_3L, resname_glyc, lipid)
-
-
 #return index of table matching with the regexpression
 def filterPick(list, filter):
     return [ (i) for i, l in enumerate(list) for m in (filter(l),) if m]
@@ -130,6 +112,23 @@ def dict_lipid(lipid_3L):
         data = key.strip().split('_')
         lipid.append(data[0])
     return lipid
+
+# read the parameters file and return 3 tables
+#lis le fichier de paramètres en renvoir 3 tableaux
+#tab1 : correspondence between PDB name and Lipid name in the script
+#tab2 : Glycerol atoms by lipid type
+#tab3 : Dictionary of aliphatic atoms for each lipid type
+def set_params(filename):
+    lines = bfrg.read_file(filename)
+    searchRegex = re.compile("^#").search
+    limits = filterPick(lines, searchRegex)
+    tab_limits = limits_list(lines, limits)
+    lines_tab = split_list(lines, tab_limits)
+    tab1, tab2 = lines_tab[0], lines_tab[1]
+    dict_3L = dict_2columns(tab1)
+    resname_glyc = dict_2columns(tab2)
+    lipid=dict_lipid(dict_3L)
+    return(dict_3L, resname_glyc, lipid)
 
 #return the lines number for each lipid
 def limits_lip(tab):
