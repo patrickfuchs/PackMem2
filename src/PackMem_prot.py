@@ -6,7 +6,6 @@
 # M. Zygadlo august 2024
 
 import sys
-import argparse
 import warnings
 import numpy as np
 import MDAnalysis as mda
@@ -62,56 +61,13 @@ if __name__ == '__main__':
         if -prot option:
             Prot_outputnameFrame_Up/Lo_Deep/Shallow/All_prot.txt
     """
-    ####### PARAMETRES et INPUT #####
+    ####### PARAMETERS and INPUT #####
     try:
-        outputname = "output"
-        parser = argparse.ArgumentParser(description = 'Arguments for PackMem_prot.py')
-        parser.add_argument('-f', action='store', dest='traj',
-                            help = 'Trajectory file (.xtc)')
-        parser.add_argument('-s', action='store', dest='topo',
-                            help = 'Topology file (.gro)')
-        parser.add_argument('-l', action='store', dest='lipid',
-                            help = 'Lipid name in the .gro file')
-        parser.add_argument('-b', action='store', dest='start', type=int,
-                            default = 0,
-                            help = 'Frame to start the analysis (default: 0)')
-        parser.add_argument('-e', action='store', dest='end', type=int,
-                            default = None,
-                            help = 'Frame to end the analysis (default: None)')
-        parser.add_argument('-r', action='store', dest='filesrad',
-                            default = 'vdw_radii_Charmm.txt',
-                            help = 'File for the atom radius (default: vdw_radii_Charmm.txt)')
-        parser.add_argument('-p', action='store', dest='paramFile',
-                            default = 'param_Charmm.txt',
-                            help = 'File for lipid parameters (default: param_Charmm.txt)')
-        parser.add_argument('-o', action='store', dest='outputname',
-                            default = 'output',
-                            help = 'Name for output file (default: output)')
-        parser.add_argument('-d', action='store', dest='dist_suppl_Z', type=float,
-                            default = 1.0, 
-                            help = 'Distance to differenciate Deep from Shallow defects (default: 1.0)')
-        parser.add_argument('-n', action='store', dest='indexFile',
-                            help = 'Index file (Gromacs ndx style) of only Lower/Upper group')
-        parser.add_argument('-pdb', dest = 'pdbout', action = 'store_true',
-                            help = 'Get .pdb outputs of the packing defects')
-        parser.add_argument('-prot', dest = 'protein', action = 'store_true',
-                            help = 'Analyse the packing defects close/far of the protein')
-                            
-        args = parser.parse_args()
-        
-        if len(sys.argv) == 1:
-            parser.print_usage()
-            sys.exit()
-            
-        if args.dist_suppl_Z < 0.0 :
-            print('ERROR : The distance for the -d option must be > 0')
-            sys.exit()
-        
-    except:
-        print('Command line: PackMem_prot.py -f file.xtc -s file.gro -l lipid_name\
-              -b start_frame -e end_frame -r radius.txt -p param.txt -o output\
-              -d distGlyc [-n index file] [-pdb] [-prot] or -h for help')
-        sys.exit()
+        args = p.get_args()
+
+    except (Exception, FileNotFoundError) as error:
+        # Don't print Traceback 
+        sys.exit(error)
     
 
     ######### READ PARAM FILES #########

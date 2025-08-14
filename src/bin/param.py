@@ -1,9 +1,60 @@
 #-*- coding: utf-8 -*-
 # R. Gautier  A. Bacle 2015
 
+import argparse
+import os
 from bin import BasicFunctions as bfrg
 import re
 import sys
+
+def file_present(filename):
+    if not os.path.isfile(filename):
+        raise FileNotFoundError(f"ERROR : file '{filename}' not found.")
+
+def get_args():
+    parser = argparse.ArgumentParser(description = 'Arguments for PackMem_prot.py')
+    parser.add_argument('-f', action='store', dest='traj', required=True,
+                        help = 'Trajectory file (.xtc)')
+    parser.add_argument('-s', action='store', dest='topo', required=True,
+                        help = 'Topology file (.gro)')
+    parser.add_argument('-l', action='store', dest='lipid', required=True,
+                        help = 'Lipid name in the .gro file')
+    parser.add_argument('-b', action='store', dest='start', type=int,
+                        default = 0,
+                        help = 'Frame to start the analysis (default: 0)')
+    parser.add_argument('-e', action='store', dest='end', type=int,
+                        default = None,
+                        help = 'Frame to end the analysis (default: None)')
+    parser.add_argument('-r', action='store', dest='filesrad',
+                        default = 'vdw_radii_Charmm.txt',
+                        help = 'File for the atom radius (default: vdw_radii_Charmm.txt)')
+    parser.add_argument('-p', action='store', dest='paramFile',
+                        default = 'param_Charmm.txt',
+                        help = 'File for lipid parameters (default: param_Charmm.txt)')
+    parser.add_argument('-o', action='store', dest='outputname',
+                        default = 'output',
+                        help = 'Name for output file (default: output)')
+    parser.add_argument('-d', action='store', dest='dist_suppl_Z', type=float,
+                        default = 1.0, 
+                        help = 'Distance to differenciate Deep from Shallow defects (default: 1.0)')
+    parser.add_argument('-n', action='store', dest='indexFile',
+                        help = 'Index file (Gromacs ndx style) of only Lower/Upper group')
+    parser.add_argument('-pdb', dest = 'pdbout', action = 'store_true',
+                        help = 'Get .pdb outputs of the packing defects')
+    parser.add_argument('-prot', dest = 'protein', action = 'store_true',
+                        help = 'Analyse the packing defects close/far of the protein')
+                        
+    args = parser.parse_args()
+
+    file_present(args.traj)
+    file_present(args.topo)
+    file_present(args.paramFile)
+    file_present(args.filesrad)    
+
+    if args.dist_suppl_Z < 0.0 :
+        raise Exception("ERROR : The distance for the -d option must be > 0.0")
+    
+    return args
 
 # read the parameters file and return 3 tables
 #lis le fichier de paramètres en renvoir 3 tableaux
