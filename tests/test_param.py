@@ -65,3 +65,9 @@ def test_get_args(monkeypatch, tmp_path):
     with pytest.raises(Exception) as exc_info:
         p.get_args()
     assert "must be > 0.0" in str(exc_info.value)
+
+def test_dict_2columns():
+    list_str = ["DOPC C2", "DMPG C2", "POPC C2"]
+    tested_ouput = p.dict_2columns(list_str)
+    wanted_output = {"DOPC": "C2", "DMPG": "C2", "POPC": "C2"}
+    assert tested_ouput == wanted_output

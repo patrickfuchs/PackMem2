@@ -73,13 +73,26 @@ def get_args():
     
     return args
 
-# transform 2 columns of file to a dictionary
-def dict_2columns(tab1):
-    lipid_3L  = {}
-    for i in tab1:
-        data = i.strip().split(' ')
-        lipid_3L[data[0]] = data[1]
-    return lipid_3L
+def dict_2columns(list_str):
+    """
+    Transform list of strings with 2 columns into a dictionary.
+
+    --------------------
+    INPUT
+    list_str: list
+        Contains strings as values
+    
+    --------------------
+    OUTPUT
+    dictionary
+        Contains for each string the key as first word and value as second word
+    """
+    dic = {}
+    for line in list_str:
+        # Use space a separator
+        data = line.strip().split(' ')
+        dic[data[0]] = data[1]
+    return dic
 
 #RG 2016 01 11
 # transform  a lipid dictionary [LIPIDFILE_ATOMFILE]=LIPID3L to a list of LIPIDFILE
