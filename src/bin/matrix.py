@@ -5,7 +5,6 @@
 import math
 import sys
 import numpy as np
-from bin import BasicFunctions as bfrg
 
 # matrix size  (square size = 1A)
 SIZE=1.0
@@ -158,6 +157,16 @@ def check_edges(val, val_lim1, val_lim2):
     else:
         return val
 
+# distance for one axis without square root
+def dist_oneAxis(axe1,axe2):
+    return (axe1-axe2)**2
+
+# Euclidian distance without square root
+def dist(coord1, coord2):
+    return ((coord1[0]-coord2[0])**2 +
+           (coord1[1]-coord2[1])**2 +
+           (coord1[2]-coord2[2])**2)
+
 def setDefects(type_aliphatic, val_mat):
     """
     Fill matrix cell depending on the defect type (Deep, Shallow)
@@ -227,9 +236,9 @@ def fill_matrix(matrix, coordtmp, listX, listY, listZ,
 
     # Select valid positions to search in the radius of the distance
     # from the position of the atom to the slice in Z / X / Y
-    validZ = [z for z in listZ if bfrg.dist_oneAxis(coordtmp[2], z) <= dist_lim]
-    validX = [(ix, x) for ix, x in enumerate(listXM) if bfrg.dist_oneAxis(coordtmp[0], x) <= dist_lim]
-    validY = [(iy, y) for iy, y in enumerate(listYM) if bfrg.dist_oneAxis(coordtmp[1], y) <= dist_lim]
+    validZ = [z for z in listZ if dist_oneAxis(coordtmp[2], z) <= dist_lim]
+    validX = [(ix, x) for ix, x in enumerate(listXM) if dist_oneAxis(coordtmp[0], x) <= dist_lim]
+    validY = [(iy, y) for iy, y in enumerate(listYM) if dist_oneAxis(coordtmp[1], y) <= dist_lim]
     # Loop on the different z positions of the upper OR lower leaflet
     for sliceZ in validZ:
         # Loop on the different cells in x dimension
@@ -242,7 +251,7 @@ def fill_matrix(matrix, coordtmp, listX, listY, listZ,
                 # in a 5 cell radius of the atom
                 coordCenter = np.array([sliceX, sliceY, sliceZ], dtype=float)
                 # Compute the distance between the atom and this position of the matrix
-                distance = bfrg.dist(coordCenter, coordtmp)
+                distance = dist(coordCenter, coordtmp)
                 # If the matrix cell was empty, put 0.0
                 if np.isnan(matrix[X, Y]):
                     matrix[X, Y] = 0.
