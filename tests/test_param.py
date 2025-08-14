@@ -65,11 +65,3 @@ def test_get_args(monkeypatch, tmp_path):
     with pytest.raises(Exception) as exc_info:
         p.get_args()
     assert "must be > 0.0" in str(exc_info.value)
-
-def test_filterPick():
-    re_filter = re.compile("^#").search
-    list_str = ["#Category", "text", "text2", "#Category2", "text3"]
-
-    tested_output = p.filterPick(list_str, re_filter)
-    wanted_ouput = [0, 3]
-    assert tested_output == wanted_ouput

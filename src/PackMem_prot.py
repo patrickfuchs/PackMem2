@@ -74,7 +74,7 @@ if __name__ == '__main__':
     # DICT_3L = {'DOP_N': 'DOP', 'DOE_N': 'DOE', 'DPP_N': 'DPP', etc}
     # RESNAME_GLYC = {'DOP': 'C2', 'DOE': 'C2', 'DPP': 'C2', etc}
     # LIPID = ['DOP', 'DOE', 'DPP', etc]
-    DICT_3L, RESNAME_GLYC, LIPID = p.set_params(args.paramFile)
+    RESNAME_GLYC, LIPID = p.set_params(args.paramFile)
     # {'ALA N': 1.85, 'ALA HN': 0.22, 'ALA HT1': 0.22, etc}
     # for the amino acids then the lipids
     radius = bfrg.read_radius(args.filesrad)
