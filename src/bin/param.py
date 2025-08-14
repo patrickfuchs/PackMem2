@@ -113,27 +113,6 @@ def set_params(filename):
     resname_glyc = dict_2columns(lines)
     return resname_glyc
 
-#return the lines number for each lipid
-def limits_lip(tab):
-    list_limit_lip = []
-    for i, lip in enumerate(tab):
-        line = len(lip.strip().split(' '))
-        if line > 1:
-            list_limit_lip.append(i)
-    return list_limit_lip
-
-#build dictionary with key= lipd name, values = aliphatic atoms list
-def dic_aliph_atoms(tab, list_limits):
-    dic_aliph_atoms = {}
-    for limit in list_limits :
-        name_lip = tab[limit].strip().split(' ')[0]
-        nb_aliph = int(tab[limit].strip().split(' ')[1])
-        tab_aliph = []
-        for i in range(nb_aliph):
-            tab_aliph.append(tab[limit+i+1].strip())
-        dic_aliph_atoms[name_lip] = tab_aliph
-    return(dic_aliph_atoms)
-
 #Read a ndx file to set the lower/upper residue number lists
 def read_ndx(ndx_file):
     lines = bfrg.read_file(ndx_file)
