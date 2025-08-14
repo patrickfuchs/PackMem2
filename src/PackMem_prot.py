@@ -99,7 +99,7 @@ if __name__ == '__main__':
         upper_leaflet = L.groups(0).resids
         lower_leaflet = L.groups(1).resids
     else:
-        lower_leaflet, upper_leaflet = p.read_ndx(args.indexFile)
+        upper_leaflet, lower_leaflet = p.read_ndx(args.indexFile)
 
 
     ############################## Main loop ##################################
