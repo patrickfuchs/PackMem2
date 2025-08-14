@@ -3,6 +3,7 @@
 
 import argparse
 import os
+import numpy as np
 from bin import BasicFunctions as bfrg
 
 def file_present(filename):
@@ -123,26 +124,22 @@ def read_ndx(ndx_file):
         Name if the index file
     --------------------
     OUTPUT
-
+    array numpy
+        Contains the residue number of each lipid in the upper/lower leaflet
     """
+    # Read the lines in the index file
     lines = bfrg.read_file(ndx_file)
-    lower_leaflet = []
-    upper_leaflet = []
-    index1 = lines[1].split(' ')
-    index2 = lines[3].split(' ')
-    for number in index1:
-        res_num = int(number.strip())
-        if "Lower" in lines[0] or "lower" in lines[0]:
-            lower_leaflet.append(res_num)
-        else: 
-            upper_leaflet.append(res_num)
-    for number in index2:
-        res_num = int(number.strip())
-        if "Lower" in lines[0] or "lower" in lines[0]:
-            upper_leaflet.append(res_num)
-        else:
-            lower_leaflet.append(res_num)
-    return upper_leaflet, lower_leaflet
+    # Get the 2nd and last last into a numpy array
+    # Because these lines are where the residue numbers are
+    index1 = np.array(lines[1].strip().split(' '), dtype=int)
+    index2 = np.array(lines[3].strip().split(' '), dtype=int)
+
+    # If the first line : "[ Upper leaflet ]" or "[ upper leaflet ]"
+    if "upper" in lines[0] or "Upper" in lines[0]:
+        return index1, index2
+    # If the first  line : "[ Lower leaflet ]" or "[ lower leaflet ]"
+    else:
+        return index2, index1
     
 
 
