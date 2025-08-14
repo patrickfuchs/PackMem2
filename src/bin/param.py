@@ -5,9 +5,16 @@ import argparse
 import os
 from bin import BasicFunctions as bfrg
 import re
-import sys
 
 def file_present(filename):
+    """
+    Check if the file exists
+
+    --------------------
+    INPUT
+    filename: str
+        The name if the file to test the presence of
+    """
     if not os.path.isfile(filename):
         raise FileNotFoundError(f"ERROR : file '{filename}' not found.")
 
