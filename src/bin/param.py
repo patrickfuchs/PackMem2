@@ -113,8 +113,18 @@ def set_params(filename):
     resname_glyc = dict_2columns(lines)
     return resname_glyc
 
-#Read a ndx file to set the lower/upper residue number lists
 def read_ndx(ndx_file):
+    """
+    Read a .ndx file to set the lower/upper residue number lists.
+
+    --------------------
+    INPUT
+    ndx_file: str
+        Name if the index file
+    --------------------
+    OUTPUT
+
+    """
     lines = bfrg.read_file(ndx_file)
     lower_leaflet = []
     upper_leaflet = []
@@ -132,7 +142,7 @@ def read_ndx(ndx_file):
             upper_leaflet.append(res_num)
         else:
             lower_leaflet.append(res_num)
-    return(lower_leaflet, upper_leaflet)
+    return upper_leaflet, lower_leaflet
     
 
 
