@@ -73,9 +73,22 @@ def get_args():
     
     return args
 
-#return index of table matching with the regexpression
-def filterPick(list, filter):
-    return [ (i) for i, l in enumerate(list) for m in (filter(l),) if m]
+def filterPick(list_str, filter):
+    """
+    Find the index of the strings where its matches the regex filter.
+
+    --------------------
+    INPUT
+    list_str: list
+        Contains strings
+    filter: regex filter
+
+    --------------------
+    OUTPUT
+    list
+        Contains the indexes of the strings where the filter matched
+    """
+    return [i for i, str_i in enumerate(list_str) if filter(str_i)]
 
 
 #Argument: list of lines from the file and limits table
