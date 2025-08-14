@@ -17,3 +17,52 @@ def test_file_present():
     filename_NO = "piou.txt"
     with pytest.raises(FileNotFoundError):
         p.file_present(str(filename_NO))
+
+def test_get_args(monkeypatch, tmp_path):
+    # Create tmp files
+    traj = tmp_path / "traj.xtc"
+    topo = tmp_path / "topo.gro"
+    param = tmp_path / "param_Charmm.txt"
+    radii = tmp_path / "vdw_radii_Charmm.txt"
+    for f in [traj, topo, param, radii]:
+        f.write_text("dummy content")
+
+    ## TEST OK ##
+    # Simulate the corect arguments
+    monkeypatch.setattr(
+        sys, "argv",
+        [
+            "prog",
+            "-f", str(traj),
+            "-s", str(topo),
+            "-l", "DPPC",
+            "-p", str(param),
+            "-r", str(radii),
+            "-d", "1.0",
+            "-prot"
+        ]
+    )
+    args = p.get_args()
+    assert args.traj == str(traj)
+    assert args.topo == str(topo)
+    assert args.lipid == "DPPC"
+    assert args.dist_suppl_Z == 1.0
+    assert args.protein is True
+
+    ## TEST NO ##
+    monkeypatch.setattr(
+        sys, "argv",
+        [
+            "prog",
+            "-f", str(traj),
+            "-s", str(topo),
+            "-l", "DPPC",
+            "-p", str(param),
+            "-r", str(radii),
+            "-d", "-1.0",
+        ]
+    )
+    with pytest.raises(Exception) as exc_info:
+        p.get_args()
+    assert "must be > 0.0" in str(exc_info.value)
+    

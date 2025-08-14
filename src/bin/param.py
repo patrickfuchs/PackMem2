@@ -8,7 +8,7 @@ import re
 
 def file_present(filename):
     """
-    Check if the file exists
+    Check if the file exists.
 
     --------------------
     INPUT
@@ -19,6 +19,14 @@ def file_present(filename):
         raise FileNotFoundError(f"ERROR : file '{filename}' not found.")
 
 def get_args():
+    """
+    Get the arguments for the script and check that the inputfiles are valid.
+
+    --------------------
+    OUTPUT
+    parser.parse_args
+        Contains all the arguments for the script
+    """
     parser = argparse.ArgumentParser(description = 'Arguments for PackMem_prot.py')
     parser.add_argument('-f', action='store', dest='traj', required=True,
                         help = 'Trajectory file (.xtc)')
@@ -53,11 +61,13 @@ def get_args():
                         
     args = parser.parse_args()
 
+    # Check that the files exist
     file_present(args.traj)
     file_present(args.topo)
     file_present(args.paramFile)
     file_present(args.filesrad)    
 
+    # Check that the variable d is positive
     if args.dist_suppl_Z < 0.0 :
         raise Exception("ERROR : The distance for the -d option must be > 0.0")
     
