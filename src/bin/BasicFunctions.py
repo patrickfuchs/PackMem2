@@ -42,11 +42,6 @@ def dist(coord1, coord2):
            (coord1[1]-coord2[1])**2 +
            (coord1[2]-coord2[2])**2)
 
-# Euclidian distance without square root
-def dist2D(coord1, coord2):
-    return ((coord2[0]-coord1[0])**2 +
-           (coord2[1]-coord1[1])**2)
-
 # distance for one axis without square root
 def dist_oneAxis(axe1,axe2):
     return (axe1-axe2)**2
