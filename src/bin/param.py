@@ -73,13 +73,25 @@ def get_args():
     
     return args
 
-# load file return list[line(string)]
 def read_file(filename):
+    """
+    Read an input file and test if file is readable.
+
+    --------------------
+    INPUT
+    filename: str
+        Name of the input file
+    
+    --------------------
+    OUTPUT
+    list
+        Contains the lines of the file as a list of strings
+    """
     try: 
         with open(filename) as f:
             data = f.readlines()
     except : 
-        print("ERROR : Something went wrong with the file %s" % filename)
+        print(f"ERROR : Something went wrong with the file {filename}")
     return data
 
 def dict_2columns(list_str):
