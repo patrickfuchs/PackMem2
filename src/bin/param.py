@@ -73,42 +73,6 @@ def get_args():
     
     return args
 
-def filterPick(list_str, filter):
-    """
-    Find the index of the strings where its matches the regex filter.
-
-    --------------------
-    INPUT
-    list_str: list
-        Contains strings
-    filter: regex filter
-
-    --------------------
-    OUTPUT
-    list
-        Contains the indexes of the strings where the filter matched
-    """
-    return [i for i, str_i in enumerate(list_str) if filter(str_i)]
-
-
-#Argument: list of lines from the file and limits table
-#return limits (start and end) for each sublist of file
-def limits_list(lines, limits):
-    list_limit_tab = []
-    len_limits = len(limits) - 1
-    for i in range(len_limits):
-        list_limit_tab.append( (limits[i] + 1, limits[i + 1] - 1))
-    list_limit_tab.append((limits[i+1] + 1,len(lines)))
-    return list_limit_tab
-
-#Argument: list of lines from the file and limits table
-#return table with X subtables of file
-def split_list(lines, limits_tab):
-    tab= []
-    for i in limits_tab:
-        tab.append(lines[i[0] : i[1]])
-    return tab
-
 # transform 2 columns of file to a dictionary
 def dict_2columns(tab1):
     lipid_3L  = {}
@@ -122,26 +86,19 @@ def dict_2columns(tab1):
 def dict_lipid(lipid_3L):
     lipid  = []
     for key in lipid_3L:
-        data = key.strip().split('_')
-        lipid.append(data[0])
+        data = key.strip()
+        lipid.append(data)
     return lipid
 
 # read the parameters file and return 3 tables
 #lis le fichier de paramètres en renvoir 3 tableaux
-#tab1 : correspondence between PDB name and Lipid name in the script
 #tab2 : Glycerol atoms by lipid type
 #tab3 : Dictionary of aliphatic atoms for each lipid type
 def set_params(filename):
     lines = bfrg.read_file(filename)
-    searchRegex = re.compile("^#").search
-    limits = filterPick(lines, searchRegex)
-    tab_limits = limits_list(lines, limits)
-    lines_tab = split_list(lines, tab_limits)
-    tab1, tab2 = lines_tab[0], lines_tab[1]
-    dict_3L = dict_2columns(tab1)
-    resname_glyc = dict_2columns(tab2)
-    lipid=dict_lipid(dict_3L)
-    return(dict_3L, resname_glyc, lipid)
+    resname_glyc = dict_2columns(lines[103:])
+    lipid=dict_lipid(resname_glyc)
+    return(resname_glyc, lipid)
 
 #return the lines number for each lipid
 def limits_lip(tab):
