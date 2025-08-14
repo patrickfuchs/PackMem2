@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
-# R. Gautier  A. Bacle 2015
+# R. Gautier A. Bacle 2015
+# M. Zygadlo 2025
 
 import argparse
 import os
@@ -140,11 +141,3 @@ def read_ndx(ndx_file):
     # If the first  line : "[ Lower leaflet ]" or "[ lower leaflet ]"
     else:
         return index2, index1
-    
-
-
-
-
-
-
-
