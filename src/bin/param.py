@@ -94,14 +94,21 @@ def dict_2columns(list_str):
         dic[data[0]] = data[1]
     return dic
 
-#RG 2016 01 11
-# transform  a lipid dictionary [LIPIDFILE_ATOMFILE]=LIPID3L to a list of LIPIDFILE
-def dict_lipid(lipid_3L):
-    lipid  = []
-    for key in lipid_3L:
-        data = key.strip()
-        lipid.append(data)
-    return lipid
+def get_dict_keys(dic):
+    """
+    Get the keys of a dictionary.
+
+    --------------------
+    INPUT
+    dic: dictionary
+        Contains lipid names as key and central atom as values
+    
+    --------------------
+    OUTPUT
+    list
+        Contains all the keys of the input dictionary
+    """
+    return list(dic.keys())
 
 # read the parameters file and return 3 tables
 #lis le fichier de paramètres en renvoir 3 tableaux
@@ -110,7 +117,7 @@ def dict_lipid(lipid_3L):
 def set_params(filename):
     lines = bfrg.read_file(filename)
     resname_glyc = dict_2columns(lines[103:])
-    lipid=dict_lipid(resname_glyc)
+    lipid = get_dict_keys(resname_glyc)
     return(resname_glyc, lipid)
 
 #return the lines number for each lipid

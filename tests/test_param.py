@@ -71,3 +71,9 @@ def test_dict_2columns():
     tested_ouput = p.dict_2columns(list_str)
     wanted_output = {"DOPC": "C2", "DMPG": "C2", "POPC": "C2"}
     assert tested_ouput == wanted_output
+
+def test_get_dict_keys():
+    dictionary = {"DOPC": "C2", "DMPG": "C2", "POPC": "C2"}
+    tested_ouput = p.get_dict_keys(dictionary)
+    wanted_output = ["DOPC", "DMPG", "POPC"]
+    assert  tested_ouput  == wanted_output
