@@ -6,7 +6,7 @@
 # M. Zygadlo august 2024
 
 import sys
-import argparse
+import warnings
 import numpy as np
 import MDAnalysis as mda
 from MDAnalysis.analysis.leaflet import LeafletFinder 
@@ -20,193 +20,101 @@ from bin import BasicFunctions as bfrg
 from bin import param as p
 from bin import protdist as pdist
 
-def create_listZ(residues, list_resids, atom_mb, dist_suppl_Z, z_extr, up=True):
-    """
-    Create the listZ array for upper and lower leaflet
-    ---------------------------------------------------------------------------
-    INPUT:
-    residues : MDAnalysis ResidueGroup
-        Contains the names of all the residues selected
-    list_resids : numpy array
-        Contains all the residue numbers selected
-    atom_mb : str
-        Name of the reference atom for the lipids (C2)
-    dist_suppl_Z : float
-        Supplementary distance from the z coord
-    z_extr : float
-        Either maximum or minimum value of z coord
-    up : boolean
-        If we are on the upper leaflet
-    ---------------------------------------------------------------------------
-    OUTPUT:
-    numpy array
-        Contains floats ranging from z_coord to zmin
-        or from zmax to z_coord by 1.0 steps
-    """
-    leaflet_listZ = {}
-    for resid in list_resids:
-        # Get the residue at a given residue number (resid)
-        residue = residues[residues.resids == resid][0]
-        # Get the atom given in the parameter file
-        atom = residue.atoms[residue.atoms.names == atom_mb][0]
-        # Get the z of this atom
-        z_coord = atom.position[2]
-        if up:
-            tmp = l.create_array(round(z_coord - dist_suppl_Z, 2),
-                                        round(z_extr +1.0, 2), m.SIZE)
-        else:
-            tmp = l.create_array(round(z_coord + dist_suppl_Z, 2),
-                                            round(z_extr - 1.0, 2), -m.SIZE)
-        # Reverse it
-        tmp = np.flip(tmp)
-        leaflet_listZ[resid] = tmp
-    return leaflet_listZ
-
 ##########################################################################################
 ##### main
 if __name__ == '__main__':
-    
     """
     Python
-    Script to compute Packing defect in flat bilayers, Use pdb file (from for example editconf) 
-    be careful to PBC to create pdb file
-    Lipids parameters adapted to Berger lipid FF (with corrections). Be careful to the atoms name if you use other lipids
-    Lipids parameters from CHarmm36 FF (with Klauda corrections). Be careful to the atoms name if you use other lipids
-    Lipids parameters from Martini FF. Be careful to the atoms name if you use other lipids
+    Script to compute Packing defect in flat bilayers
+    Lipids parameters adapted to either Berger lipid (with corrections), CHARMM36 (with Klauda corrections) or Martini FF. Be careful to the atoms name if you use other lipids
     fileRadius.txt example:
     DOPC  C02 1.875 a (aliphatic)
     DOPC  O8  1.48 n (non aliphatic)
     DOPC  C25 1.98 n (non aliphatic)
+
     Output files:
-    outputname_Up/Lo_Shallow/Deep/All_result.txt
-    ## MatrixSize  9646  9801         # Membrane matrix size, Total matrix size
-    ## Total   51   582 11.41 6.034   # number of packing defects, total area of packing defects, average size, pourcent of membrane (Membrane matrix size)
-    1    1    77.00     2.00    # for each packing defect num size x_position (first pixel) y_mean (first pixel)
-    2    1    21.00     3.00 
-    3    8    59.12     7.00 
+        outputname_Up/Lo_Shallow/Deep/All_result.txt
+        ## MatrixSize  9646  9801         # Membrane matrix size, Total matrix size
+        ## Total   51   582 11.41 6.034   # number of packing defects, total area of packing defects, average size, pourcent of membrane (Membrane matrix size)
+        1    1    77.00     2.00          # for each packing defect num size x_position (first pixel) y_mean (first pixel)
+        2    1    21.00     3.00 
+        3    8    59.12     7.00 
 
-    outputname_TotalUp/Lo_Shallow/Deep/All.pdb # PDB format only if verbose
-    Matrix x,y with, for each cell, the value of "packing defect" (in B_factor column, the last column) 
-    if 0 = Deep packing defects The value increases with the number of atoms in the cell.
-    if >0 and < 1 = Shallow defect
-    if -1 = Edge
-    ATOM      3   H1 EDG     3       4.000  54.000  56.940  1.00 -1.00
-    ATOM      3   H1 MAT     3       4.000  54.000  56.940  1.00  0.00
-    ATOM      3   H1 MAT     3       4.000  54.000  56.940  1.00  0.00
+        if -pdb option:
+            outputname_TotalUp/Lo_Shallow/Deep/All.pdb 
+            Matrix x,y with, for each cell, the value of "packing defect" (in B_factor column, the last column) 
+            if 0 = Deep packing defects The value increases with the number of atoms in the cell.
+            if > 0 and < 1 = Shallow defect
+            if -1 = Edge
+            ATOM      3   H1 EDG     3       4.000  54.000  56.940  1.00 -1.00
+            ATOM      3   H1 MAT     3       4.000  54.000  56.940  1.00  0.00
+            ATOM      3   H1 MAT     3       4.000  54.000  56.940  1.00  0.00
 
-    outputname+"_DefectUp/Lo_Shallow/Deep/All.pdb # PDB format only if verbose
-    Packing defects in pdb format:
-    the residue number corresponds to the different packing defects.
-    ATOM      5   H1 DEF     2       6.000  22.000  56.940  1.00  2.00
-    ATOM      5   H1 DEF     3       6.000  85.000  56.940  1.00  3.00
-    ATOM      5   H1 DEF     3       6.000  86.000  56.940  1.00  3.00
-    ATOM      6   H1 DEF     3       7.000  86.000  56.940  1.00  3.00
+            outputname+"_DefectUp/Lo_Shallow/Deep/All.pdb
+            Packing defects in pdb format:
+            the residue number corresponds to the different packing defects.
+            ATOM      5   H1 DEF     2       6.000  22.000  56.940  1.00  2.00
+            ATOM      5   H1 DEF     3       6.000  85.000  56.940  1.00  3.00
+            ATOM      5   H1 DEF     3       6.000  86.000  56.940  1.00  3.00
+            ATOM      6   H1 DEF     3       7.000  86.000  56.940  1.00  3.00
+
+        if -prot option:
+            Prot_outputnameFrame_Up/Lo_Deep/Shallow/All_prot.txt
     """
-    #######PARAMETRES et INPUT#####
-    
+    ####### PARAMETERS and INPUT #####
     try:
-        outputname = "output"
-        pdbout = 0
-        parser = argparse.ArgumentParser(description = 'Arguments for the app')
-        parser.add_argument('-f', action = 'store', dest = 'traj', help = 'trajectory file (.xtc)')
-        parser.add_argument('-s', action='store', dest='topo', help='Topology file (.gro)')
-        parser.add_argument('-l', action='store', dest='lipid', help='Lipid name in the .gro file')
-        parser.add_argument('-r', action = 'store', dest = 'filesrad',
-                            help = 'File for radius (default vdw_radiiFinal2014.txt)',
-                            default = 'vdw_radiiFinal2014.txt')
-        parser.add_argument('-o', action = 'store', dest = 'outputname',
-                            default = 'output', help = 'Name for output file (default output)')
-        parser.add_argument('-d', action = 'store', dest = 'dist_suppl_Z', default = 1.0, type = float,
-                            help = '(default value 1.0)')
-        parser.add_argument('-t', action = 'store', dest = 'pd_type', default = 'all',
-                            help = 'Packing Defect Type (all/shallow/deep) default all')
-        parser.add_argument('-p', action = 'store', dest = 'paramFile', default = 'param.txt',
-                            help = 'File for lipid parameters')
-        parser.add_argument('-n', action = 'store', dest = 'indexFile',
-                            help = 'File for index (Gromacs ndx style). Only Lower/Upper group accepted')
-        parser.add_argument('-b', action = 'store', dest = 'start', type=int,
-                            help = 'frame to start the analysis')
-        parser.add_argument('-e', action = 'store', dest = 'end', type=int,
-                            help = 'frame to end the analysis')
-        parser.add_argument('-pdb', dest = 'pdbout', action = 'store_true',
-                            help = 'Get .pdb outputs of the packing defects')
-        parser.add_argument('-prot', dest = 'protein', action = 'store_true',
-                            help = 'Analyse the packing defects close/far of the protein')
-                            
-        args = parser.parse_args()
-        
-        if len(sys.argv) == 1:
-            parser.print_usage()
-            sys.exit()
-        
-        # DICT_3L = {'DOP_N': 'DOP', 'DOE_N': 'DOE', 'DPP_N': 'DPP', etc}
-        # RESNAME_GLYC = {'DOP': 'C2', 'DOE': 'C2', 'DPP': 'C2', etc}
-        # LIPID = ['DOP', 'DOE', 'DPP', etc]
-        DICT_3L, RESNAME_GLYC, LIPID = p.set_params(args.paramFile)
+        args = p.get_args()
 
-        # Determine packing defedct type (all/shallow/deep)
-        if args.pd_type == 'all':
-            FlagPDtype = 0
-        elif args.pd_type == 'deep' :
-            FlagPDtype = 1
-        elif args.pd_type == 'shallow':
-            FlagPDtype = 2
-        else: 
-            print('ERROR : Packing defect type not known. Please choose : all/deep/shallow')
-            sys.exit()
-            
-        if args.dist_suppl_Z < 0.0 :
-            print('ERROR : The distance for the -d option must be > 0')
-            sys.exit()
-        
-        # ['REMARK    GENERATED BY TRJCONV\n',
-        #  'TITLE     Title t= 100.00000 step= 50000\n',
-        #  'REMARK    THIS IS A SIMULATION BOX\n',
-        #  'CRYST1   56.638   56.638   74.530  90.00  90.00  90.00 P 1           1\n',
-        #  'MODEL        2\n', 
-        # 'ATOM      1  N   ARG A  43      28.420  41.300  49.850  1.00  0.00           N\n', etc]
-        #pdblines = bfrg.read_file(args.filename) # remplace with MDAnalysis
-        # {'ALA N': 1.85, 'ALA HN': 0.22, 'ALA HT1': 0.22, etc}
-        # for the amino acids then the lipids
-        radius = bfrg.read_radius(args.filesrad)
-        # {'ALA N': 'n', 'ALA HN': 'n', 'ALA HT1': 'n', etc }
-        # for the amino acids then the lipids
-        aliphatic = bfrg.read_aliphatic(args.filesrad)
-        
-    except:
-        print('Command line: PackMem_prot.py -f file.xtc -s file.gro -l lipid_name\
-               -p param.txt -r radius.txt -t deep/all/shallow -o output [-d distGlyc]\
-              [-b start frame] [-e end frame][-n index file] [-pdb] [-prot] or -h for help')
-        sys.exit()
+    except (Exception, FileNotFoundError) as error:
+        # Don't print Traceback 
+        sys.exit(error)
+    
+
+    ######### READ PARAM FILES #########
+    # DICT_3L = {'DOP_N': 'DOP', 'DOE_N': 'DOE', 'DPP_N': 'DPP', etc}
+    # RESNAME_GLYC = {'DOP': 'C2', 'DOE': 'C2', 'DPP': 'C2', etc}
+    # LIPID = ['DOP', 'DOE', 'DPP', etc]
+    DICT_3L, RESNAME_GLYC, LIPID = p.set_params(args.paramFile)
+    # {'ALA N': 1.85, 'ALA HN': 0.22, 'ALA HT1': 0.22, etc}
+    # for the amino acids then the lipids
+    radius = bfrg.read_radius(args.filesrad)
+    # {'ALA N': 'n', 'ALA HN': 'n', 'ALA HT1': 'n', etc }
+    # for the amino acids then the lipids
+    aliphatic = bfrg.read_aliphatic(args.filesrad)
+
 
     ######### LOAD UNIVERSE  #########
     u = mda.Universe(args.topo, args.traj)
+    # If multiple lipids
+    lipid_names = args.lipid.replace('_', ' ')
     # select the lipids in system
-    system = u.select_atoms(f"resname {args.lipid}")
+    lipids = u.select_atoms(f"resname {lipid_names}")
     
+
     ######### Extract UPPER/LOWER leaflet ##########
-    atom_mb = RESNAME_GLYC[args.lipid]
+    # Get the glycerol atom name(s)
+    glyc_mb = l.get_glyc_lipids(args.lipid.split('_'), RESNAME_GLYC)
     # If no index file seperating the leaflets
     if args.indexFile == None:
         # Create lists of the residue number  for upper and lower leaflets
-        L = LeafletFinder(system, f'name {atom_mb}')
+        L = LeafletFinder(lipids, f'name {glyc_mb}')
         upper_leaflet = L.groups(0).resids
         lower_leaflet = L.groups(1).resids
     else:
         lower_leaflet, upper_leaflet = p.read_ndx(args.indexFile)
 
+
+    ############################## Main loop ##################################
     for ts in u.trajectory[args.start:args.end+1]:
-        print(f"Working on frame {ts.frame:3d}")
         # select all atoms in systems
-        #system = u.atoms
-        system = u.select_atoms(f"resname {args.lipid} or protein")
+        system = u.select_atoms(f"resname {lipid_names} or protein")
 
         # Get all the residues in the membrane
         res_ids = system.resids
-        dicoMb = list(set(res_ids))
+        md_uniq_ids = list(set(res_ids))
 
         # If there are a lot of lipids (> 9999)
-        if len(dicoMb) > 9999:
+        if len(md_uniq_ids) > 9999:
             print("The number of lipids in your membrane is very high (>9999)!")
             print("Please check that you only give to PackMem your membrane (+ protein)")
             sys.exit()
@@ -215,238 +123,337 @@ if __name__ == '__main__':
         x_atoms = system.positions[:,0].round(2)
         y_atoms = system.positions[:,1].round(2)
         z_atoms = system.positions[:,2].round(2)
+        coords = np.stack((x_atoms, y_atoms, z_atoms), axis=1)
         # Get membrane dimension
         xmin, xmax, xmean = l.min_max(x_atoms)
         ymin, ymax, ymean = l.min_max(y_atoms)
         zmin, zmax, zmean = l.min_max(z_atoms)
         
-        upper_listZ = create_listZ(system.residues, upper_leaflet, atom_mb, args.dist_suppl_Z, zmax)
-        lower_listZ = create_listZ(system.residues, lower_leaflet, atom_mb, args.dist_suppl_Z, zmin, up=False)
-                    
-        # Build a lists from xmin-1 to xmax+1 every 1.0
-        listX = l.create_array(int(xmin-1), int(xmax+2), m.SIZE)
-        # Build a lists from ymin-1 to ymax+1 every 1.0
-        listY = l.create_array(int(ymin-1), int(ymax+2), m.SIZE)
+        upper_arrayZ = l.create_arrayZ(system.residues, upper_leaflet, glyc_mb, args.dist_suppl_Z, zmax)
+        lower_arrayZ = l.create_arrayZ(system.residues, lower_leaflet, glyc_mb, args.dist_suppl_Z, zmin, up=False)
 
-        # Initialize 2 matrixes for Upper and Lower leaflet of length listX,listY
-        MatrixUp = m.initialize_matrix2D(len(listX), len(listY), np.nan)
-        MatrixLo = m.initialize_matrix2D(len(listX), len(listY), np.nan)
-                    
+        # Build an array from xmin-1 to xmax+1 every 1.0
+        arrayX = l.create_array(int(xmin-1), int(xmax+2), m.SIZE)
+        # Build an array from ymin-1 to ymax+1 every 1.0
+        arrayY = l.create_array(int(ymin-1), int(ymax+2), m.SIZE)
+
+
         ####################  Compute Matrix    #################
-        # Search v cells around coord
-        v = 5
-        # For each atoms of lipids
-        for i in range(len(res_ids)):
-            atom_name = system.names[i]
-            res_name = system.resnames[i]
-            res_id = system.resids[i]
-            radius_res=m.get_radius(radius, res_name, atom_name)
-            # Get if the residue is aliphatic or not
-            aliph_atom=m.get_aliphatic(aliphatic, res_name, atom_name)
-            # Get the coordinates X Y Z
-            coordtmp = [x_atoms[i], y_atoms[i], z_atoms[i]]
-            # Upper leaflet ########################
-            if res_id in upper_leaflet :
-                # dfZ = z_C2_res - z_atom
-                dfZ = round(m.diff_Z(upper_listZ[res_id], coordtmp[2]),2)
-                # If dfZ < 5
-                # To limit the search around an atom to 5 cells
-                if dfZ < (1. * v):
-                    # Fill the matrix with value 0 < a < 1 for aliphatic
-                    # Or with > 1 if polar OR deep
-                    # Defects = 0
-                    MatrixUp= m.fill_matrix(MatrixUp, coordtmp, listX, listY,
-                                            upper_listZ[res_id], radius_res,
-                                            FlagPDtype, aliph_atom)
-            # Lower leaflet ########################
-            if res_id in lower_leaflet :
-                # dfZ = z_C2_res - z_atom
-                dfZ = round(m.diff_Z(lower_listZ[res_id], coordtmp[2]),2)
-                # If dfZ > -5
-                # To limit the search around an atom to 5 cells
-                if dfZ > (-1. * v):
-                    # Fill the matrix with value 0 < a < 1 for aliphatic
-                    # Or with > 1 if polar OR deep
-                    # Defects = 0
-                    MatrixLo = m.fill_matrix(MatrixLo, coordtmp, listX, listY,
-                                            lower_listZ[res_id], radius_res,
-                                            FlagPDtype, aliph_atom)
+        # Initialize 2 matrixes for Upper and Lower leaflet of length arrayX,arrayY
+        MatrixUp_Deep = m.initialize_matrix2D(len(arrayX), len(arrayY), np.nan)
+        MatrixLo_Deep = m.initialize_matrix2D(len(arrayX), len(arrayY), np.nan)
 
+        MatrixUp_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), np.nan)
+        MatrixLo_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), np.nan)
+
+        MatrixUp_All = m.initialize_matrix2D(len(arrayX), len(arrayY), np.nan)
+        MatrixLo_All = m.initialize_matrix2D(len(arrayX), len(arrayY), np.nan)
+        
+        # Search v cells around coord
+        v = 5.0
+        # For each atoms of lipids
+        for i, (res_id, atom_name, res_name) in enumerate(zip(res_ids, system.names, system.resnames)):
+            radius_atm = m.get_radius(radius, res_name, atom_name)
+            aliph_atom = m.get_aliphatic(aliphatic, res_name, atom_name)
+            coordtmp = coords[i]
+            #### Upper leaflet ####
+            if res_id in upper_leaflet :
+                # dZ = z_C2_res - z_atom
+                dZ = round(m.diff_Z(upper_arrayZ[res_id], coordtmp[2]), 2)
+                # If dZ < 5.0
+                # To limit the search around an atom to 5 cells
+                if dZ < v:
+                    # Fill the matrix with value 0 < a < 1 for aliphatic
+                    # Or with > 1 if polar OR deep
+                    # Defects = 0
+                    MatrixUp_Deep = m.fill_matrix(MatrixUp_Deep, coordtmp, arrayX, arrayY,
+                                            upper_arrayZ[res_id], radius_atm,
+                                            "deep", aliph_atom)
+                    MatrixUp_Shallow = m.fill_matrix(MatrixUp_Shallow, coordtmp, arrayX, arrayY,
+                                            upper_arrayZ[res_id], radius_atm,
+                                            "shallow", aliph_atom)
+                    MatrixUp_All = m.fill_matrix(MatrixUp_All, coordtmp, arrayX, arrayY,
+                                            upper_arrayZ[res_id], radius_atm,
+                                            "all", aliph_atom)
+            #### Lower leaflet ####
+            if res_id in lower_leaflet :
+                # dZ = z_C2_res - z_atom
+                dZ = round(m.diff_Z(lower_arrayZ[res_id], coordtmp[2]), 2)
+                # If dfZ > -5.0
+                # To limit the search around an atom to 5 cells
+                if dZ > -v:
+                    # Fill the matrix with value 0 < a < 1 for aliphatic
+                    # Or with > 1 if polar OR deep
+                    # Defects = 0
+                    MatrixLo_Deep = m.fill_matrix(MatrixLo_Deep, coordtmp, arrayX, arrayY,
+                                            lower_arrayZ[res_id], radius_atm,
+                                            "deep", aliph_atom)
+                    MatrixLo_Shallow = m.fill_matrix(MatrixLo_Shallow, coordtmp, arrayX, arrayY,
+                                            lower_arrayZ[res_id], radius_atm,
+                                            "shallow", aliph_atom)
+                    MatrixLo_All = m.fill_matrix(MatrixLo_All, coordtmp, arrayX, arrayY,
+                                            lower_arrayZ[res_id], radius_atm,
+                                            "all", aliph_atom)
+
+
+        ####################  Binarise the matrix    #################
         # Preliminary process for shallow defect and problem of the edges 
         # To eliminate shallow defects on edges first: binarize on all defects and storage edges coord
-        # If shallow defects (2)
-        if FlagPDtype == 2:
-            # Initalise matrices to 0.0
-            Matrix_UpbinM = m.initialize_matrix2D(len(listX),len(listY),0.)
-            Matrix_LobinM = m.initialize_matrix2D(len(listX),len(listY),0.)
-            # Binarise these matrices, with 0 for aliphatic atoms + packing defects and 1 otherwise
-            Matrix_UpbinM = m.binarize_matrix_without0(MatrixUp, Matrix_UpbinM , -0.01, 0.99)
-            Matrix_LobinM = m.binarize_matrix_without0(MatrixLo, Matrix_LobinM, -0.01, 0.99)
-        
-            # Get temporary packing defects
-            # Connect the packing defects + label them + count the area
-            Matrix_labels_UpM, root_labels_UpM, area_clusters_UpM, coor_clusters_UpM = \
-                cc.get_connected_components(Matrix_UpbinM)
-            Matrix_labels_LoM, root_labels_LoM, area_clusters_LoM, coor_clusters_LoM = \
-                cc.get_connected_components(Matrix_LobinM)
-            # Get the cluster on the edge
-            clust_edge_UpM=cc.get_clusters_on_the_edge(Matrix_labels_UpM)
-            clust_edge_LoM=cc.get_clusters_on_the_edge(Matrix_labels_LoM)
-
-        # Binarisation matrices ###################################################
         # Initalise matrices to 0.0
-        Matrix_Upbin=m.initialize_matrix2D(len(listX),len(listY),0.)
-        Matrix_Lobin=m.initialize_matrix2D(len(listX),len(listY),0.)
-
-        # If shallow (2)
-        if FlagPDtype == 2:
-            # Binarise these matrices, with 0 for aliphatic atoms and 1 otherwise
-            Matrix_Upbin = m.binarize_matrix_without0(MatrixUp, Matrix_Upbin , 0, 0.99)
-            Matrix_Lobin = m.binarize_matrix_without0(MatrixLo, Matrix_Lobin, 0, 0.99)
-        # If all (0)
-        elif FlagPDtype == 0:
-            # Binarise these matrices, with 0 for aliphatic atoms + packing defects and 1 otherwise
-            Matrix_Upbin = m.binarize_matrix_without0(MatrixUp, Matrix_Upbin , -0.01, 0.99)
-            Matrix_Lobin = m.binarize_matrix_without0(MatrixLo, Matrix_Lobin, -0.01, 0.99)
-        # If deep (1)
-        else:
-            # Binarise these matrices, with 0 if deep defect, 1 otherwise
-            Matrix_Upbin = m.binarize_matrix_without0(MatrixUp, Matrix_Upbin, -0.01, 0.001)
-            Matrix_Lobin = m.binarize_matrix_without0(MatrixLo, Matrix_Lobin, -0.01, 0.001)
-
-        # If shallow defects (2)
-        if FlagPDtype == 2:
-            # Modify the binary matrix to take account edges (determined by all packing defects)
-            # The clusters that had their labels on the edge are put to 0.0
-            Matrix_Upbin = m.modify_matrix(Matrix_labels_UpM, Matrix_Upbin, clust_edge_UpM)
-            Matrix_Lobin = m.modify_matrix(Matrix_labels_LoM, Matrix_Lobin, clust_edge_LoM)
-
-
-        # Packing defects determination  ##########################################
+        MatrixUp_Shallowbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
+        MatrixLo_Shallowbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
+        # Binarise these matrices, with 0 for aliphatic atoms + packing defects and 1 otherwise
+        MatrixUp_Shallowbin = m.binarize_matrix_without0(MatrixUp_Shallow, MatrixUp_Shallowbin, -0.01, 0.99)
+        MatrixLo_Shallowbin = m.binarize_matrix_without0(MatrixLo_Shallow, MatrixLo_Shallowbin, -0.01, 0.99)
+    
+        # Get temporary packing defects
         # Connect the packing defects + label them + count the area
-        Matrix_labels_Up, root_labels_Up, area_clusters_Up, coor_clusters_Up = \
-            cc.get_connected_components(Matrix_Upbin)
-        Matrix_labels_Lo, root_labels_Lo, area_clusters_Lo, coor_clusters_Lo = \
-            cc.get_connected_components(Matrix_Lobin)
+        MatrixUp_labels_Shallow, set_labelsUp_Shallow, area_labelsUp_Shallow, firstCoorUp_labels_Shallow = \
+            cc.get_connected_components(MatrixUp_Shallowbin)
+        MatrixLo_labels_Shallow, set_labelsLo_Shallow, area_labelsLo_Shallow, firstCoorLo_labels_Shallow = \
+            cc.get_connected_components(MatrixLo_Shallowbin)
+        # Get the labels on the edge
+        edge_labelsUp_Shallow=cc.get_clusters_on_the_edge(MatrixUp_labels_Shallow)
+        edge_labelsLo_Shallow=cc.get_clusters_on_the_edge(MatrixLo_labels_Shallow)
 
+
+        # Initalise matrices to 0.0
+        MatrixUp_Deepbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
+        MatrixLo_Deepbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
+        MatrixUp_Shallowbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
+        MatrixLo_Shallowbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
+        MatrixUp_Allbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
+        MatrixLo_Allbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
+
+        #### Deep ####
+        # Binarise these matrices, with 0 if deep defect, 1 otherwise
+        MatrixUp_Deepbin = m.binarize_matrix_without0(MatrixUp_Deep, MatrixUp_Deepbin, -0.01, 0.001)
+        MatrixLo_Deepbin = m.binarize_matrix_without0(MatrixLo_Deep, MatrixLo_Deepbin, -0.01, 0.001)
+        # Packing defects determination
+        # Connect the packing defects + label them + count the area
+        MatrixUp_labels_Deep, set_labelsUp_Deep, area_labelsUp_Deep, firstCoorUp_labels_Deep = \
+            cc.get_connected_components(MatrixUp_Deepbin)
+        MatrixLo_labels_Deep, set_labelsLo_Deep, area_labelsLo_Deep, firstCoorLo_labels_Deep = \
+            cc.get_connected_components(MatrixLo_Deepbin)
         # Get cluster on the edge
-        clust_edge_Up = cc.get_clusters_on_the_edge(Matrix_labels_Up)
-        clust_edge_Lo = cc.get_clusters_on_the_edge(Matrix_labels_Lo)
-
+        edge_labelsUp_Deep = cc.get_clusters_on_the_edge(MatrixUp_labels_Deep)
+        edge_labelsLo_Deep = cc.get_clusters_on_the_edge(MatrixLo_labels_Deep)
         # Count area of the edge
-        total_edge_Up = m.count_edge_area(area_clusters_Up, clust_edge_Up)
-        total_edge_Lo = m.count_edge_area(area_clusters_Lo, clust_edge_Lo)
-        
+        area_edgeUp_Deep = m.count_edge_area(area_labelsUp_Deep, edge_labelsUp_Deep)
+        area_edgeLo_Deep = m.count_edge_area(area_labelsLo_Deep, edge_labelsLo_Deep)
         # Clean dico defects (without edge)
-        area_clusters_Up = d.del_key_dico(area_clusters_Up, clust_edge_Up)
-        coor_clusters_Up = d.del_key_dico(coor_clusters_Up, clust_edge_Up)
-        area_clusters_Lo = d.del_key_dico(area_clusters_Lo, clust_edge_Lo)
-        coor_clusters_Lo = d.del_key_dico(coor_clusters_Lo, clust_edge_Lo)
-
-        # If shallow (2)
-        if FlagPDtype == 2:
-            # Eliminate nan inside (deep not shallow defect)
-            Matrix_labels_Up, total_edge_Up, clustPb_Up = \
-                m.clean_NA_inside(Matrix_labels_Up, clust_edge_Up, MatrixUp, total_edge_Up)
-            root_labels_Up, area_clusters_Up, coor_clusters_Up = \
-                cc.delete_NApoints_inside(clustPb_Up, Matrix_labels_Up,
-                                        root_labels_Up, area_clusters_Up)
-
-            Matrix_labels_Lo, total_edge_Lo, clustPb_Lo = \
-                m.clean_NA_inside(Matrix_labels_Lo, clust_edge_Lo, MatrixLo, total_edge_Lo)
-            root_labels_Lo, area_clusters_Lo, coor_clusters_Lo = \
-                cc.delete_NApoints_inside(clustPb_Lo, Matrix_labels_Lo,
-                                        root_labels_Lo, area_clusters_Lo)
-            
-            # Reclean dico defects (without edge)
-            area_clusters_Up = d.del_key_dico(area_clusters_Up, clust_edge_Up)
-            coor_clusters_Up = d.del_key_dico(coor_clusters_Up, clust_edge_Up)
-            area_clusters_Lo = d.del_key_dico(area_clusters_Lo, clust_edge_Lo)
-            coor_clusters_Lo = d.del_key_dico(coor_clusters_Lo, clust_edge_Lo)
+        area_labelsUp_Deep = d.del_key_dico(area_labelsUp_Deep, edge_labelsUp_Deep)
+        firstCoorUp_labels_Deep = d.del_key_dico(firstCoorUp_labels_Deep, edge_labelsUp_Deep)
+        area_labelsLo_Deep = d.del_key_dico(area_labelsLo_Deep, edge_labelsLo_Deep)
+        firstCoorLo_labels_Deep = d.del_key_dico(firstCoorLo_labels_Deep, edge_labelsLo_Deep)
         
-        # Output text file  #######################################################
-        total_size = len(listX) * len(listY)
-        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", FlagPDtype, "Up", area_clusters_Up, 
-                            coor_clusters_Up, total_size, total_edge_Up, listX, listY)
-        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", FlagPDtype, "Lo", area_clusters_Lo, 
-                            coor_clusters_Lo, total_size, total_edge_Lo, listX, listY)
 
-        # Output PDB files ########################################################
+        #### Shallow ####
+        # Binarise these matrices, with 0 for aliphatic atoms and 1 otherwise
+        MatrixUp_Shallowbin = m.binarize_matrix_without0(MatrixUp_Shallow, MatrixUp_Shallowbin, 0, 0.99)
+        MatrixLo_Shallowbin = m.binarize_matrix_without0(MatrixLo_Shallow, MatrixLo_Shallowbin, 0, 0.99)
+        # Modify the binary matrix to take account edges (determined by all packing defects)
+        # The clusters that had their labels on the edge are put to 0.0
+        MatrixUp_Shallowbin = m.modify_matrix(MatrixUp_labels_Shallow, MatrixUp_Shallowbin, edge_labelsUp_Shallow)
+        MatrixLo_Shallowbin = m.modify_matrix(MatrixLo_labels_Shallow, MatrixLo_Shallowbin, edge_labelsLo_Shallow)
+        # Packing defects determination
+        # Connect the packing defects + label them + count the area
+        MatrixUp_labels_Shallow, set_labelsUp_Shallow, area_labelsUp_Shallow, firstCoorUp_labels_Shallow = \
+            cc.get_connected_components(MatrixUp_Shallowbin)
+        MatrixLo_labels_Shallow, set_labelsLo_Shallow, area_labelsLo_Shallow, firstCoorLo_labels_Shallow = \
+            cc.get_connected_components(MatrixLo_Shallowbin)
+        # Get cluster on the edge
+        edge_labelsUp_Shallow = cc.get_clusters_on_the_edge(MatrixUp_labels_Shallow)
+        edge_labelsLo_Shallow = cc.get_clusters_on_the_edge(MatrixLo_labels_Shallow)
+        # Count area of the edge
+        area_edgeUp_Shallow = m.count_edge_area(area_labelsUp_Shallow, edge_labelsUp_Shallow)
+        area_edgeLo_Shallow = m.count_edge_area(area_labelsLo_Shallow, edge_labelsLo_Shallow)
+        # Clean dico defects (without edge)
+        area_labelsUp_Shallow = d.del_key_dico(area_labelsUp_Shallow, edge_labelsUp_Shallow)
+        firstCoorUp_labels_Shallow = d.del_key_dico(firstCoorUp_labels_Shallow, edge_labelsUp_Shallow)
+        area_labelsLo_Shallow = d.del_key_dico(area_labelsLo_Shallow, edge_labelsLo_Shallow)
+        firstCoorLo_labels_Shallow = d.del_key_dico(firstCoorLo_labels_Shallow, edge_labelsLo_Shallow)
+        # Eliminate nan inside (deep not shallow defect)
+        MatrixUp_labels_Shallow, area_edgeUp_Shallow, labelsPb_Up_Shallow = \
+            m.clean_NA_inside(MatrixUp_labels_Shallow, edge_labelsUp_Shallow,
+                              MatrixUp_Shallow, area_edgeUp_Shallow)
+        set_labelsUp_Shallow, area_labelsUp_Shallow, firstCoorUp_labels_Shallow = \
+            cc.delete_NApoints_inside(labelsPb_Up_Shallow, MatrixUp_labels_Shallow,
+                                    set_labelsUp_Shallow, area_labelsUp_Shallow)
+
+        MatrixLo_labels_Shallow, area_edgeLo_Shallow, labelsPb_Lo_Shallow = \
+            m.clean_NA_inside(MatrixLo_labels_Shallow, edge_labelsLo_Shallow,
+                              MatrixLo_Shallow, area_edgeLo_Shallow)
+        set_labelsLo_Shallow, area_labelsLo_Shallow, firstCoorLo_labels_Shallow = \
+            cc.delete_NApoints_inside(labelsPb_Lo_Shallow, MatrixLo_labels_Shallow,
+                                    set_labelsLo_Shallow, area_labelsLo_Shallow)
+        # Reclean dico defects (without edge)
+        area_labelsUp_Shallow = d.del_key_dico(area_labelsUp_Shallow, edge_labelsUp_Shallow)
+        firstCoorUp_labels_Shallow = d.del_key_dico(firstCoorUp_labels_Shallow, edge_labelsUp_Shallow)
+        area_labelsLo_Shallow = d.del_key_dico(area_labelsLo_Shallow, edge_labelsLo_Shallow)
+        firstCoorLo_labels_Shallow = d.del_key_dico(firstCoorLo_labels_Shallow, edge_labelsLo_Shallow)
+
+
+        #### All ####
+        # Binarise these matrices, with 0 for aliphatic atoms + packing defects and 1 otherwise
+        MatrixUp_Allbin = m.binarize_matrix_without0(MatrixUp_All, MatrixUp_Allbin, -0.01, 0.99)
+        MatrixLo_Allbin = m.binarize_matrix_without0(MatrixLo_All, MatrixLo_Allbin, -0.01, 0.99)
+        # Packing defects determination
+        # Connect the packing defects + label them + count the area
+        MatrixUp_labels_All, set_labelsUp_All, area_labelsUp_All, firstCoorUp_labels_All = \
+            cc.get_connected_components(MatrixUp_Allbin)
+        MatrixLo_labels_All, set_labelsLo_All, area_labelsLo_All, firstCoorLo_labels_All = \
+            cc.get_connected_components(MatrixLo_Allbin)
+        # Get cluster on the edge
+        edge_labelsUp_All = cc.get_clusters_on_the_edge(MatrixUp_labels_All)
+        edge_labelsLo_All = cc.get_clusters_on_the_edge(MatrixLo_labels_All)
+        # Count area of the edge
+        area_edgeUp_All = m.count_edge_area(area_labelsUp_All, edge_labelsUp_All)
+        area_edgeLo_All = m.count_edge_area(area_labelsLo_All, edge_labelsLo_All)
+        # Clean dico defects (without edge)
+        area_labelsUp_All = d.del_key_dico(area_labelsUp_All, edge_labelsUp_All)
+        firstCoorUp_labels_All = d.del_key_dico(firstCoorUp_labels_All, edge_labelsUp_All)
+        area_labelsLo_All = d.del_key_dico(area_labelsLo_All, edge_labelsLo_All)
+        firstCoorLo_labels_All = d.del_key_dico(firstCoorLo_labels_All, edge_labelsLo_All)
+
+
+        ####################  Output text file  #################
+        # Compute the total area of the matrix
+        total_area = len(arrayX) * len(arrayY)
+        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "deep", "Up", area_labelsUp_Deep, 
+                            firstCoorUp_labels_Deep, total_area, area_edgeUp_Deep, arrayX, arrayY)
+        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "deep", "Lo", area_labelsLo_Deep, 
+                            firstCoorLo_labels_Deep, total_area, area_edgeLo_Deep, arrayX, arrayY)
+        
+        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "shallow", "Up", area_labelsUp_Shallow, 
+                            firstCoorUp_labels_Shallow, total_area, area_edgeUp_Shallow, arrayX, arrayY)
+        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "shallow", "Lo", area_labelsLo_Shallow, 
+                            firstCoorLo_labels_Shallow, total_area, area_edgeLo_Shallow, arrayX, arrayY)
+        
+        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "all", "Up", area_labelsUp_All, 
+                            firstCoorUp_labels_All, total_area, area_edgeUp_All, arrayX, arrayY)
+        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "all", "Lo", area_labelsLo_All, 
+                            firstCoorLo_labels_All, total_area, area_edgeLo_All, arrayX, arrayY)
+
+
+        ####################  Output PDB files  #################
         # final matrix values PD (X,Y) with Z cooresponding to the max(Upper/lowerZlevel)
         if args.pdbout :
-            valzmax=float(d.max_value_dico(upper_listZ))
-            valzmin=float(d.min_value_dico(lower_listZ))
-            pdb.outputPDB_leaflet(system.resids, system.resnames, system.names,
-                                  system.positions, upper_leaflet, 
-                                  f"{args.outputname}{ts.frame}" + "_Upper.pdb", 
-                                  ts.frame)
-            pdb.outputPDB_leaflet(system.resids, system.names, system.resnames,
-                                  system.positions, lower_leaflet, 
-                                  f"{args.outputname}{ts.frame}" + "_Lower.pdb", 
-                                  ts.frame)
-                            
-            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", FlagPDtype, "Up", ts.frame,
-                                    listX, listY, valzmax, MatrixUp)
-            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", FlagPDtype, "Lo", ts.frame,
-                                    listX, listY, valzmin, MatrixLo)
-                                    
-            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", FlagPDtype, "Up", ts.frame,
-                                listX, listY, valzmax, Matrix_labels_Up, clust_edge_Up)
-            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", FlagPDtype, "Lo", ts.frame,
-                                listX, listY, valzmin, Matrix_labels_Lo, clust_edge_Lo)
-        
-        # Distance from the protein ###############################################
-        if args.protein :
-            # Label 1 corresponds to the void around the simulation, so we remove it.
-            Matrix_labels_Up = np.where(Matrix_labels_Up == 1, 0, Matrix_labels_Up)
-            Matrix_labels_Lo = np.where(Matrix_labels_Lo == 1, 0, Matrix_labels_Lo)
+            # Get the max/min of the z_coord+1
+            valZmax=float(d.max_value_dico(upper_arrayZ))
+            valZmin=float(d.min_value_dico(lower_arrayZ))
+
+            # Write the leaflets into a PDB
+            # To ignore the warnings when writing a PDB
+            warnings.filterwarnings("ignore", category=UserWarning)
+            # Write the leaflets into a PDB
+            u.select_atoms(f"resid {upper_leaflet[0]}:{upper_leaflet[-1]}").write(f"{args.outputname}{ts.frame}_Upper_leaflet.pdb")
+            u.select_atoms(f"resid {lower_leaflet[0]}:{lower_leaflet[-1]}").write(f"{args.outputname}{ts.frame}_Lower_leaflet.pdb")
             
-            # Retrieve the protein    
-            list_code3L_AA = ['ALA', 'ASP', 'ARG', 'ASN', 'CYS',
-                                'GLN', 'GLU', 'GLY', 'HIS', 'ILE',
-                                'LEU', 'LYS', 'MET', 'PHE', 'PRO',
-                                'SER', 'THR', 'TRP', 'TYR', 'VAL']
+            # Write the Matrix (each cell) into a PDB
+            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "deep", "Up", ts.frame,
+                                    arrayX, arrayY, valZmax, MatrixUp_Deep)
+            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "deep", "Lo", ts.frame,
+                                    arrayX, arrayY, valZmin, MatrixLo_Deep)
+            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "shallow", "Up", ts.frame,
+                                    arrayX, arrayY, valZmax, MatrixUp_Shallow)
+            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "shallow", "Lo", ts.frame,
+                                    arrayX, arrayY, valZmin, MatrixLo_Shallow)
+            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "all", "Up", ts.frame,
+                                    arrayX, arrayY, valZmax, MatrixUp_All)
+            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "all", "Lo", ts.frame,
+                                    arrayX, arrayY, valZmin, MatrixLo_All)
+            
+            # Write the defects into a PDB
+            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "deep", "Up", ts.frame,
+                                arrayX, arrayY, valZmax, MatrixUp_labels_Deep, edge_labelsUp_Deep)
+            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "deep", "Lo", ts.frame,
+                                arrayX, arrayY, valZmin, MatrixLo_labels_Deep, edge_labelsLo_Deep)
+            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "shallow", "Up", ts.frame,
+                                arrayX, arrayY, valZmax, MatrixUp_labels_Shallow, edge_labelsUp_Shallow)
+            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "shallow", "Lo", ts.frame,
+                                arrayX, arrayY, valZmin, MatrixLo_labels_Shallow, edge_labelsLo_Shallow)
+            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "all", "Up", ts.frame,
+                                arrayX, arrayY, valZmax, MatrixUp_labels_All, edge_labelsUp_All)
+            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "all", "Lo", ts.frame,
+                                arrayX, arrayY, valZmin, MatrixLo_labels_All, edge_labelsLo_All)
+        
+
+        ####################  Distance from the protein  #################
+        if args.protein :
+            # Select only the protein
+            protein = u.select_atoms("protein")
+            pos_prot = protein.positions
+
+            # Label 1 corresponds to the void around the simulation
+            # So we replace it by 0
+            MatrixUp_labels_Deep = np.where(MatrixUp_labels_Deep == 1, 0, MatrixUp_labels_Deep)
+            MatrixLo_labels_Deep = np.where(MatrixLo_labels_Deep == 1, 0, MatrixLo_labels_Deep)
+            MatrixUp_labels_Shallow = np.where(MatrixUp_labels_Shallow == 1, 0, MatrixUp_labels_Shallow)
+            MatrixLo_labels_Shallow = np.where(MatrixLo_labels_Shallow == 1, 0, MatrixLo_labels_Shallow)
+            MatrixUp_labels_All = np.where(MatrixUp_labels_All == 1, 0, MatrixUp_labels_All)
+            MatrixLo_labels_All = np.where(MatrixLo_labels_All == 1, 0, MatrixLo_labels_All)
 
             # Create empty arrays
-            array2d_prot_Up = np.zeros_like(Matrix_labels_Up)
-            array2d_prot_Lo = np.zeros_like(Matrix_labels_Lo)
+            MatrixUp_prot_Deep = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
+            MatrixLo_prot_Deep = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
+            MatrixUp_prot_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
+            MatrixLo_prot_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
+            MatrixUp_prot_All = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
+            MatrixLo_prot_All = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
 
-            # Find where the protein is in the simulation box
-            for i in range(len(res_ids)) :
-                res_name = system.resnames[i]
-                # If it is an amino acid atom
-                if res_name in list_code3L_AA:
-                    atom_name = system.names[i]
-                    # Get the coordinates X Y Z
-                    coordtmp = [x_atoms[i], y_atoms[i], z_atoms[i]]
-                    iX,iY = m.find_X_Y(coordtmp, listX, listY)
-                    # Upper leaflet
-                    if coordtmp[2] > zmean:
-                        array2d_prot_Up[iX, iY] = 1
-                    # Lower leaflet
-                    if coordtmp[2] < zmean:
-                        array2d_prot_Lo[iX, iY] = 1
+            # Find where the protein is in the matrix
+            MatrixUp_prot_Deep = pdist.find_protein(MatrixUp_prot_Deep, 'up', protein, arrayX, arrayY, zmean)
+            MatrixUp_prot_Shallow = pdist.find_protein(MatrixUp_prot_Shallow, 'up', protein, arrayX, arrayY, zmean)
+            MatrixUp_prot_All = pdist.find_protein(MatrixUp_prot_All, 'up', protein, arrayX, arrayY, zmean)
+            MatrixLo_prot_Deep = pdist.find_protein(MatrixLo_prot_Deep, 'lo', protein, arrayX, arrayY, zmean)
+            MatrixLo_prot_Shallow = pdist.find_protein(MatrixLo_prot_Shallow, 'lo', protein, arrayX, arrayY, zmean)
+            MatrixLo_prot_All = pdist.find_protein(MatrixLo_prot_All, 'lo', protein, arrayX, arrayY, zmean)
             
-            # Classification of Packing Defects by distance group 
-            # Get the coordinates of the matrix where the edges of the packing defects are located.
-            # dictionnary label coords {lab1 = [(x1, y1), (x2, y2), ...],
-            #                           lab2 = [(x1, y1), (x2, y2), ...], 
-            #                           ...                              }
-            dict_labels_coor_Up = pdist.find_pd_border(Matrix_labels_Up)
-            #dict_labels_coor_Lo = pdist.find_pd_border(Matrix_labels_Lo)
 
-            # Get the coordinates of the matrix where the edges of the protein are located.
-            # list of tuples [(x1, y1), (x2, y2), ...]
-            list_edge_coor_prot_Up = pdist.find_prot_border(array2d_prot_Up)
-            #list_edge_coor_prot_Lo = pdist.find_prot_border(array2d_prot_Lo)
+            # If there are proteins on the upper leaflet
+            if len(np.argwhere(MatrixUp_prot_All > 0)) > 0:
+                # Classification of Packing Defects by distance group 
+                # Get the coordinates of the matrix where the edges of the packing defects are located.
+                # dictionnary label coords {lab1 = [(x1, y1), (x2, y2), ...],
+                #                           lab2 = [(x1, y1), (x2, y2), ...], 
+                #                           ...                              }
+                coor_label_bordersUp_Deep = pdist.find_pd_border(MatrixUp_labels_Deep)
+                coor_label_bordersUp_Shallow = pdist.find_pd_border(MatrixUp_labels_Shallow)
+                coor_label_bordersUp_All = pdist.find_pd_border(MatrixUp_labels_All)
 
-            # Assign distance group for each packing defect, "far" or "close". Default threshold = 10 A.
-            # dict {lab1 : 'group', lab2 : 'group', ... }
-            pd_labels_group_Up = pdist.assign_dist_group(list_edge_coor_prot_Up, dict_labels_coor_Up, 10)
-            #pd_labels_group_Lo = pdist.assign_dist_group(list_edge_coor_prot_Lo, dict_labels_coor_Lo, 10)
+                # Get the coordinates of the matrix where the edges of the protein are located.
+                # list of tuples [(x1, y1), (x2, y2), ...]
+                coor_prot_edgeUp_Deep = pdist.find_prot_border(MatrixUp_prot_Deep)
+                coor_prot_edgeUp_Shallow = pdist.find_prot_border(MatrixUp_prot_Shallow)
+                coor_prot_edgeUp_All = pdist.find_prot_border(MatrixUp_prot_All)
 
-            # Results
-            # Ouput text file
-            # header : label,dist_group,area
-            pdist.outputTXT_defects_prot(f"{args.outputname}{ts.frame}", FlagPDtype, "Up", pd_labels_group_Up, area_clusters_Up)
-            #pdist.outputTXT_defects_prot(f"{args.outputname}{ts.frame}", FlagPDtype, "Lo", pd_labels_group_Lo, area_clusters_Lo)
+                # Assign distance group for each packing defect, "far" or "close". Default threshold = 10 A.
+                # dict {lab1 : 'group', lab2 : 'group', ... }
+                DefectsUp_labels_group_Deep = pdist.assign_dist_group(coor_prot_edgeUp_Deep, coor_label_bordersUp_Deep, 10)
+                DefectsUp_labels_group_Shallow = pdist.assign_dist_group(coor_prot_edgeUp_Shallow, coor_label_bordersUp_Shallow, 10)
+                DefectsUp_labels_group_All = pdist.assign_dist_group(coor_prot_edgeUp_All, coor_label_bordersUp_All, 10)
+
+                # Write the result in a text file
+                # format : label,dist_group,area
+                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}", "deep", "Up", DefectsUp_labels_group_Deep, area_labelsUp_Deep)
+                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}", "shallow", "Up", DefectsUp_labels_group_Shallow, area_labelsUp_Shallow)
+                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}", "all", "Up", DefectsUp_labels_group_All, area_labelsUp_All)
+
+            # If there are proteins on the lower leaflet
+            elif len(np.argwhere(MatrixLo_prot_All > 0)) > 0:
+                coor_label_bordersLo_Deep = pdist.find_pd_border(MatrixLo_labels_Deep)
+                coor_label_bordersLo_Shallow = pdist.find_pd_border(MatrixLo_labels_Shallow)
+                coor_label_bordersLo_All = pdist.find_pd_border(MatrixLo_labels_All)
+
+                coor_prot_edgeLo_Deep = pdist.find_prot_border(MatrixLo_prot_Deep)
+                coor_prot_edgeLo_Shallow = pdist.find_prot_border(MatrixLo_prot_Shallow)
+                coor_prot_edgeLo_All = pdist.find_prot_border(MatrixLo_prot_All)
+
+                DefectsLo_labels_group_Deep = pdist.assign_dist_group(coor_prot_edgeLo_Deep, coor_label_bordersLo_Deep, 10)
+                DefectsLo_labels_group_Shallow = pdist.assign_dist_group(coor_prot_edgeLo_Shallow, coor_label_bordersLo_Shallow, 10)
+                DefectsLo_labels_group_All = pdist.assign_dist_group(coor_prot_edgeLo_All, coor_label_bordersLo_All, 10)
+
+                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}", "deep", "Lo", DefectsLo_labels_group_Deep, area_labelsLo_Deep)
+                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}", "shallow", "Lo", DefectsLo_labels_group_Shallow, area_labelsLo_Shallow)
+                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}", "all", "Lo", DefectsLo_labels_group_All, area_labelsLo_All)

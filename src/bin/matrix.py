@@ -199,8 +199,8 @@ def fill_matrix(matrix, coordtmp, listX, listY, listZ,
         List from z_C2_coord+1 to zmin-1 by step of 1.0
     radius_res : float
         the radius of the atom type for the residue
-    FlagPDtype : int
-        The type of defect to analyse. 0 : all / 1 : deep / 2 : shallow
+    FlagPDtype : str
+        The type of defect to analyse. all / deep / shallow
     aliph_atoms : string
         The nature of the atom. a : aliphatique / n : polar
 

@@ -2,8 +2,6 @@
 # Functions about PDB data and output files
 # R. Gautier A. Bacle 2015
 
-FLAG_TO_DEFECT = ["All", "Deep", "Shallow"]
-
 # modify data from PDB with the good lipid name
 # Rename lipid from 3 letters to 4 
 def modifyPDBdata(datapdb, dico,startID,endID):
@@ -73,7 +71,7 @@ def write_a_pdb_line(file, nb_atm, atm_name, nb_res, coords, nb_defect):
 # create output file with Total Matrix in pdb format
 def outputPDB_Total_matrix(outputname, FlagPDtype, leaflet, num_frame, listX, 
                             listY, Rpos, Matrix_final):
-    outputname = outputname + "_Total" + leaflet+ "_" + FLAG_TO_DEFECT[FlagPDtype] + ".pdb"
+    outputname = outputname + "_Total" + leaflet+ "_" + FlagPDtype + ".pdb"
     with open(outputname,"w") as f:
         f.write("MODEL      %3d\n"%(num_frame))
         nb=0
@@ -91,7 +89,7 @@ def outputPDB_Total_matrix(outputname, FlagPDtype, leaflet, num_frame, listX,
 # create output file with defects only in pdb format
 def outputPDB_defects(outputname, FlagPDtype, leaflet, num_frame, listX, listY, Rpos, 
                         Matrix_fin, cluster_edge):
-    outputname = outputname + "_Defect" + leaflet+ "_"+FLAG_TO_DEFECT[FlagPDtype]+".pdb"
+    outputname = outputname + "_Defect" + leaflet+ "_"+ FlagPDtype +".pdb"
     with open(outputname,"w") as f:
         f.write("MODEL      %3d\n"%(num_frame))
         nb=0
@@ -126,7 +124,7 @@ def outputPDB_defects(outputname, FlagPDtype, leaflet, num_frame, listX, listY, 
 # 2    1     7.00    58.00
 def outputTXT_defects(outputname, FlagPDtype, leaflet, dico_def_area, dico_def_coor, 
                         total_size, total_edge, listX, listY):
-    outputname = outputname + "_" + leaflet+ "_"+FLAG_TO_DEFECT[FlagPDtype]+"_result.txt"
+    outputname = outputname + "_" + leaflet+ "_"+FlagPDtype+"_result.txt"
     with open(outputname,"w") as f:
         f.write("## MatrixSize %5d %5d \n"%(total_size-total_edge,total_size))
         if len(dico_def_coor) != 0:
