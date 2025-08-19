@@ -8,13 +8,13 @@ from bin import matrix as m
 
 def get_glyc_lipids(lipid_list, RESNAME_GLYC):
     """
-    Get the glycerol atom name(s) for each lipid in the bilayer
+    Get the glycerol atom name(s) for each lipid in the bilayer.
 
     ---------------------------------------------------------------------------
     INPUT:
-    lipid_list :  list
+    lipid_list:  list
         Contains the name of every lipid(s) in the bilayer given by the user
-    RESNAME_GLYC : dictionary
+    RESNAME_GLYC: dictionary
         Contains as keys to lipid name and as keys the glycerol atom name
     
     ---------------------------------------------------------------------------
@@ -85,18 +85,6 @@ def create_arrayZ(residues, list_resids, atom_mb, dist_suppl_Z, z_extr, up=True)
         tmp = np.flip(tmp)
         leaflet_listZ[resid] = tmp
     return leaflet_listZ
-
-#from list[list] determine max length
-def determine_lenMax(listeTot):
-    return max([len(data) for data in listeTot])
-
-# return the maximum value from list[list]
-def max_value_list(data):
-    return max(data)
-
-# return the minimum value from list[list]
-def min_value_list(data):
-    return min(data)
 
 # return min, max, mean from list[values]
 def min_max(data):
