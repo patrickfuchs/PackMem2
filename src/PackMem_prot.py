@@ -120,9 +120,9 @@ if __name__ == '__main__':
         z_atoms = system.positions[:,2].round(2)
         coords = np.stack((x_atoms, y_atoms, z_atoms), axis=1)
         # Get membrane dimension
-        xmin, xmax, xmean = l.min_max(x_atoms)
-        ymin, ymax, ymean = l.min_max(y_atoms)
-        zmin, zmax, zmean = l.min_max(z_atoms)
+        xmin, xmax, xmean = l.min_max_mean(x_atoms)
+        ymin, ymax, ymean = l.min_max_mean(y_atoms)
+        zmin, zmax, zmean = l.min_max_mean(z_atoms)
         
         upper_arrayZ = l.create_arrayZ(system.residues, upper_leaflet, glyc_mb, args.dist_suppl_Z, zmax)
         lower_arrayZ = l.create_arrayZ(system.residues, lower_leaflet, glyc_mb, args.dist_suppl_Z, zmin, up=False)
