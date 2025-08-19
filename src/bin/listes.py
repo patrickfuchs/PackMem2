@@ -69,9 +69,10 @@ def create_array(v1, v2, step):
 
 def create_arrayZ(residues, list_resids, atom_mb, dist_suppl_Z, z_extr, up=True):
     """
-    Create the listZ array for upper and lower leaflet
-    ---------------------------------------------------------------------------
-    INPUT:
+    Create an array of the Z position for upper and lower leaflet.
+
+    --------------------
+    INPUT
     residues : MDAnalysis ResidueGroup
         Contains the names of all the residues selected
     list_resids : numpy array
@@ -84,8 +85,8 @@ def create_arrayZ(residues, list_resids, atom_mb, dist_suppl_Z, z_extr, up=True)
         Either maximum or minimum value of z coord
     up : boolean
         If we are on the upper leaflet
-    ---------------------------------------------------------------------------
-    OUTPUT:
+    --------------------
+    OUTPUT
     numpy array
         Contains floats ranging from z_coord to zmin
         or from zmax to z_coord by 1.0 steps
