@@ -10,15 +10,15 @@ def get_glyc_lipids(lipid_list, RESNAME_GLYC):
     """
     Get the glycerol atom name(s) for each lipid in the bilayer.
 
-    ---------------------------------------------------------------------------
-    INPUT:
+    --------------------
+    INPUT
     lipid_list:  list
         Contains the name of every lipid(s) in the bilayer given by the user
     RESNAME_GLYC: dictionary
         Contains as keys to lipid name and as keys the glycerol atom name
     
-    ---------------------------------------------------------------------------
-    OUTPUT:
+    --------------------
+    OUTPUT
     str
         The glycerol atom name for each lipid given   
     """
@@ -28,6 +28,28 @@ def get_glyc_lipids(lipid_list, RESNAME_GLYC):
     atom_mb = set(atom_mb)
     atom_mb = ' '.join(atom_mb)
     return atom_mb
+
+def min_max_mean(data):
+    """
+    Find the minimum, maximum and mean of an array.
+
+    --------------------
+    INPUT
+    data: numpy array
+
+    --------------------
+    OUTPUT
+    float
+        The minimum of the data
+    float
+        The maximum of the data
+    float
+        The mean of the data
+    """
+    mini = min(data)
+    maxi = max(data)
+    mean = np.mean(data)
+    return mini, maxi, mean
 
 def create_array(v1, v2, step):
     """
@@ -85,10 +107,3 @@ def create_arrayZ(residues, list_resids, atom_mb, dist_suppl_Z, z_extr, up=True)
         tmp = np.flip(tmp)
         leaflet_listZ[resid] = tmp
     return leaflet_listZ
-
-# return min, max, mean from list[values]
-def min_max(data):
-    miniz = min(data)
-    maxiz = max(data)
-    meanz=(maxiz+miniz)/2.
-    return miniz, maxiz, meanz
