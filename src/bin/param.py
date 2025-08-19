@@ -135,30 +135,54 @@ def set_params(filename):
     resname_glyc = dict_2columns(lines)
     return resname_glyc
 
-# open VdW radius -> dict["RES(3L) ATOMname"]=radius in A 
-def read_radius(filename):
-    dico={}
-    data = read_file(filename)
-    for i in range(0, len(data)):
-        data[i]=data[i].strip()
-        if data[i] != "":
-            data[i]=data[i].split()
-            cle=data[i][0]+" "+data[i][1]
-            dico[cle]=float(data[i][2])
-    return dico
+def dict_4columns(list_str, nb):
+    """
+    Transform list of strings with 4 columns into a dictionary.
 
-#new 2016-08-18
-# open aliphatic table-> dict["RES(3L) ATOMname"]= p (polar) a (aliphatic) 
-def read_aliphatic(filename):
-    dico={}
-    data = read_file(filename)
-    for i in range(0, len(data)):
-        data[i]=data[i].strip()
-        if data[i] != "":
-            data[i]=data[i].split()
-            cle=data[i][0]+" "+data[i][1]
-            dico[cle]=data[i][3]
-    return dico
+    --------------------
+    INPUT
+    list_str: list
+        Contains strings as values
+    nb: int
+        index of the column that will be put as key
+    
+    --------------------
+    OUTPUT
+    dictionary
+        Contains for each string the key as first and second word
+        and value as third or fourth word
+    """
+    dic = {}
+    for line in list_str:
+        # Use space a separator
+        data = line.strip().split()
+        if nb == 2:
+            dic[data[0]+' '+data[1]] = float(data[nb])
+        else:
+            dic[data[0]+' '+data[1]] = data[nb]
+    return dic
+
+
+def set_rad_ali(filename):
+    """
+    Read the vdw_radii file and return two dictionaries.
+
+    --------------------
+    INPUT
+    filename: str
+        Name of the parameter file
+    
+    --------------------
+    OUTPUT
+    dictionary
+        Contains the radius of the atom
+    dictionary
+        Contains the aliphatic information of the atom
+    """
+    lines = read_file(filename)
+    radius = dict_4columns(lines, 2)
+    aliph = dict_4columns(lines, 3)
+    return  radius, aliph
 
 def read_ndx(ndx_file):
     """
@@ -174,7 +198,7 @@ def read_ndx(ndx_file):
         Contains the residue number of each lipid in the upper/lower leaflet
     """
     # Read the lines in the index file
-    lines = bfrg.read_file(ndx_file)
+    lines = read_file(ndx_file)
     # Get the 2nd and last last into a numpy array
     # Because these lines are where the residue numbers are
     index1 = np.array(lines[1].strip().split(' '), dtype=int)
