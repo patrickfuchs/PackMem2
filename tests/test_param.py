@@ -80,6 +80,25 @@ def test_set_params(tmp_path):
     wanted_output = {'DOP': 'C2', 'DOE': 'C2'}
     assert tested_output == wanted_output
 
+def test_dict_4columns():
+    list_str = ['DOP N 1.89 n', 'DOE C 1.45 a']
+    tested_ouput_1 = p.dict_4columns(list_str, 2)
+    wanted_output_1 = {"DOP N": 1.89, "DOE C": 1.45}
+    assert tested_ouput_1 == wanted_output_1
+    tested_ouput_2 = p.dict_4columns(list_str, 3)
+    wanted_output_2 = {"DOP N": 'n', "DOE C": 'a'}
+    assert tested_ouput_2 == wanted_output_2
+
+def test_set_rad_ali(tmp_path):
+    filename = tmp_path / "file.txt"
+    for f in [filename]:
+        f.write_text('DOP N 1.89 n\nDOE C 1.45 a\n')
+    output_rad, output_ali = p.set_rad_ali(filename)
+    wanted_rad = {'DOP N': 1.89, 'DOE C': 1.45}
+    wanted_ali = {'DOP N': 'n', 'DOE C': 'a'}
+    assert output_rad == wanted_rad
+    assert output_ali == wanted_ali
+
 def test_read_ndx(tmp_path):
     indexfile = tmp_path / "param.txt"
     for f in [indexfile]:
