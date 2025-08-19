@@ -162,7 +162,6 @@ def dict_4columns(list_str, nb):
             dic[data[0]+' '+data[1]] = data[nb]
     return dic
 
-
 def set_rad_ali(filename):
     """
     Read the vdw_radii file and return two dictionaries.
