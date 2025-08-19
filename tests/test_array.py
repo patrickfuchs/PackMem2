@@ -26,3 +26,8 @@ def test_min_max_mean():
     assert out_min == wanted_min
     assert out_max == wanted_max
     assert pytest.approx(out_mean, 0.001) == wanted_mean
+
+def test_create_array():
+    tested_output = l.create_array(1, 2.4, 0.5)
+    wanted_output = np.array([1, 1.5, 2])
+    np.testing.assert_array_equal(tested_output, wanted_output)

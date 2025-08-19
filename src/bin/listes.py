@@ -53,13 +53,14 @@ def min_max_mean(data):
 
 def create_array(v1, v2, step):
     """
-    Create numpy array from v1 to v2 by step step
-    ---------------------------------------------------------------------------
-    INPUT:
-    v1 : float
-    v2 : float
-    step : float
-    ---------------------------------------------------------------------------
+    Create numpy array from v1 to v2 by step step.
+
+    --------------------
+    INPUT
+    v1: float
+    v2: float
+    step: float
+    --------------------
     OUTPUT
     numpy array
         Containing floats from v1 to v2 by step step
