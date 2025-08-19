@@ -72,12 +72,10 @@ if __name__ == '__main__':
     ######### READ PARAM FILES #########
     # RESNAME_GLYC = {'DOP': 'C2', 'DOE': 'C2', 'DPP': 'C2', etc}
     RESNAME_GLYC = p.set_params(args.paramFile)
-    # {'ALA N': 1.85, 'ALA HN': 0.22, 'ALA HT1': 0.22, etc}
+    # rad = {'ALA N': 1.85, 'ALA HN': 0.22, 'ALA HT1': 0.22, etc}
+    # ali = {'ALA N': 'n', 'ALA HN': 'n', 'ALA HT1': 'n', etc }
     # for the amino acids then the lipids
-    radius = p.read_radius(args.filesrad)
-    # {'ALA N': 'n', 'ALA HN': 'n', 'ALA HT1': 'n', etc }
-    # for the amino acids then the lipids
-    aliphatic = p.read_aliphatic(args.filesrad)
+    radius, aliphatic = p.set_rad_ali(args.filesrad)
 
 
     ######### LOAD UNIVERSE  #########
