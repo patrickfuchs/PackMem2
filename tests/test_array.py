@@ -31,3 +31,12 @@ def test_create_array():
     tested_output = l.create_array(1, 2.4, 0.5)
     wanted_output = np.array([1, 1.5, 2])
     np.testing.assert_array_equal(tested_output, wanted_output)
+
+def test_create_arrayZ():
+    residues = [] # pb ici car objet MDAnalysis
+    list_resids = [1, 2]
+    atom = 'C2'
+    tested_output = l.create_arrayZ(residues, list_resids, atom, 1.0, 13.0)
+    # supposons z_coord = 7 puis 10
+    wanted_output = {1: [13., 12., 11., 10., 9., 8., 7., 6.], 2: [13., 12., 11., 10., 9.]}
+    assert tested_output == wanted_output
