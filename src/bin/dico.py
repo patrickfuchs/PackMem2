@@ -2,6 +2,57 @@
 # Functions about dictionaries
 # R. Gautier 2015
 
+def get_radius(radius, res_name, atom_name):
+    """
+    Get radius from [lipid_name atom_name]
+
+    --------------------
+    INPUT
+    radius : dictionnary
+        Contains the atom's radiuses of lipids and amino acids
+    res_name : string
+        Name of the residue (lipid / amino acid)
+    atom_name : string
+        Name of the atom
+    
+    --------------------
+    OUTPUT
+    float
+        The radius of an lipid's / amino acid's atom
+    """
+    key = res_name+" "+atom_name
+    if key not in radius.keys():
+        print(f"ERROR : Association of lipid {res_name} and atom {atom_name} not found in parameter file")
+        sys.exit()
+    return radius[key]
+
+def get_aliphatic(aliphatic, res_name, atom_name):
+    """
+    Get aliphatic flag [Lipid_name Atom_name]
+
+    n for polar atoms
+    a for aliphatic atoms
+
+    --------------------
+    INPUT
+    aliphatic : dictionnary
+        Contains the nature of the atoms
+    res_name : string
+        Name of the residue (lipid / amino acid)
+    atom_name : string
+        Name of the atom
+    
+    --------------------
+    OUTPUT
+    float
+        The nature of an lipid's / amino acid's atom
+    """
+    key = res_name+" "+atom_name
+    if key not in aliphatic.keys():
+        print(f"ERROR : Association of lipid {res_name} and atom {atom_name} not found in parameter file")
+        sys.exit()
+    return aliphatic[key]
+
 # remove in dict keys from list_key
 def del_key_dico(dico, list_key):
     if len(list_key) != 0:
