@@ -68,7 +68,7 @@ def create_array(v1, v2, step):
     """
     return np.arange(v1, v2, step)
 
-def create_arrayZ(residues, list_resids, atom_mb, dist_suppl_Z, z_extr, up=True):
+def create_arrayZ(residues, array_resids, atom_mb, dist_suppl_Z, z_extr, up=True):
     """
     Create a dictionary of the Z position for upper and lower leaflet.
 
@@ -76,7 +76,7 @@ def create_arrayZ(residues, list_resids, atom_mb, dist_suppl_Z, z_extr, up=True)
     INPUT
     residues : MDAnalysis ResidueGroup
         Contains the names of all the residues selected
-    list_resids : numpy array
+    array_resids : numpy array
         Contains all the residue numbers selected
     atom_mb : str
         Name of the reference atom for the lipids (C2)
@@ -92,8 +92,8 @@ def create_arrayZ(residues, list_resids, atom_mb, dist_suppl_Z, z_extr, up=True)
         For each resid, it contains floats ranging from z_coord to zmin
         or from zmax to z_coord by 1.0 steps
     """
-    leaflet_listZ = {}
-    for resid in list_resids:
+    leaflet_arrayZ = {}
+    for resid in array_resids:
         # Get the residue at a given residue number (resid)
         residue = residues[residues.resids == resid][0]
         # Get the atom given in the parameter file
@@ -108,5 +108,5 @@ def create_arrayZ(residues, list_resids, atom_mb, dist_suppl_Z, z_extr, up=True)
                                             round(z_extr - 1.0, 2), -m.SIZE)
         # Reverse it
         tmp = np.flip(tmp)
-        leaflet_listZ[resid] = tmp
-    return leaflet_listZ
+        leaflet_arrayZ[resid] = tmp
+    return leaflet_arrayZ
