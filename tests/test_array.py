@@ -9,7 +9,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 
 
-from  bin import listes as l
+from  bin import arrays as l
 
 def test_get_glyc_lipids():
     glycerol = {'DOP': 'C2', 'DOE': 'C2', 'DPP': 'C2'}
