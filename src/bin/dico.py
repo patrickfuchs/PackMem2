@@ -5,17 +5,17 @@
 
 import sys
 
-def get_value(dict, resname, atom_name):
+def get_value(dict_info, resname, atom_name):
     """
     Get value from a dictionary of the form "lipid_name atom_name" : value.
 
     --------------------
     INPUT
-    radius : dictionnary
+    dict_info: dictionnary
         Contains the atom radius or nature (n for polar / a for apolar)
-    resname : string
+    resname: string
         Name of the residue (lipid / amino acid)
-    atom_name : string
+    atom_name: string
         Name of the atom
     
     --------------------
@@ -24,31 +24,31 @@ def get_value(dict, resname, atom_name):
         The atom radius or nature
     """
     key = resname+" "+atom_name
-    if key not in dict.keys():
+    if key not in dict_info.keys():
         print(f"ERROR : Association of lipid {resname} and atom {atom_name} not found in parameter file")
         sys.exit()
-    return dict[key]
+    return dict_info[key]
 
-def del_key_dict(dict, list_key):
+def del_key_dict(dict_info, list_key):
     """
     Remove in a dictionary keys from list_key.
 
     --------------------
     INPUT
-    dict: dictionary
+    dict_info: dictionary
         Contains information on the label clusters
     list_key: list
         Contains the labels on the edge of the matrix
 
     --------------------
-    INPUT
+    OUTPUT
     dictionary
         Contains information on the label clusters minus the edges ones
     """
     if len(list_key) != 0:
         for key in list_key:
-            del dict[key]
-    return dict
+            del dict_info[key]
+    return dict_info
 
 # return the maximum value from dico[key]=list
 def max_value_dico(dico):
