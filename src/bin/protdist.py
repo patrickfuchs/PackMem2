@@ -1,8 +1,47 @@
 #-*- coding: utf-8 -*-
 # Pg assign a distance group for each packing defect
 # R. Gerard 2024
+# M. Zygadlo 2025
 
 import numpy as np
+from bin import matrix as m
+
+def find_protein(matrix, defect, protein, arrayX, arrayY, zmean):
+    """
+    Locate the protein in the matrix.
+
+    --------------------
+    INPUT
+    matrix : numpy array 2D
+        Empty matrix (filled with 0)
+    defect : string
+        Take 'up' or 'lo' value. If we are working with the up or lo matrix
+    protein : MDAnalysis group
+        The protein(s)
+    arrayX : numpy array
+        List from xmin-1 to xmax+1 by step of 1.0
+    arrayY : numpy array
+        List from ymin-1 to ymax+1 by step of 1.0
+    zmean : float
+        The mean z position of the membrane
+
+    --------------------
+    OUTPUT
+    numpy array 2D
+        Contains the position of the protein(s) marked by 1
+    """
+    for i in range(len(protein.resids)) :
+        print(protein.positions[i,:])
+        # Get the coordinates X Y Z
+        coordtmp = [protein.positions[i,0].round(2), protein.positions[i,1].round(2), protein.positions[i,2].round(2)]
+        iX,iY = m.find_X_Y(coordtmp, arrayX, arrayY)
+        # Upper leaflet
+        if coordtmp[2] > zmean and defect == "up":
+            matrix[iX, iY] = 1
+        # Lower leaflet
+        if coordtmp[2] < zmean and defect == "lo":
+            matrix[iX, iY] = 1
+    return matrix
 
 def find_pd_border(arr2d_mem):
 
@@ -132,25 +171,6 @@ def assign_dist_group(prot_bord_coor, dico_pd_bord_coor, dist_thr):
             pd_labels_group[label] = 'far'
 
     return pd_labels_group
-
-
-def create_mat_group(dico_labels_coor_UP, pd_labels_group, mat):
-# Not essential. Create a matrix filled with the borders of the packing defects according to their distance group.
-    forme = mat.shape
-    nouvelle_matrice = np.zeros(forme)
-    
-    for label in pd_labels_group:
-
-        if pd_labels_group[label] == 'close':
-            for coord in dico_labels_coor_UP[label]:
-                nouvelle_matrice[coord] = 2 
-
-        if pd_labels_group[label] == 'far':
-            for coord in dico_labels_coor_UP[label]:
-                nouvelle_matrice[coord] = 1           
-    
-    return nouvelle_matrice
-
 
 def outputTXT_defects_prot(outputname, FlagPDtype, leaflet, dico_labels_group, dico_def_area):
     """Output a text file with information about the packing defects and their distance groups.
