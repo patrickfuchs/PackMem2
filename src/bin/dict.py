@@ -43,7 +43,7 @@ def del_key_dict(dict_info, list_key):
     --------------------
     OUTPUT
     dictionary
-        Contains information on the label clusters minus the edges ones
+        Contains information on the defect labels minus the edges ones
     """
     if len(list_key) != 0:
         for key in list_key:
