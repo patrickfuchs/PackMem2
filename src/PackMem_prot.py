@@ -11,7 +11,7 @@ import numpy as np
 import MDAnalysis as mda
 from MDAnalysis.analysis.leaflet import LeafletFinder 
 
-from bin import listes as l
+from bin import arrays as a
 from bin import matrix as m
 from bin import pdb as pdb
 from bin import connected_component as cc
@@ -88,7 +88,7 @@ if __name__ == '__main__':
 
     ######### Extract UPPER/LOWER leaflet ##########
     # Get the glycerol atom name(s)
-    glyc_mb = l.get_glyc_lipids(args.lipid.split('_'), RESNAME_GLYC)
+    glyc_mb = a.get_glyc_lipids(args.lipid.split('_'), RESNAME_GLYC)
     # If no index file seperating the leaflets
     if args.indexFile == None:
         # Create lists of the residue number  for upper and lower leaflets
@@ -120,17 +120,17 @@ if __name__ == '__main__':
         z_atoms = system.positions[:,2].round(2)
         coords = np.stack((x_atoms, y_atoms, z_atoms), axis=1)
         # Get membrane dimension
-        xmin, xmax, xmean = l.min_max_mean(x_atoms)
-        ymin, ymax, ymean = l.min_max_mean(y_atoms)
-        zmin, zmax, zmean = l.min_max_mean(z_atoms)
+        xmin, xmax, xmean = a.min_max_mean(x_atoms)
+        ymin, ymax, ymean = a.min_max_mean(y_atoms)
+        zmin, zmax, zmean = a.min_max_mean(z_atoms)
         
-        upper_arrayZ = l.create_arrayZ(system.residues, upper_leaflet, glyc_mb, args.dist_suppl_Z, zmax)
-        lower_arrayZ = l.create_arrayZ(system.residues, lower_leaflet, glyc_mb, args.dist_suppl_Z, zmin, up=False)
+        upper_arrayZ = a.create_arrayZ(system.residues, upper_leaflet, glyc_mb, args.dist_suppl_Z, zmax)
+        lower_arrayZ = a.create_arrayZ(system.residues, lower_leaflet, glyc_mb, args.dist_suppl_Z, zmin, up=False)
 
         # Build an array from xmin-1 to xmax+1 every 1.0
-        arrayX = l.create_array(int(xmin-1), int(xmax+2), m.SIZE)
+        arrayX = a.create_array(int(xmin-1), int(xmax+2), m.SIZE)
         # Build an array from ymin-1 to ymax+1 every 1.0
-        arrayY = l.create_array(int(ymin-1), int(ymax+2), m.SIZE)
+        arrayY = a.create_array(int(ymin-1), int(ymax+2), m.SIZE)
 
 
         ####################  Compute Matrix    #################
