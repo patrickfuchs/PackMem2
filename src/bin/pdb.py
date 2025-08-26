@@ -2,18 +2,6 @@
 # Functions about PDB data and output files
 # R. Gautier A. Bacle 2015
 
-# modify data from PDB with the good lipid name
-# Rename lipid from 3 letters to 4 
-def modifyPDBdata(datapdb, dico,startID,endID):
-    for i, val in enumerate(datapdb):
-        if val[0:4] == "ATOM":
-            for key in dico:
-                if int(val[startID:endID]) in dico[key] and len(key) < 3:
-                    datapdb[i]=val[:17]+key+"  "+val[21:]
-                if int(val[startID:endID]) in dico[key] and len(key) == 3:
-                    datapdb[i]=val[:17]+key+" "+val[21:]
-    return datapdb
-
 #determine position of res_identifier in pdb file
 def determine_pos_resid(data):
     # The residue number can exceed PDB_limit(9999)
