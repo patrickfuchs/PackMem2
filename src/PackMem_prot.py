@@ -346,17 +346,17 @@ if __name__ == '__main__':
             u.select_atoms(f"resid {lower_leaflet[0]}:{lower_leaflet[-1]}").write(f"{args.outputname}{ts.frame}_Lower_leaflet.pdb")
             
             # Write the Matrix (each cell) into a PDB
-            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "deep", "Up", ts.frame,
+            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}_TotalUp_Deep", ts.frame,
                                     arrayX, arrayY, valZmax, MatrixUp_Deep)
-            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "deep", "Lo", ts.frame,
+            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}_TotalLo_Deep", ts.frame,
                                     arrayX, arrayY, valZmin, MatrixLo_Deep)
-            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "shallow", "Up", ts.frame,
+            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}_TotalUp_Shallow", ts.frame,
                                     arrayX, arrayY, valZmax, MatrixUp_Shallow)
-            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "shallow", "Lo", ts.frame,
+            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}_TotalLo_Shallow", ts.frame,
                                     arrayX, arrayY, valZmin, MatrixLo_Shallow)
-            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "all", "Up", ts.frame,
+            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}_TotalUp_All", ts.frame,
                                     arrayX, arrayY, valZmax, MatrixUp_All)
-            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}", "all", "Lo", ts.frame,
+            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}_TotalLo_All", ts.frame,
                                     arrayX, arrayY, valZmin, MatrixLo_All)
             
             # Write the defects into a PDB
