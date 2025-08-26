@@ -83,7 +83,7 @@ def outputPDB_Total_matrix(out_name, num_frame, arrayX, arrayY, z_extr, Matrix_f
     z_extr: float
         The maximum or  minimum z value
     Matrix_final: numpy array
-        Contains the label of the defects or np.nan for the edges
+        Contains the types of the defects or np.nan for the edges
     """
     with open(f'{out_name}.pdb',"w") as f_tot:
         f_tot.write(f"MODEL      {num_frame:3d}\n")
@@ -116,7 +116,7 @@ def outputPDB_defects(out_name, num_frame, arrayX, arrayY, z_extr,
     z_extr: float
         The maximum or  minimum z value
     Matrix_final: numpy array
-        Contains the label of the defects or np.nan for the edges
+        Contains the label of the defects or 0.0 for the edges
     edge_labels: list
         Contains the labels on the edge of the matrix
     """
