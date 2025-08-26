@@ -83,7 +83,3 @@ def min_value_dict(dict_arrayZ):
         The minimum value from the dictionary
     """
     return min([min(arrayZ) for arrayZ in dict_arrayZ.values()])
-
-# from dico[liste] determine max length
-def determine_lenMax2(dicoTot):
-    return max([len(dicoTot[key]) for key in dicoTot])
