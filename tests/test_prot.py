@@ -21,19 +21,19 @@ def test_find_protein():
     u.add_TopologyAttr("resid", list_resids)
 
     # Add coordinates
-    coords = np.array([[1.140001, 0.930004, 0.370003],
+    coords = np.array([[2.140001, 0.930004, 0.370003],
                 [0.360003, 1.550003, 1.860004]])
     u.atoms.positions = coords
 
     matrix = np.zeros((3,3))
     defect = 'up'
     protein = u.atoms
-    arrayX = [0., 1., 2.]
-    arrayY = [0., 1., 2.]
+    arrayX = np.array([0., 1., 2.])
+    arrayY = np.array([0., 1., 2.])
     zmean =  1.0
 
     tested_out = prot.find_protein(matrix, defect, protein, arrayX, arrayY, zmean)
-    wanted_out = np.array([[0, 0, 1],
-                            [0, 1, 0],
+    wanted_out = np.array([[0, 1, 0],
+                            [0, 0, 0],
                             [0, 0, 0]])
-    assert tested_out == wanted_out
+    np.testing.assert_array_equal(tested_out, wanted_out)
