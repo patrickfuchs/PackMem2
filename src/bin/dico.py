@@ -1,16 +1,19 @@
 #-*- coding: utf-8 -*-
 # Functions about dictionaries
 # R. Gautier 2015
+# M. Zygadlo 2025
 
-def get_radius(radius, res_name, atom_name):
+import sys
+
+def get_value(dict, resname, atom_name):
     """
-    Get radius from [lipid_name atom_name]
+    Get value from a dictionary of the form "lipid_name atom_name" : value.
 
     --------------------
     INPUT
     radius : dictionnary
-        Contains the atom's radiuses of lipids and amino acids
-    res_name : string
+        Contains the atom radius or nature (n for polar / a for apolar)
+    resname : string
         Name of the residue (lipid / amino acid)
     atom_name : string
         Name of the atom
@@ -18,40 +21,13 @@ def get_radius(radius, res_name, atom_name):
     --------------------
     OUTPUT
     float
-        The radius of an lipid's / amino acid's atom
+        The atom radius or nature
     """
-    key = res_name+" "+atom_name
-    if key not in radius.keys():
-        print(f"ERROR : Association of lipid {res_name} and atom {atom_name} not found in parameter file")
+    key = resname+" "+atom_name
+    if key not in dict.keys():
+        print(f"ERROR : Association of lipid {resname} and atom {atom_name} not found in parameter file")
         sys.exit()
-    return radius[key]
-
-def get_aliphatic(aliphatic, res_name, atom_name):
-    """
-    Get aliphatic flag [Lipid_name Atom_name]
-
-    n for polar atoms
-    a for aliphatic atoms
-
-    --------------------
-    INPUT
-    aliphatic : dictionnary
-        Contains the nature of the atoms
-    res_name : string
-        Name of the residue (lipid / amino acid)
-    atom_name : string
-        Name of the atom
-    
-    --------------------
-    OUTPUT
-    float
-        The nature of an lipid's / amino acid's atom
-    """
-    key = res_name+" "+atom_name
-    if key not in aliphatic.keys():
-        print(f"ERROR : Association of lipid {res_name} and atom {atom_name} not found in parameter file")
-        sys.exit()
-    return aliphatic[key]
+    return dict[key]
 
 # remove in dict keys from list_key
 def del_key_dico(dico, list_key):

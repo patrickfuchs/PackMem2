@@ -148,8 +148,8 @@ if __name__ == '__main__':
         v = 5.0
         # For each atoms of lipids
         for i, (res_id, atom_name, res_name) in enumerate(zip(res_ids, system.names, system.resnames)):
-            radius_atm = m.get_radius(radius, res_name, atom_name)
-            aliph_atom = m.get_aliphatic(aliphatic, res_name, atom_name)
+            radius_atm = d.get_value(radius, res_name, atom_name)
+            aliph_atom = d.get_value(aliphatic, res_name, atom_name)
             coordtmp = coords[i]
             #### Upper leaflet ####
             if res_id in upper_leaflet :
