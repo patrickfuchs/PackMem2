@@ -6,7 +6,7 @@
 import numpy as np
 
 
-def write_a_pdb_line(file, nb_atm, atm_name, nb_res, coords, nb_defect):
+def write_a_pdb_line(nb_atm, atm_name, nb_res, coords, nb_defect):
     """
     Write a PDB line in a given file.
 
@@ -25,7 +25,7 @@ def write_a_pdb_line(file, nb_atm, atm_name, nb_res, coords, nb_defect):
     nb_defect: int
         The label of the defect
     """
-    file.write(f"{'ATOM  ':6s}{nb_atm:5d} {'  H1':4s} {atm_name:3s}  {nb_res:4d}    {float(coords[0]):8.3f}{float(coords[1]):8.3f}{float(coords[2]):8.3f}{1.0:6.2f}{nb_defect:6.2f}\n")
+    return f"{'ATOM  ':6s}{nb_atm:5d} {'  H1':4s} {atm_name:3s}  {nb_res:4d}    {float(coords[0]):8.3f}{float(coords[1]):8.3f}{float(coords[2]):8.3f}{1.0:6.2f}{nb_defect:6.2f}\n"
 
 def outputPDB_Total_matrix(out_name, num_frame, arrayX, arrayY, z_extr, Matrix_final):
     """
@@ -54,9 +54,9 @@ def outputPDB_Total_matrix(out_name, num_frame, arrayX, arrayY, z_extr, Matrix_f
             for j, ind_matY in enumerate(arrayY):
                 coordtmp = [ind_matX, ind_matY, z_extr]
                 if np.isnan(Matrix_final[i][j]):
-                    write_a_pdb_line(f_tot, nb, "EDG", nb, coordtmp, -1)
+                    f_tot.write(write_a_pdb_line(nb, "EDG", nb, coordtmp, -1))
                 else:
-                    write_a_pdb_line(f_tot, nb, "MAT", nb, coordtmp, Matrix_final[i][j])
+                    f_tot.write(write_a_pdb_line(nb, "MAT", nb, coordtmp, Matrix_final[i][j]))
         f_tot.write("ENDMDL\n")
 
 def outputPDB_defects(out_name, num_frame, arrayX, arrayY, z_extr, 
@@ -93,8 +93,7 @@ def outputPDB_defects(out_name, num_frame, arrayX, arrayY, z_extr,
                         dict_Def[int(label_def)]=[]
                     nb+=1
                     coordtmp=[ind_matX, ind_matY, z_extr]
-                    dict_Def[int(label_def)].append(
-                                f"{'ATOM  ':6s}{nb:5d} {'  H1':4s} {'DEF':3s}  {int(label_def):4d}    {float(coordtmp[0]):8.3f}{float(coordtmp[1]):8.3f}{float(coordtmp[2]):8.3f}{1.0:6.2f}{label_def:6.2f}\n")
+                    dict_Def[int(label_def)].append(write_a_pdb_line(nb, 'DEF', int(label_def), coordtmp, label_def))
         keys_def= list(dict_Def.keys())
         keys_def.sort()
         nb=0
