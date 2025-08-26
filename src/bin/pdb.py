@@ -27,19 +27,34 @@ def write_a_pdb_line(file, nb_atm, atm_name, nb_res, coords, nb_defect):
     """
     file.write(f"{'ATOM  ':6s}{nb_atm:5d} {'  H1':4s} {atm_name:3s}  {nb_res:4d}    {float(coords[0]):8.3f}{float(coords[1]):8.3f}{float(coords[2]):8.3f}{1.0:6.2f}{nb_defect:6.2f}\n")
 
-# create output file with Total Matrix in pdb format
-def outputPDB_Total_matrix(outputname, FlagPDtype, leaflet, num_frame, listX, 
-                            listY, Rpos, Matrix_final):
-    outputname = outputname + "_Total" + leaflet+ "_" + FlagPDtype + ".pdb"
-    with open(outputname,"w") as f:
-        f.write("MODEL      %3d\n"%(num_frame))
+def outputPDB_Total_matrix(out_name, num_frame, arrayX, arrayY, z_extr, Matrix_final):
+    """
+    Create output file with Total Matrix in pdb format.
+
+    --------------------
+    INPUT
+    out_name: string
+        Name of the output PDB file
+    num_frame: int
+        The  frame number
+    arrayX: numpy array
+        Array from xmin-1 to xmax+1 by step of 1.0
+    arrayY: numpy array
+        Array from ymin-1 to ymax+1 by step of 1.0
+    z_extr: float
+        The maximum or  minimum z value
+    Matrix_final: numpy array
+        Contains the label of the defects or np.nan for the edges
+    """
+    with open(f'{out_name}.pdb',"w") as f:
+        f.write(f"MODEL      {num_frame:3d}\n")
         nb=0
-        for j, sliceX in enumerate(listX):
+        for j, ind_matX in enumerate(arrayX):
             nb+=1
-            for k, sliceY in enumerate(listY):
-                coordtmp = [sliceX, sliceY, Rpos]
+            for k, ind_matY in enumerate(arrayY):
+                coordtmp = [ind_matX, ind_matY, z_extr]
                 if np.isnan(Matrix_final[j][k]):
-                    write_a_pdb_line(f, nb, "EDG",  nb, coordtmp, -1)
+                    write_a_pdb_line(f, nb, "EDG", nb, coordtmp, -1)
                 else:
                     write_a_pdb_line(f, nb, "MAT", nb, coordtmp, Matrix_final[j][k])
         f.write("ENDMDL\n")
