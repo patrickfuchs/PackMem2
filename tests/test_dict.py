@@ -42,3 +42,11 @@ def test_max_value_dict():
     tested_out = d.max_value_dict(dictionary)
     wanted_out = 11.7
     assert tested_out == wanted_out
+
+def test_min_value_dict():
+    dictionary = {1: np.array([2.34, 3.34, 4.34, 5.34, 6.34, 7.34, 8.34]),
+                  2: np.array([2.7, 3.7, 4.7, 5.7, 6.7, 7.7, 8.7, 9.7,
+                               10.7, 11.7])}
+    tested_out = d.min_value_dict(dictionary)
+    wanted_out = 2.34
+    assert tested_out == wanted_out

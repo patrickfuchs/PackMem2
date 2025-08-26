@@ -336,7 +336,7 @@ if __name__ == '__main__':
         if args.pdbout :
             # Get the max/min of the z_coord+1
             valZmax=float(d.max_value_dict(upper_arrayZ))
-            valZmin=float(d.min_value_dico(lower_arrayZ))
+            valZmin=float(d.min_value_dict(lower_arrayZ))
 
             # Write the leaflets into a PDB
             # To ignore the warnings when writing a PDB

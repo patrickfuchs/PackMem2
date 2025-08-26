@@ -67,9 +67,22 @@ def max_value_dict(dict_arrayZ):
     """
     return max([max(arrayZ) for arrayZ in dict_arrayZ.values()])
 
-# return the minimum value from dico[key]=list
-def min_value_dico(dico):
-    return min([min(data2) for data2 in [dico[data] for data in dico.keys()]])
+def min_value_dict(dict_arrayZ):
+    """
+    Return the minimum value from the dictionary.
+
+    --------------------
+    INPUT
+    dict_arrayZ:  dictionary
+        For each resid, contains array of floats ranging from z_coord to zmin
+        or from zmax to z_coord by 1.0 steps
+    
+    --------------------
+    OUTPUT
+    float
+        The minimum value from the dictionary
+    """
+    return min([min(arrayZ) for arrayZ in dict_arrayZ.values()])
 
 # from dico[liste] determine max length
 def determine_lenMax2(dicoTot):
