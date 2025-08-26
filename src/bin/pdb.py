@@ -46,48 +46,62 @@ def outputPDB_Total_matrix(out_name, num_frame, arrayX, arrayY, z_extr, Matrix_f
     Matrix_final: numpy array
         Contains the label of the defects or np.nan for the edges
     """
-    with open(f'{out_name}.pdb',"w") as f:
+    with open(f'{out_name}.pdb',"w") as f_tot:
+        f_tot.write(f"MODEL      {num_frame:3d}\n")
+        nb=0
+        for i, ind_matX in enumerate(arrayX):
+            nb+=1
+            for j, ind_matY in enumerate(arrayY):
+                coordtmp = [ind_matX, ind_matY, z_extr]
+                if np.isnan(Matrix_final[i][j]):
+                    write_a_pdb_line(f_tot, nb, "EDG", nb, coordtmp, -1)
+                else:
+                    write_a_pdb_line(f_tot, nb, "MAT", nb, coordtmp, Matrix_final[i][j])
+        f_tot.write("ENDMDL\n")
+
+def outputPDB_defects(out_name, num_frame, arrayX, arrayY, z_extr, 
+                        Matrix_final, cluster_edge):
+    """
+    Create output file with defects only in pdb format.
+
+    --------------------
+    INPUT
+    out_name: string
+        Name of the output PDB file
+    num_frame: int
+        The  frame number
+    arrayX: numpy array
+        Array from xmin-1 to xmax+1 by step of 1.0
+    arrayY: numpy array
+        Array from ymin-1 to ymax+1 by step of 1.0
+    z_extr: float
+        The maximum or  minimum z value
+    Matrix_final: numpy array
+        Contains the label of the defects or np.nan for the edges
+    edge_labels: list
+        Contains the labels on the edge of the matrix
+    """
+    with open(f"{out_name}.pdb","w") as f:
         f.write(f"MODEL      {num_frame:3d}\n")
         nb=0
-        for j, ind_matX in enumerate(arrayX):
-            nb+=1
-            for k, ind_matY in enumerate(arrayY):
-                coordtmp = [ind_matX, ind_matY, z_extr]
-                if np.isnan(Matrix_final[j][k]):
-                    write_a_pdb_line(f, nb, "EDG", nb, coordtmp, -1)
-                else:
-                    write_a_pdb_line(f, nb, "MAT", nb, coordtmp, Matrix_final[j][k])
-        f.write("ENDMDL\n")
-
-
-# create output file with defects only in pdb format
-def outputPDB_defects(outputname, FlagPDtype, leaflet, num_frame, listX, listY, Rpos, 
-                        Matrix_fin, cluster_edge):
-    outputname = outputname + "_Defect" + leaflet+ "_"+ FlagPDtype +".pdb"
-    with open(outputname,"w") as f:
-        f.write("MODEL      %3d\n"%(num_frame))
-        nb=0
-        dicoDef={}
-        for j, sliceX in enumerate(listX):
-            for k, sliceY in enumerate(listY):
-                num_def = Matrix_fin[j][k]
-                if num_def !=0. and num_def not in cluster_edge:
-                    if int(num_def) not in dicoDef:
-                        dicoDef[int(num_def)]=[]
+        dict_Def={}
+        for i, ind_matX in enumerate(arrayX):
+            for j, ind_matY in enumerate(arrayY):
+                label_def = Matrix_final[i][j]
+                if label_def !=0. and label_def not in cluster_edge:
+                    if int(label_def) not in dict_Def:
+                        dict_Def[int(label_def)]=[]
                     nb+=1
-                    coordtmp=[sliceX,sliceY, Rpos]
-                    dicoDef[int(num_def)].append(
-                                "%6s%5d %4s %3s  %4d    %8.3f%8.3f%8.3f%6.2f%6.2f\n"%
-                                ("ATOM  ", nb,"  H1", "DEF", int(num_def),
-                                float(coordtmp[0]),float(coordtmp[1]),float(coordtmp[2]),
-                                1.0,num_def))
-        listdef = list(dicoDef.keys())
-        listdef.sort()
+                    coordtmp=[ind_matX, ind_matY, z_extr]
+                    dict_Def[int(label_def)].append(
+                                f"{'ATOM  ':6s}{nb:5d} {'  H1':4s} {'DEF':3s}  {int(label_def):4d}    {float(coordtmp[0]):8.3f}{float(coordtmp[1]):8.3f}{float(coordtmp[2]):8.3f}{1.0:6.2f}{label_def:6.2f}\n")
+        keys_def= list(dict_Def.keys())
+        keys_def.sort()
         nb=0
-        for l in listdef:
-            for line in dicoDef[l]:
+        for key in keys_def:
+            for line in dict_Def[key]:
                 nb+=1
-                f.write("%s%5d%s"%(line[:6],nb,line[11:]))
+                f.write(f"{line[:6]}{nb:5d}{line[11:]}")
         f.write("ENDMDL\n")
 
 

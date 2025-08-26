@@ -42,3 +42,20 @@ def  test_outputPDB_Total_matrix():
                     "ATOM      2   H1 MAT     2       0.000  -2.000   4.430  1.00  1.00\n",
                     "ENDMDL\n"]
     assert content == wanted_lines
+
+def test_outputPDB_defects():
+    arrayX = [-1., 0.]
+    arrayY = [-3., -2.]
+    z_extr = 4.430
+    edge_labels = [1]
+    Matrix_final = np.array([[1, 0],
+                             [1, 2]])
+
+    pdb.outputPDB_defects('output', 1, arrayX, arrayY, z_extr, Matrix_final, edge_labels)
+
+    with open("output.pdb", 'r') as file_test:
+        content = file_test.readlines()
+    wanted_lines = ["MODEL        1\n",
+                    "ATOM      1   H1 DEF     2       0.000  -2.000   4.430  1.00  2.00\n",
+                    "ENDMDL\n"]
+    assert content == wanted_lines

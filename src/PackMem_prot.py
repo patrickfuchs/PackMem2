@@ -360,17 +360,17 @@ if __name__ == '__main__':
                                     arrayX, arrayY, valZmin, MatrixLo_All)
             
             # Write the defects into a PDB
-            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "deep", "Up", ts.frame,
+            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}_DefectsUp_Deep", ts.frame,
                                 arrayX, arrayY, valZmax, MatrixUp_labels_Deep, edge_labelsUp_Deep)
-            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "deep", "Lo", ts.frame,
+            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}_DefectsLo_Deep", ts.frame,
                                 arrayX, arrayY, valZmin, MatrixLo_labels_Deep, edge_labelsLo_Deep)
-            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "shallow", "Up", ts.frame,
+            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}_DefectsUp_Shallow", ts.frame,
                                 arrayX, arrayY, valZmax, MatrixUp_labels_Shallow, edge_labelsUp_Shallow)
-            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "shallow", "Lo", ts.frame,
+            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}_DefectsLo_Shallow", ts.frame,
                                 arrayX, arrayY, valZmin, MatrixLo_labels_Shallow, edge_labelsLo_Shallow)
-            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "all", "Up", ts.frame,
+            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}_DefectsUp_All", ts.frame,
                                 arrayX, arrayY, valZmax, MatrixUp_labels_All, edge_labelsUp_All)
-            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}", "all", "Lo", ts.frame,
+            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}_DefectsLo_All", ts.frame,
                                 arrayX, arrayY, valZmin, MatrixLo_labels_All, edge_labelsLo_All)
         
 
