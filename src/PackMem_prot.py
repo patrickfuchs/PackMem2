@@ -15,7 +15,7 @@ from bin import arrays as a
 from bin import matrix as m
 from bin import pdb as pdb
 from bin import connected_component as cc
-from bin import dico as d
+from bin import dict as d
 from bin import param as p
 from bin import protdist as pdist
 

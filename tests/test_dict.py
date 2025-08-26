@@ -8,7 +8,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 
 
-from bin import dico as d
+from bin import dict as d
 
 
 def test_get_value():
