@@ -50,9 +50,22 @@ def del_key_dict(dict_info, list_key):
             del dict_info[key]
     return dict_info
 
-# return the maximum value from dico[key]=list
-def max_value_dico(dico):
-    return max([max(data2) for data2 in [dico[data] for data in dico.keys()]])
+def max_value_dict(dict_arrayZ):
+    """
+    Return the maximum value from the dictionary.
+
+    --------------------
+    INPUT
+    dict_arrayZ:  dictionary
+        For each resid, contains array of floats ranging from z_coord to zmin
+        or from zmax to z_coord by 1.0 steps
+    
+    --------------------
+    OUTPUT
+    float
+        The maximum value from the dictionary
+    """
+    return max([max(arrayZ) for arrayZ in dict_arrayZ.values()])
 
 # return the minimum value from dico[key]=list
 def min_value_dico(dico):

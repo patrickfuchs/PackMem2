@@ -335,7 +335,7 @@ if __name__ == '__main__':
         # final matrix values PD (X,Y) with Z cooresponding to the max(Upper/lowerZlevel)
         if args.pdbout :
             # Get the max/min of the z_coord+1
-            valZmax=float(d.max_value_dico(upper_arrayZ))
+            valZmax=float(d.max_value_dict(upper_arrayZ))
             valZmin=float(d.min_value_dico(lower_arrayZ))
 
             # Write the leaflets into a PDB
