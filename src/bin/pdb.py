@@ -2,54 +2,6 @@
 # Functions about PDB data and output files
 # R. Gautier A. Bacle 2015
 
-#determine position of res_identifier in pdb file
-def determine_pos_resid(data):
-    # The residue number can exceed PDB_limit(9999)
-    flagID=0
-    i=0
-    while flagID == 0:
-        if data[i][:4] == "ATOM":
-            flagID=1
-            try:
-                resid=int(data[i][22:26])
-            except:
-                startID=21
-                endID=27
-            else:
-                startID=22
-                endID=26
-        i=i+1
-    #print(startID,endID)
-    return startID,endID
-
-#find num frame in pdb file (line MODEL) or 1 by default
-def find_numframe(data):
-    num_frame = 1
-    for line in data:
-        if line[:6].strip() == "MODEL":
-            num_frame = int(line.split()[-1])
-    return num_frame
-    
-# create output file of atoms in list_res in PDB format
-def outputPDB_leaflet(res_ids, res_names, atom_names, atom_pos, list_res, outputname, num_frame=1):
-    with open(outputname,"w") as f:
-        f.write(f"MODEL        {num_frame+1}\n")
-        atom_num = 0
-        for i in range(len(res_ids)):
-                if res_ids[i] in list_res:
-                    atom_num += 1
-                    f.write(f"{'ATOM':6s}{atom_num:5d} {atom_names[i]:^5s}{res_names[i]:3s}  {res_ids[i]:4d}{atom_pos[i][0]:12.3f}{atom_pos[i][1]:8.3f}{atom_pos[i][2]:8.3f}{1.00:6.2f}  {0.00:<16.2f}\n")
-        f.write("ENDMDL\n")
-
-# create output file of atm_name in listres in PDB format
-def outputPDB_leafletAtm(data, listres, outputname, startID, endID, atm_name):
-    with open(outputname,"w") as f:
-        for val in data:
-            if val[0:4] == "ATOM":
-                res_number=int(val[startID:endID])
-                atm=val[12:16].strip()
-                if res_number in listres and atm == atm_name:
-                    f.write(val)
 
 def write_a_pdb_line(file, nb_atm, atm_name, nb_res, coords, nb_defect):
     file.write("%6s%5d %4s %3s  %4d    %8.3f%8.3f%8.3f%6.2f%6.2f\n"%
