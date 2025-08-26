@@ -1,6 +1,7 @@
 #-*- coding: utf-8 -*-
 # Functions to create, analyse list variables
 # R. Gautier 2015
+# M. Zygadlo 2025
 
 import numpy as np
 
