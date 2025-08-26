@@ -1,12 +1,31 @@
 #-*- coding: utf-8 -*-
 # Functions about PDB data and output files
 # R. Gautier A. Bacle 2015
+# M. Zygadlo 2025
+
+import numpy as np
 
 
 def write_a_pdb_line(file, nb_atm, atm_name, nb_res, coords, nb_defect):
-    file.write("%6s%5d %4s %3s  %4d    %8.3f%8.3f%8.3f%6.2f%6.2f\n"%
-                ("ATOM  ",nb_atm,"  H1", atm_name, nb_res ,float(coords[0]),float(coords[1]),
-                float(coords[2]),1.0,nb_defect))
+    """
+    Write a PDB line in a given file.
+
+    --------------------
+    INPUT
+    file: file
+        An open file to write into
+    nb_atm: int
+        The atom number
+    atm_name: string
+        The atom name
+    nb_res: int
+        The residue number
+    coords: list
+        Contains the coordinates x,y,z of the atom
+    nb_defect: int
+        The label of the defect
+    """
+    file.write(f"{'ATOM  ':6s}{nb_atm:5d} {'  H1':4s} {atm_name:3s}  {nb_res:4d}    {float(coords[0]):8.3f}{float(coords[1]):8.3f}{float(coords[2]):8.3f}{1.0:6.2f}{nb_defect:6.2f}\n")
 
 # create output file with Total Matrix in pdb format
 def outputPDB_Total_matrix(outputname, FlagPDtype, leaflet, num_frame, listX, 
@@ -19,7 +38,7 @@ def outputPDB_Total_matrix(outputname, FlagPDtype, leaflet, num_frame, listX,
             nb+=1
             for k, sliceY in enumerate(listY):
                 coordtmp = [sliceX, sliceY, Rpos]
-                if Matrix_final[j][k] == "NA":
+                if np.isnan(Matrix_final[j][k]):
                     write_a_pdb_line(f, nb, "EDG",  nb, coordtmp, -1)
                 else:
                     write_a_pdb_line(f, nb, "MAT", nb, coordtmp, Matrix_final[j][k])
