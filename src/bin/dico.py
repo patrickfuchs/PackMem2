@@ -29,12 +29,26 @@ def get_value(dict, resname, atom_name):
         sys.exit()
     return dict[key]
 
-# remove in dict keys from list_key
-def del_key_dico(dico, list_key):
+def del_key_dict(dict, list_key):
+    """
+    Remove in a dictionary keys from list_key.
+
+    --------------------
+    INPUT
+    dict: dictionary
+        Contains information on the label clusters
+    list_key: list
+        Contains the labels on the edge of the matrix
+
+    --------------------
+    INPUT
+    dictionary
+        Contains information on the label clusters minus the edges ones
+    """
     if len(list_key) != 0:
-        for m in list_key:
-            del dico[m]
-    return dico
+        for key in list_key:
+            del dict[key]
+    return dict
 
 # determine if duplicate in residue number
 def detect_duplicate(dico):
