@@ -103,27 +103,42 @@ def outputPDB_defects(out_name, num_frame, arrayX, arrayY, z_extr,
                 f.write(f"{line[:6]}{nb:5d}{line[11:]}")
         f.write("ENDMDL\n")
 
+def outputTXT_defects(out_name, dict_def_area, dict_def_coor, 
+                        total_size, total_edge, arrayX, arrayY):
+    """
+    Create output file for packing defects in TXT format.
 
-#create output file for packing defects in TXT format
-## MatrixSize  9646  9801         # Membrane matrix size, Total matrix size
-## Total   51   582 11.41 6.034   # number of packing defects, total area of packing defects, average size, pourcent of membrane (Membrane matrix size)
-# 1    7     7.00    55.00        #defect size Xposition   Yposition
-# 2    1     7.00    58.00
-def outputTXT_defects(outputname, FlagPDtype, leaflet, dico_def_area, dico_def_coor, 
-                        total_size, total_edge, listX, listY):
-    outputname = outputname + "_" + leaflet+ "_"+FlagPDtype+"_result.txt"
-    with open(outputname,"w") as f:
-        f.write("## MatrixSize %5d %5d \n"%(total_size-total_edge,total_size))
-        if len(dico_def_coor) != 0:
-            f.write("## Total %4d %5d %4.2f %5.3f\n"%(len(dico_def_area),sum(dico_def_area.values()), sum(dico_def_area.values())/float(len(dico_def_area)), (sum(dico_def_area.values())*100.)/(total_size-total_edge)))
+    ## MatrixSize  9646  9801           # Membrane_matrix_size  Total_matrix_size
+    ## Total   51   582 11.41 6.034     # Total_packing_defect_number, total_packing_defect_area, average_size, pourcent_of_membrane
+    1    7     7.00    55.00            # Defect_label  defect_size  X_position  Y_position
+    2    1     7.00    58.00
+
+    --------------------
+    INPUT
+    out_name: string
+        Name of the output result txt file
+    dict_def_area: dictionary
+        Contains the area of each label
+    dict_def_coor: dictionary
+        Contains the first appearance of the label in the matrix
+    total_size: int
+        The total area of the matrix
+    total_edge: int
+        The sum of the defect areas on the edge
+    arrayX: numpy array
+        Array from xmin-1 to xmax+1 by step of 1.0
+    arrayY: numpy array
+        Array from ymin-1 to ymax+1 by step of 1.0
+    """
+    with open(f"{out_name}.txt","w") as f_result:
+        f_result.write(f"## MatrixSize {total_size-total_edge:5d} {total_size:5d} \n")
+        if len(dict_def_coor) != 0:
+            f_result.write(f"## Total {len(dict_def_area):4d} {sum(dict_def_area.values()):5d} {sum(dict_def_area.values())/float(len(dict_def_area)):4.2f} {(sum(dict_def_area.values())*100.)/(total_size-total_edge):5.3f}\n")
         else:
             #exception if no defect 
-            f.write("## Total 0 0 0.0 0.0\n")
+            f_result.write("## Total 0 0 0.0 0.0\n")
         i=0
-        for key in dico_def_coor:
-            # version with matrice position
-            #f.write("%3d %4d   %6.2f   %6.2f \n"%(i+1, dico_def_area[key], dico_def_coor[key][0], dico_def_coor[key][1]))
-            # version with x, y coordinates
-            f.write("%3d %4d   %6.2f   %6.2f \n"%(i+1, dico_def_area[key], listX[dico_def_coor[key][0]], listY[dico_def_coor[key][1]]))
+        for key in dict_def_coor:
+            f_result.write(f"{i+1:3d} {dict_def_area[key]:4d}   {arrayX[dict_def_coor[key][0]]:6.2f}   {arrayY[dict_def_coor[key][1]]:6.2f} \n")
             i+=1
 

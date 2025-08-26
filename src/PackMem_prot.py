@@ -315,19 +315,19 @@ if __name__ == '__main__':
         ####################  Output text file  #################
         # Compute the total area of the matrix
         total_area = len(arrayX) * len(arrayY)
-        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "deep", "Up", area_labelsUp_Deep, 
+        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}_Up_Deep_result", area_labelsUp_Deep, 
                             firstCoorUp_labels_Deep, total_area, area_edgeUp_Deep, arrayX, arrayY)
-        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "deep", "Lo", area_labelsLo_Deep, 
+        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}_Lo_Deep_result", area_labelsLo_Deep, 
                             firstCoorLo_labels_Deep, total_area, area_edgeLo_Deep, arrayX, arrayY)
         
-        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "shallow", "Up", area_labelsUp_Shallow, 
+        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}_Up_Shallow_result", area_labelsUp_Shallow, 
                             firstCoorUp_labels_Shallow, total_area, area_edgeUp_Shallow, arrayX, arrayY)
-        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "shallow", "Lo", area_labelsLo_Shallow, 
+        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}_Lo_Shallow_result", area_labelsLo_Shallow, 
                             firstCoorLo_labels_Shallow, total_area, area_edgeLo_Shallow, arrayX, arrayY)
         
-        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "all", "Up", area_labelsUp_All, 
+        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}_Up_All_result", area_labelsUp_All, 
                             firstCoorUp_labels_All, total_area, area_edgeUp_All, arrayX, arrayY)
-        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}", "all", "Lo", area_labelsLo_All, 
+        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}_Lo_All_result", area_labelsLo_All, 
                             firstCoorLo_labels_All, total_area, area_edgeLo_All, arrayX, arrayY)
 
 
