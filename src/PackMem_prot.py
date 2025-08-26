@@ -237,10 +237,10 @@ if __name__ == '__main__':
         area_edgeUp_Deep = m.count_edge_area(area_labelsUp_Deep, edge_labelsUp_Deep)
         area_edgeLo_Deep = m.count_edge_area(area_labelsLo_Deep, edge_labelsLo_Deep)
         # Clean dico defects (without edge)
-        area_labelsUp_Deep = d.del_key_dico(area_labelsUp_Deep, edge_labelsUp_Deep)
-        firstCoorUp_labels_Deep = d.del_key_dico(firstCoorUp_labels_Deep, edge_labelsUp_Deep)
-        area_labelsLo_Deep = d.del_key_dico(area_labelsLo_Deep, edge_labelsLo_Deep)
-        firstCoorLo_labels_Deep = d.del_key_dico(firstCoorLo_labels_Deep, edge_labelsLo_Deep)
+        area_labelsUp_Deep = d.del_key_dict(area_labelsUp_Deep, edge_labelsUp_Deep)
+        firstCoorUp_labels_Deep = d.del_key_dict(firstCoorUp_labels_Deep, edge_labelsUp_Deep)
+        area_labelsLo_Deep = d.del_key_dict(area_labelsLo_Deep, edge_labelsLo_Deep)
+        firstCoorLo_labels_Deep = d.del_key_dict(firstCoorLo_labels_Deep, edge_labelsLo_Deep)
         
 
         #### Shallow ####
@@ -264,10 +264,10 @@ if __name__ == '__main__':
         area_edgeUp_Shallow = m.count_edge_area(area_labelsUp_Shallow, edge_labelsUp_Shallow)
         area_edgeLo_Shallow = m.count_edge_area(area_labelsLo_Shallow, edge_labelsLo_Shallow)
         # Clean dico defects (without edge)
-        area_labelsUp_Shallow = d.del_key_dico(area_labelsUp_Shallow, edge_labelsUp_Shallow)
-        firstCoorUp_labels_Shallow = d.del_key_dico(firstCoorUp_labels_Shallow, edge_labelsUp_Shallow)
-        area_labelsLo_Shallow = d.del_key_dico(area_labelsLo_Shallow, edge_labelsLo_Shallow)
-        firstCoorLo_labels_Shallow = d.del_key_dico(firstCoorLo_labels_Shallow, edge_labelsLo_Shallow)
+        area_labelsUp_Shallow = d.del_key_dict(area_labelsUp_Shallow, edge_labelsUp_Shallow)
+        firstCoorUp_labels_Shallow = d.del_key_dict(firstCoorUp_labels_Shallow, edge_labelsUp_Shallow)
+        area_labelsLo_Shallow = d.del_key_dict(area_labelsLo_Shallow, edge_labelsLo_Shallow)
+        firstCoorLo_labels_Shallow = d.del_key_dict(firstCoorLo_labels_Shallow, edge_labelsLo_Shallow)
         # Eliminate nan inside (deep not shallow defect)
         MatrixUp_labels_Shallow, area_edgeUp_Shallow, labelsPb_Up_Shallow = \
             m.clean_NA_inside(MatrixUp_labels_Shallow, edge_labelsUp_Shallow,
@@ -283,10 +283,10 @@ if __name__ == '__main__':
             cc.delete_NApoints_inside(labelsPb_Lo_Shallow, MatrixLo_labels_Shallow,
                                     set_labelsLo_Shallow, area_labelsLo_Shallow)
         # Reclean dico defects (without edge)
-        area_labelsUp_Shallow = d.del_key_dico(area_labelsUp_Shallow, edge_labelsUp_Shallow)
-        firstCoorUp_labels_Shallow = d.del_key_dico(firstCoorUp_labels_Shallow, edge_labelsUp_Shallow)
-        area_labelsLo_Shallow = d.del_key_dico(area_labelsLo_Shallow, edge_labelsLo_Shallow)
-        firstCoorLo_labels_Shallow = d.del_key_dico(firstCoorLo_labels_Shallow, edge_labelsLo_Shallow)
+        area_labelsUp_Shallow = d.del_key_dict(area_labelsUp_Shallow, edge_labelsUp_Shallow)
+        firstCoorUp_labels_Shallow = d.del_key_dict(firstCoorUp_labels_Shallow, edge_labelsUp_Shallow)
+        area_labelsLo_Shallow = d.del_key_dict(area_labelsLo_Shallow, edge_labelsLo_Shallow)
+        firstCoorLo_labels_Shallow = d.del_key_dict(firstCoorLo_labels_Shallow, edge_labelsLo_Shallow)
 
 
         #### All ####
@@ -306,10 +306,10 @@ if __name__ == '__main__':
         area_edgeUp_All = m.count_edge_area(area_labelsUp_All, edge_labelsUp_All)
         area_edgeLo_All = m.count_edge_area(area_labelsLo_All, edge_labelsLo_All)
         # Clean dico defects (without edge)
-        area_labelsUp_All = d.del_key_dico(area_labelsUp_All, edge_labelsUp_All)
-        firstCoorUp_labels_All = d.del_key_dico(firstCoorUp_labels_All, edge_labelsUp_All)
-        area_labelsLo_All = d.del_key_dico(area_labelsLo_All, edge_labelsLo_All)
-        firstCoorLo_labels_All = d.del_key_dico(firstCoorLo_labels_All, edge_labelsLo_All)
+        area_labelsUp_All = d.del_key_dict(area_labelsUp_All, edge_labelsUp_All)
+        firstCoorUp_labels_All = d.del_key_dict(firstCoorUp_labels_All, edge_labelsUp_All)
+        area_labelsLo_All = d.del_key_dict(area_labelsLo_All, edge_labelsLo_All)
+        firstCoorLo_labels_All = d.del_key_dict(firstCoorLo_labels_All, edge_labelsLo_All)
 
 
         ####################  Output text file  #################
