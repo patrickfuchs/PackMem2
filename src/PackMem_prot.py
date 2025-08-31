@@ -83,18 +83,18 @@ if __name__ == '__main__':
     # If multiple lipids
     lipid_names = args.lipid.replace('_', ' ')
     # select the lipids in system
-    lipids = u.select_atoms(f"resname {lipid_names}")
-    
+    lipids = u.select_atoms(f"resname {lipid_names} or protein")
+    res_names = list(set(lipids.resnames))
 
     ######### Extract UPPER/LOWER leaflet ##########
     # Get the glycerol atom name(s)
-    glyc_mb = a.get_glyc_lipids(args.lipid.split('_'), RESNAME_GLYC)
+    glyc_mb = a.get_glyc_lipids(res_names, RESNAME_GLYC)
     # If no index file seperating the leaflets
     if args.indexFile == None:
         # Create lists of the residue number  for upper and lower leaflets
         L = LeafletFinder(lipids, f'name {glyc_mb}')
-        upper_leaflet = L.groups(0).resids
-        lower_leaflet = L.groups(1).resids
+        upper_leaflet = np.array(list(set(L.groups(0).resids)))
+        lower_leaflet = np.array(list(set(L.groups(1).resids)))
     else:
         upper_leaflet, lower_leaflet = p.read_ndx(args.indexFile)
 
@@ -124,8 +124,8 @@ if __name__ == '__main__':
         ymin, ymax, ymean = a.min_max_mean(y_atoms)
         zmin, zmax, zmean = a.min_max_mean(z_atoms)
         
-        upper_arrayZ = a.create_arrayZ(system.residues, upper_leaflet, glyc_mb, args.dist_suppl_Z, zmax)
-        lower_arrayZ = a.create_arrayZ(system.residues, lower_leaflet, glyc_mb, args.dist_suppl_Z, zmin, up=False)
+        upper_arrayZ = a.create_arrayZ(system.residues, upper_leaflet, RESNAME_GLYC, args.dist_suppl_Z, zmax)
+        lower_arrayZ = a.create_arrayZ(system.residues, lower_leaflet, RESNAME_GLYC, args.dist_suppl_Z, zmin, up=False)
 
         # Build an array from xmin-1 to xmax+1 every 1.0
         arrayX = a.create_array(int(xmin-1), int(xmax+2), m.SIZE)

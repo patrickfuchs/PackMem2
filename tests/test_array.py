@@ -34,6 +34,7 @@ def test_create_array():
     np.testing.assert_array_equal(tested_output, wanted_output)
 
 def test_create_arrayZ():
+    dict_glyc ={"DMPC": "C2", "POPC" : "C2", "ARG": "N"}
     n_atoms = 2
     u = mda.Universe.empty(n_atoms=n_atoms,
                            n_residues=n_atoms,
@@ -43,6 +44,10 @@ def test_create_arrayZ():
     # Add atom names
     atom_name = "C2"
     u.add_TopologyAttr("name", [atom_name] * n_atoms)
+    
+    # Add residue names
+    res_name = "DMPC"
+    u.add_TopologyAttr("resname", [res_name] * n_atoms)
 
     # Add residue IDs
     list_resids = [1, 2]
@@ -55,7 +60,7 @@ def test_create_arrayZ():
     u.atoms.positions = coords
 
     # Test Upper leaflet
-    tested_output = a.create_arrayZ(u.residues, list_resids, atom_name, 1.0, 13.0, up=True)
+    tested_output = a.create_arrayZ(u.residues, list_resids, dict_glyc, 1.0, 13.0, up=True)
     wanted_output = {1: np.array([13., 12., 11., 10., 9., 8., 7., 6.]),
                      2: np.array([13., 12., 11., 10., 9.])}
     # Compare each element
@@ -69,7 +74,7 @@ def test_create_arrayZ():
     coords[:, 2] = [7.34002, 10.7]
     u.atoms.positions = coords
 
-    tested_output = a.create_arrayZ(u.residues, list_resids, atom_name, 1.0, 3.24, up=False)
+    tested_output = a.create_arrayZ(u.residues, list_resids, dict_glyc, 1.0, 3.24, up=False)
     wanted_output = {1: np.array([2.34, 3.34, 4.34, 5.34, 6.34, 7.34, 8.34]),
                      2: np.array([2.7, 3.7, 4.7, 5.7, 6.7, 7.7, 8.7, 9.7,
                                   10.7, 11.7])}

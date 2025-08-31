@@ -24,9 +24,12 @@ def get_glyc_lipids(lipid_list, RESNAME_GLYC):
         The glycerol atom name for each lipid given   
     """
     atom_mb =  []
+    # Find the glycerol atom for all lipids selected
     for lip in lipid_list:
         atom_mb.append(RESNAME_GLYC[lip])
+    # Delete the multi occurrences
     atom_mb = set(atom_mb)
+    # Cast to string
     atom_mb = ' '.join(atom_mb)
     return atom_mb
 
@@ -68,7 +71,7 @@ def create_array(v1, v2, step):
     """
     return np.arange(v1, v2, step)
 
-def create_arrayZ(residues, array_resids, atom_mb, dist_suppl_Z, z_extr, up=True):
+def create_arrayZ(residues, array_resids, resname_glyc, dist_suppl_Z, z_extr, up=True):
     """
     Create a dictionary of the Z position for upper and lower leaflet.
 
@@ -78,8 +81,8 @@ def create_arrayZ(residues, array_resids, atom_mb, dist_suppl_Z, z_extr, up=True
         Contains the names of all the residues selected
     array_resids : numpy array
         Contains all the residue numbers selected
-    atom_mb : str
-        Name of the reference atom for the lipids (C2)
+    resname_glyc : dictionary
+        Contains the residue name as key and the reference atom as value
     dist_suppl_Z : float
         Supplementary distance from the z coord
     z_extr : float
@@ -94,11 +97,13 @@ def create_arrayZ(residues, array_resids, atom_mb, dist_suppl_Z, z_extr, up=True
     """
     leaflet_arrayZ = {}
     for resid in array_resids:
-        # Get the residue at a given residue number (resid)
-        residue = residues[residues.resids == resid][0]
-        # Get the atom given in the parameter file
-        atom = residue.atoms[residue.atoms.names == atom_mb][0]
-        # Get the z of this atom
+        # Select the residue with the selected res ID
+        selec_residue = residues[residues.resids == resid][0]
+        # Get the central atom of the residue
+        glyc = get_glyc_lipids([selec_residue.resname], resname_glyc)
+        # Get the atom
+        atom = selec_residue.atoms[selec_residue.atoms.names == glyc][0]
+        # Get the Z coord
         z_coord = atom.position[2]
         if up:
             tmp = create_array(round(z_coord - dist_suppl_Z, 2),
