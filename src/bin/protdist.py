@@ -42,39 +42,41 @@ def find_protein(matrix, defect, protein, arrayX, arrayY, zmean):
             matrix[iX, iY] = 1
     return matrix
 
-def find_pd_border(mat_label):
+def find_defects_edge(mat_label):
     """
     Find the border coordinates of packing defects based on their labels.
 
     --------------------
     INPUT
     mat_label : numpy array 2D
-        The labeled 2D array where each cell contains a label corresponding to a packing defect or the value 0.
+        Contains the packing defect labels or the value 0.
     --------------------
     OUTPUT
     dictionary
-        Contains labels as keys and values are lists of coordinates of the border cells for each label.
+        Contains labels as keys and values are lists of coordinates of the edge cells for each defect (label).
     """
+    # Get the indexes of where the defects are
+    defect_X = np.where(mat_label != 0)[0]
+    defect_Y = np.where(mat_label != 0)[1]
     # Dictionary to store the coordinates of the packing defects' edges based on their label
-    defects_border_coors = {}
+    defects_edges_coors = {}
 
-    # Go through the 2D array.
-    for i in range(mat_label.shape[0]):
-        for j in range(mat_label.shape[1]):
-            # If the cell is labeled and has at least one empty neighbor, then it is at the edge.
-            if mat_label[i, j] > 0 and (
-                mat_label[(i-1) % mat_label.shape[0], j] == 0 or  # top
-                mat_label[(i+1) % mat_label.shape[0], j] == 0 or  # bottom
-                mat_label[i, (j-1) % mat_label.shape[1]] == 0 or  # left
-                mat_label[i, (j+1) % mat_label.shape[1]] == 0     # right
+    for i in range(len(defect_X)):
+        indX = defect_X[i]
+        indY = defect_Y[i]
+        # If this cell is a defect edge
+        if (    mat_label[(indX-1) % mat_label.shape[0], indY] == 0 or  # top
+                mat_label[(indX+1) % mat_label.shape[0], indY] == 0 or  # bottom
+                mat_label[indX, (indY-1) % mat_label.shape[1]] == 0 or  # left
+                mat_label[indX, (indY+1) % mat_label.shape[1]] == 0     # right
             ):
-                # Get the label.
-                label = mat_label[i, j]
-                # Add the coordinates of the edge cell to the dictionary with the corresponding label.
-                if label not in defects_border_coors:
-                    defects_border_coors[label] = []
-                defects_border_coors[label].append((i, j))
-    return defects_border_coors
+            # Get the label
+            label = mat_label[indX, indY]
+            # Add the coordinates of the edge cell to the dictionary with the corresponding label
+            if label not in defects_edges_coors:
+                defects_edges_coors[label] = []
+            defects_edges_coors[label].append([indX, indY])                
+    return defects_edges_coors
 
 
 def find_prot_border(arr2d_prot):

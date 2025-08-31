@@ -413,9 +413,9 @@ if __name__ == '__main__':
                 # dictionnary label coords {lab1 = [(x1, y1), (x2, y2), ...],
                 #                           lab2 = [(x1, y1), (x2, y2), ...], 
                 #                           ...                              }
-                coor_label_bordersUp_Deep = pdist.find_pd_border(MatrixUp_labels_Deep)
-                coor_label_bordersUp_Shallow = pdist.find_pd_border(MatrixUp_labels_Shallow)
-                coor_label_bordersUp_All = pdist.find_pd_border(MatrixUp_labels_All)
+                coor_label_bordersUp_Deep = pdist.find_defects_edge(MatrixUp_labels_Deep)
+                coor_label_bordersUp_Shallow = pdist.find_defects_edge(MatrixUp_labels_Shallow)
+                coor_label_bordersUp_All = pdist.find_defects_edge(MatrixUp_labels_All)
 
                 # Get the coordinates of the matrix where the edges of the protein are located.
                 # list of tuples [(x1, y1), (x2, y2), ...]
@@ -437,9 +437,9 @@ if __name__ == '__main__':
 
             # If there are proteins on the lower leaflet
             elif len(np.argwhere(MatrixLo_prot_All > 0)) > 0:
-                coor_label_bordersLo_Deep = pdist.find_pd_border(MatrixLo_labels_Deep)
-                coor_label_bordersLo_Shallow = pdist.find_pd_border(MatrixLo_labels_Shallow)
-                coor_label_bordersLo_All = pdist.find_pd_border(MatrixLo_labels_All)
+                coor_label_bordersLo_Deep = pdist.find_defects_edge(MatrixLo_labels_Deep)
+                coor_label_bordersLo_Shallow = pdist.find_defects_edge(MatrixLo_labels_Shallow)
+                coor_label_bordersLo_All = pdist.find_defects_edge(MatrixLo_labels_All)
 
                 coor_prot_edgeLo_Deep = pdist.find_prot_border(MatrixLo_prot_Deep)
                 coor_prot_edgeLo_Shallow = pdist.find_prot_border(MatrixLo_prot_Shallow)
