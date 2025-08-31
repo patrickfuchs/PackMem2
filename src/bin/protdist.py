@@ -78,38 +78,37 @@ def find_defects_edge(mat_label):
             defects_edges_coors[label].append([indX, indY])                
     return defects_edges_coors
 
-
-def find_prot_border(arr2d_prot):
-
-    """Find the border coordinates of a protein in a 2D array.
-
-    Args:
-        arr2d_prot (2D array): The 2D array representing the protein, with positive values indicating the presence of protein.
-
-    Returns:
-        list: A list of coordinates (tuples) of the border cells of the protein.
+def find_prot_edge(mat_prot):
     """
+    Find the border coordinates of a protein in a 2D array.
 
-    if np.sum(arr2d_prot) == 0:
-        print(f"find_protein_border : No protein found") # If the protein is not in the given leaflet.
-        return 0
+    --------------------
+    INPUT
+    mat_prot: numpy array 2D
+        Contains 1 where the protein(s) is, 0 otherwise
 
+    --------------------
+    OUTPUT
+    list
+        Contains coordinates of the protein edges cells
+    """
+    # Get the indexes of where the protein(s) are
+    defect_X = np.where(mat_prot != 0)[0]
+    defect_Y = np.where(mat_prot != 0)[1]
     # List to store the coordinates of the protein edges.
     prot_bord_coor = []
 
-    # Go through the 2D array.
-    for i in range(arr2d_prot.shape[0]):
-        for j in range(arr2d_prot.shape[1]):
-            # If the cell is labeled and has at least one empty neighbor, then it is at the edge of the protein.
-            if arr2d_prot[i, j] > 0 and (
-                arr2d_prot[(i-1) % arr2d_prot.shape[0], j] == 0 or  # haut
-                arr2d_prot[(i+1) % arr2d_prot.shape[0], j] == 0 or  # bas
-                arr2d_prot[i, (j-1) % arr2d_prot.shape[1]] == 0 or  # gauche
-                arr2d_prot[i, (j+1) % arr2d_prot.shape[1]] == 0     # droite
-            ):
-                # Add the coordinates of the edge cell to the dictionary.
-                prot_bord_coor.append((i, j))
-    
+    for i in range(len(defect_X)):
+        indX = defect_X[i]
+        indY = defect_Y[i]
+        # If this cell is a protein edge
+        if (mat_prot[(indX-1) % mat_prot.shape[0], indY] == 0 or  # top
+            mat_prot[(indX+1) % mat_prot.shape[0], indY] == 0 or  # bottom
+            mat_prot[indX, (indY-1) % mat_prot.shape[1]] == 0 or  # left
+            mat_prot[indX, (indY+1) % mat_prot.shape[1]] == 0     # right
+        ):
+            # Add the coordinates of the edge cell to the dictionary.
+            prot_bord_coor.append([indX, indY])
     return prot_bord_coor
 
 

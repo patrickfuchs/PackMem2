@@ -46,3 +46,12 @@ def test_find_defects_edge():
     expected_out = prot.find_defects_edge(mat)
     wanted_out = {2:[[0, 0], [0, 1], [1, 0]], 3:[[0, 3]], 4:[[2, 2], [2, 3]]}
     assert expected_out == wanted_out
+
+def test_find_prot_edge():
+    mat = np.array([[0, 0, 1, 0],
+                   [0, 1, 1, 1],
+                   [0, 1, 1, 0]])
+    
+    expected_out = prot.find_prot_edge(mat)
+    wanted_out = [[0, 2], [1, 1], [1, 3], [2, 1], [2, 2]]
+    assert expected_out == wanted_out
