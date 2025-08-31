@@ -407,15 +407,12 @@ if __name__ == '__main__':
             
 
             # If there are proteins on the upper leaflet
-            if len(np.argwhere(MatrixUp_prot_All > 0)) > 0:
-                # Classification of Packing Defects by distance group 
-                # Get the coordinates of the matrix where the edges of the packing defects are located.
-                # dictionnary label coords {lab1 = [(x1, y1), (x2, y2), ...],
-                #                           lab2 = [(x1, y1), (x2, y2), ...], 
-                #                           ...                              }
-                coor_label_bordersUp_Deep = pdist.find_defects_edge(MatrixUp_labels_Deep)
-                coor_label_bordersUp_Shallow = pdist.find_defects_edge(MatrixUp_labels_Shallow)
-                coor_label_bordersUp_All = pdist.find_defects_edge(MatrixUp_labels_All)
+            if len(np.argwhere(MatrixUp_prot_All > 0)) > 0: 
+                # Get the coordinates of the matrix where the edges of the packing defects are located
+                # dictionnary label coords {lab1 = [[x1, y1], [x2, y2], ...], ...}
+                coor_label_edgesUp_Deep = pdist.find_defects_edge(MatrixUp_labels_Deep)
+                coor_label_edgesUp_Shallow = pdist.find_defects_edge(MatrixUp_labels_Shallow)
+                coor_label_edgesUp_All = pdist.find_defects_edge(MatrixUp_labels_All)
 
                 # Get the coordinates of the matrix where the edges of the protein are located.
                 # list of tuples [(x1, y1), (x2, y2), ...]
@@ -425,9 +422,9 @@ if __name__ == '__main__':
 
                 # Assign distance group for each packing defect, "far" or "close". Default threshold = 10 A.
                 # dict {lab1 : 'group', lab2 : 'group', ... }
-                DefectsUp_labels_group_Deep = pdist.assign_dist_group(coor_prot_edgeUp_Deep, coor_label_bordersUp_Deep, 10)
-                DefectsUp_labels_group_Shallow = pdist.assign_dist_group(coor_prot_edgeUp_Shallow, coor_label_bordersUp_Shallow, 10)
-                DefectsUp_labels_group_All = pdist.assign_dist_group(coor_prot_edgeUp_All, coor_label_bordersUp_All, 10)
+                DefectsUp_labels_group_Deep = pdist.assign_dist_group(coor_prot_edgeUp_Deep, coor_label_edgesUp_Deep, 10)
+                DefectsUp_labels_group_Shallow = pdist.assign_dist_group(coor_prot_edgeUp_Shallow, coor_label_edgesUp_Shallow, 10)
+                DefectsUp_labels_group_All = pdist.assign_dist_group(coor_prot_edgeUp_All, coor_label_edgesUp_All, 10)
 
                 # Write the result in a text file
                 # format : label,dist_group,area
@@ -437,17 +434,17 @@ if __name__ == '__main__':
 
             # If there are proteins on the lower leaflet
             elif len(np.argwhere(MatrixLo_prot_All > 0)) > 0:
-                coor_label_bordersLo_Deep = pdist.find_defects_edge(MatrixLo_labels_Deep)
-                coor_label_bordersLo_Shallow = pdist.find_defects_edge(MatrixLo_labels_Shallow)
-                coor_label_bordersLo_All = pdist.find_defects_edge(MatrixLo_labels_All)
+                coor_label_edgesLo_Deep = pdist.find_defects_edge(MatrixLo_labels_Deep)
+                coor_label_edgesLo_Shallow = pdist.find_defects_edge(MatrixLo_labels_Shallow)
+                coor_label_edgesLo_All = pdist.find_defects_edge(MatrixLo_labels_All)
 
                 coor_prot_edgeLo_Deep = pdist.find_prot_border(MatrixLo_prot_Deep)
                 coor_prot_edgeLo_Shallow = pdist.find_prot_border(MatrixLo_prot_Shallow)
                 coor_prot_edgeLo_All = pdist.find_prot_border(MatrixLo_prot_All)
 
-                DefectsLo_labels_group_Deep = pdist.assign_dist_group(coor_prot_edgeLo_Deep, coor_label_bordersLo_Deep, 10)
-                DefectsLo_labels_group_Shallow = pdist.assign_dist_group(coor_prot_edgeLo_Shallow, coor_label_bordersLo_Shallow, 10)
-                DefectsLo_labels_group_All = pdist.assign_dist_group(coor_prot_edgeLo_All, coor_label_bordersLo_All, 10)
+                DefectsLo_labels_group_Deep = pdist.assign_dist_group(coor_prot_edgeLo_Deep, coor_label_edgesLo_Deep, 10)
+                DefectsLo_labels_group_Shallow = pdist.assign_dist_group(coor_prot_edgeLo_Shallow, coor_label_edgesLo_Shallow, 10)
+                DefectsLo_labels_group_All = pdist.assign_dist_group(coor_prot_edgeLo_All, coor_label_edgesLo_All, 10)
 
                 pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}", "deep", "Lo", DefectsLo_labels_group_Deep, area_labelsLo_Deep)
                 pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}", "shallow", "Lo", DefectsLo_labels_group_Shallow, area_labelsLo_Shallow)
