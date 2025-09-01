@@ -80,32 +80,35 @@ def find_edges(mat):
             defects_edges_coors[label].append([indX, indY])                
     return defects_edges_coors
 
-
-def find_short_dist2(prot_bord_coor, pd_bord_coor):
-
-    """Find the shortest squared distance between the border coordinates of the protein and packing defects.
-
-    Args:
-        prot_bord_coor (list): List of coordinates (tuples) of the protein border cells.
-        pd_bord_coor (list): List of coordinates (tuples) of the packing defect border cells.
-
-    Returns:
-        float: The shortest squared distance between the border coordinates of the protein and packing defects.
+def find_shortest_sqdist(coor_prot_edge, coor_defect_edge):
     """
+    Find the shortest squared distance between the protein edge coordinates and packing defects one.
 
+    --------------------
+    INPUT
+    coor_prot_edge: list
+        Contains the coordinates of the protein edge cells
+    coor_defect_edge: list
+        Contains the coordinates of the packing defect edge cells
 
-    # Initialize a minimum squared distance with the first coordinates, arbitrarily using the first coordinates from each of the two lists.
-    dist2 = (prot_bord_coor[0][0]-pd_bord_coor[0][0])**2 + (prot_bord_coor[0][1]-pd_bord_coor[0][1])**2
+    --------------------
+    OUTPUT
+    float
+        The shortest squared distance between the edge coordinates of the protein and packing defects
+    """
+    # Compute a minimum squared distance with the first coordinates
+    # Arbitrarily using the first coordinates from each of the two lists
+    sqdist = (coor_prot_edge[0][0]-coor_defect_edge[0][0])**2 + (coor_prot_edge[0][1]-coor_defect_edge[0][1])**2
 
-    # Calculate all possible squared distances between the coordinates of the two lists and return the smallest one.
-    for prot_coor in prot_bord_coor :
-        for pd_coor in pd_bord_coor :
+    # Calculate all possible squared distances between the coordinates of the two lists
+    for prot_coor in coor_prot_edge :
+        for pd_coor in coor_defect_edge :
             dist2_tmp = (prot_coor[0]-pd_coor[0])**2 + (prot_coor[1]-pd_coor[1])**2
+            #  Keep the smallest one
+            if dist2_tmp < sqdist :
+                sqdist = dist2_tmp
 
-            if dist2_tmp < dist2 :
-                dist2 = dist2_tmp
-
-    return dist2
+    return sqdist
 
 
 def assign_dist_group(prot_bord_coor, dico_pd_bord_coor, dist_thr):
@@ -133,7 +136,7 @@ def assign_dist_group(prot_bord_coor, dico_pd_bord_coor, dist_thr):
 
     # For each label, find the shortest squared distance to the protein. Given this result and the threshold, assign a distance group to the label.
     for label in dico_pd_bord_coor:
-        dist2_tmp = find_short_dist2(prot_bord_coor, dico_pd_bord_coor[label])
+        dist2_tmp = find_shortest_sqdist(prot_bord_coor, dico_pd_bord_coor[label])
 
         if dist2_tmp < dist2_thr:
             pd_labels_group[label] = 'close'

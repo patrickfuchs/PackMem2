@@ -47,3 +47,10 @@ def test_find_edges():
     wanted_out = {2:[[0, 0], [0, 1], [1, 0]], 3:[[0, 3]], 4:[[2, 2], [2, 3]]}
     assert expected_out == wanted_out
 
+def test_find_shortest_sqdist():
+    coor_A = [[0, 1], [2, 5], [3, 4]]
+    coor_B = [[6, 7], [5, 1], [9, 0], [4, 8]]
+
+    expected_out = prot.find_shortest_sqdist(coor_A, coor_B)
+    wanted_out = 13
+    assert expected_out == wanted_out
