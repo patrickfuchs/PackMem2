@@ -76,8 +76,9 @@ def find_edges(mat):
             label = mat[indX, indY]
             # Add the coordinates of the edge cell to the dictionary with the corresponding label
             if label not in defects_edges_coors:
-                defects_edges_coors[label] = []
-            defects_edges_coors[label].append([indX, indY])                
+                defects_edges_coors[label] = np.array([np.array([indX, indY])])
+            else:
+                defects_edges_coors[label] = np.vstack((defects_edges_coors[label], np.array([indX, indY])))
     return defects_edges_coors
 
 def find_shortest_sqdist(coor_prot_edge, coor_defect_edge):
@@ -98,7 +99,7 @@ def find_shortest_sqdist(coor_prot_edge, coor_defect_edge):
     """
     # Compute a minimum squared distance with the first coordinates
     # Arbitrarily using the first coordinates from each of the two lists
-    sqdist = (coor_prot_edge[0][0]-coor_defect_edge[0][0])**2 + (coor_prot_edge[0][1]-coor_defect_edge[0][1])**2
+    sqdist = (coor_prot_edge[0, 0]-coor_defect_edge[0, 0])**2 + (coor_prot_edge[0, 1]-coor_defect_edge[0, 1])**2
 
     # Calculate all possible squared distances between the coordinates of the two lists
     for prot_coor in coor_prot_edge :

@@ -43,13 +43,19 @@ def test_find_edges():
                    [2, 0, 0, 0],
                    [0, 0, 4, 4]])
     
-    expected_out = prot.find_edges(mat)
-    wanted_out = {2:[[0, 0], [0, 1], [1, 0]], 3:[[0, 3]], 4:[[2, 2], [2, 3]]}
-    assert expected_out == wanted_out
+    tested_out = prot.find_edges(mat)
+    wanted_out = {2:np.array([np.array([0, 0]), np.array([0, 1]), np.array([1, 0])]),
+                3:np.array([np.array([0, 3])]),
+                4:np.array([np.array([2, 2]), np.array([2, 3])])}
+
+    # Compare each element
+    for label in wanted_out:
+        assert np.allclose(tested_out[label], wanted_out[label])
+    #np.testing.assert_array_equal(tested_out == wanted_out)
 
 def test_find_shortest_sqdist():
-    coor_A = [[0, 1], [2, 5], [3, 4]]
-    coor_B = [[6, 7], [5, 1], [9, 0], [4, 8]]
+    coor_A = np.array([np.array([0, 1]), np.array([2, 5]), np.array([3, 4])])
+    coor_B = np.array([np.array([6, 7]), np.array([5, 1]), np.array([9, 0]), np.array([4, 8])])
 
     expected_out = prot.find_shortest_sqdist(coor_A, coor_B)
     wanted_out = 13
