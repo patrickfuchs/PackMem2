@@ -4,6 +4,8 @@
 # M. Zygadlo 2025
 
 import numpy as np
+from scipy.spatial import KDTree
+
 from bin import matrix as m
 
 def find_protein(matrix, defect, protein, arrayX, arrayY, zmean):
@@ -55,7 +57,7 @@ def find_edges(mat):
     --------------------
     OUTPUT
     dictionary
-        Contains labels as keys and values are lists of coordinates of the edge cells for each defect (label)
+        Contains labels as keys and values are arrays of coordinates of the edge cells for each defect (label)
     """
     # Get the indexes of where the defects are
     defect_X = np.where(mat != 0)[0]
@@ -87,9 +89,9 @@ def find_shortest_sqdist(coor_prot_edge, coor_defect_edge):
 
     --------------------
     INPUT
-    coor_prot_edge: list
+    coor_prot_edge: numpy array
         Contains the coordinates of the protein edge cells
-    coor_defect_edge: list
+    coor_defect_edge: numpy array
         Contains the coordinates of the packing defect edge cells
 
     --------------------
@@ -97,19 +99,11 @@ def find_shortest_sqdist(coor_prot_edge, coor_defect_edge):
     float
         The shortest squared distance between the edge coordinates of the protein and packing defects
     """
-    # Compute a minimum squared distance with the first coordinates
-    # Arbitrarily using the first coordinates from each of the two lists
-    sqdist = (coor_prot_edge[0, 0]-coor_defect_edge[0, 0])**2 + (coor_prot_edge[0, 1]-coor_defect_edge[0, 1])**2
-
-    # Calculate all possible squared distances between the coordinates of the two lists
-    for prot_coor in coor_prot_edge :
-        for pd_coor in coor_defect_edge :
-            dist2_tmp = (prot_coor[0]-pd_coor[0])**2 + (prot_coor[1]-pd_coor[1])**2
-            #  Keep the smallest one
-            if dist2_tmp < sqdist :
-                sqdist = dist2_tmp
-
-    return sqdist
+    # Compute all the square distances between tthe two arrays
+    square_dist = np.sum((coor_prot_edge[:, None] - coor_defect_edge[None, :])**2, axis=2)
+    # Get the minimum one
+    min_sqdist = np.min(square_dist)
+    return min_sqdist
 
 
 def assign_dist_group(prot_bord_coor, dico_pd_bord_coor, dist_thr):
