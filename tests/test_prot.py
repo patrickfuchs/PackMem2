@@ -38,20 +38,12 @@ def test_find_protein():
                             [0, 0, 0]])
     np.testing.assert_array_equal(tested_out, wanted_out)
 
-def test_find_defects_edge():
+def test_find_edges():
     mat = np.array([[2, 2, 0, 3],
                    [2, 0, 0, 0],
                    [0, 0, 4, 4]])
     
-    expected_out = prot.find_defects_edge(mat)
+    expected_out = prot.find_edges(mat)
     wanted_out = {2:[[0, 0], [0, 1], [1, 0]], 3:[[0, 3]], 4:[[2, 2], [2, 3]]}
     assert expected_out == wanted_out
 
-def test_find_prot_edge():
-    mat = np.array([[0, 0, 1, 0],
-                   [0, 1, 1, 1],
-                   [0, 1, 1, 0]])
-    
-    expected_out = prot.find_prot_edge(mat)
-    wanted_out = [[0, 2], [1, 1], [1, 3], [2, 1], [2, 2]]
-    assert expected_out == wanted_out
