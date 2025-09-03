@@ -7,7 +7,7 @@ import MDAnalysis as mda
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 
 
-from bin import protdist as prot
+from bin import protein as prot
 
 def test_find_protein():
     n_atoms = 2

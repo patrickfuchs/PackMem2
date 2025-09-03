@@ -17,7 +17,7 @@ from bin import pdb as pdb
 from bin import connected_component as cc
 from bin import dict as d
 from bin import param as p
-from bin import protdist as pdist
+from bin import protein as prot
 
 ##########################################################################################
 ##### main
@@ -398,54 +398,54 @@ if __name__ == '__main__':
             MatrixLo_prot_All = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
 
             # Find where the protein is in the matrix
-            MatrixUp_prot_Deep = pdist.find_protein(MatrixUp_prot_Deep, 'up', protein, arrayX, arrayY, zmean)
-            MatrixUp_prot_Shallow = pdist.find_protein(MatrixUp_prot_Shallow, 'up', protein, arrayX, arrayY, zmean)
-            MatrixUp_prot_All = pdist.find_protein(MatrixUp_prot_All, 'up', protein, arrayX, arrayY, zmean)
-            MatrixLo_prot_Deep = pdist.find_protein(MatrixLo_prot_Deep, 'lo', protein, arrayX, arrayY, zmean)
-            MatrixLo_prot_Shallow = pdist.find_protein(MatrixLo_prot_Shallow, 'lo', protein, arrayX, arrayY, zmean)
-            MatrixLo_prot_All = pdist.find_protein(MatrixLo_prot_All, 'lo', protein, arrayX, arrayY, zmean)
+            MatrixUp_prot_Deep = prot.find_protein(MatrixUp_prot_Deep, 'up', protein, arrayX, arrayY, zmean)
+            MatrixUp_prot_Shallow = prot.find_protein(MatrixUp_prot_Shallow, 'up', protein, arrayX, arrayY, zmean)
+            MatrixUp_prot_All = prot.find_protein(MatrixUp_prot_All, 'up', protein, arrayX, arrayY, zmean)
+            MatrixLo_prot_Deep = prot.find_protein(MatrixLo_prot_Deep, 'lo', protein, arrayX, arrayY, zmean)
+            MatrixLo_prot_Shallow = prot.find_protein(MatrixLo_prot_Shallow, 'lo', protein, arrayX, arrayY, zmean)
+            MatrixLo_prot_All = prot.find_protein(MatrixLo_prot_All, 'lo', protein, arrayX, arrayY, zmean)
             
 
             # If there are proteins on the upper leaflet
             if len(np.argwhere(MatrixUp_prot_All > 0)) > 0: 
                 # Get the coordinates of the matrix where the edges of the packing defects are located
                 # dictionnary label coords {lab1 = [[x1, y1], [x2, y2], ...], ...}
-                coor_label_edgesUp_Deep = pdist.find_edges(MatrixUp_labels_Deep)
-                coor_label_edgesUp_Shallow = pdist.find_edges(MatrixUp_labels_Shallow)
-                coor_label_edgesUp_All = pdist.find_edges(MatrixUp_labels_All)
+                coor_label_edgesUp_Deep = prot.find_edges(MatrixUp_labels_Deep)
+                coor_label_edgesUp_Shallow = prot.find_edges(MatrixUp_labels_Shallow)
+                coor_label_edgesUp_All = prot.find_edges(MatrixUp_labels_All)
 
                 # Get the coordinates of the matrix where the edges of the protein are located.
                 # list of list [[x1, y1], [x2, y2], ...]
-                coor_prot_edgesUp_Deep = pdist.find_edges(MatrixUp_prot_Deep)[1]
-                coor_prot_edgesUp_Shallow = pdist.find_edges(MatrixUp_prot_Shallow)[1]
-                coor_prot_edgesUp_All = pdist.find_edges(MatrixUp_prot_All)[1]
+                coor_prot_edgesUp_Deep = prot.find_edges(MatrixUp_prot_Deep)[1]
+                coor_prot_edgesUp_Shallow = prot.find_edges(MatrixUp_prot_Shallow)[1]
+                coor_prot_edgesUp_All = prot.find_edges(MatrixUp_prot_All)[1]
 
                 # Assign distance group for each packing defect, "far" or "close". Default threshold = 10 A.
                 # dict {lab1 : 'group', lab2 : 'group', ... }
-                DefectsUp_labels_group_Deep = pdist.assign_dist_group(coor_prot_edgesUp_Deep, coor_label_edgesUp_Deep, 100)
-                DefectsUp_labels_group_Shallow = pdist.assign_dist_group(coor_prot_edgesUp_Shallow, coor_label_edgesUp_Shallow, 100)
-                DefectsUp_labels_group_All = pdist.assign_dist_group(coor_prot_edgesUp_All, coor_label_edgesUp_All, 100)
+                DefectsUp_labels_group_Deep = prot.assign_dist_group(coor_prot_edgesUp_Deep, coor_label_edgesUp_Deep, 100)
+                DefectsUp_labels_group_Shallow = prot.assign_dist_group(coor_prot_edgesUp_Shallow, coor_label_edgesUp_Shallow, 100)
+                DefectsUp_labels_group_All = prot.assign_dist_group(coor_prot_edgesUp_All, coor_label_edgesUp_All, 100)
 
                 # Write the result in a text file
                 # format : label,dist_group,area
-                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Up_Deep", DefectsUp_labels_group_Deep, area_labelsUp_Deep)
-                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Up_Shallow", DefectsUp_labels_group_Shallow, area_labelsUp_Shallow)
-                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Up_All", DefectsUp_labels_group_All, area_labelsUp_All)
+                prot.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Up_Deep", DefectsUp_labels_group_Deep, area_labelsUp_Deep)
+                prot.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Up_Shallow", DefectsUp_labels_group_Shallow, area_labelsUp_Shallow)
+                prot.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Up_All", DefectsUp_labels_group_All, area_labelsUp_All)
 
             # If there are proteins on the lower leaflet
             elif len(np.argwhere(MatrixLo_prot_All > 0)) > 0:
-                coor_label_edgesLo_Deep = pdist.find_edges(MatrixLo_labels_Deep)
-                coor_label_edgesLo_Shallow = pdist.find_edges(MatrixLo_labels_Shallow)
-                coor_label_edgesLo_All = pdist.find_edges(MatrixLo_labels_All)
+                coor_label_edgesLo_Deep = prot.find_edges(MatrixLo_labels_Deep)
+                coor_label_edgesLo_Shallow = prot.find_edges(MatrixLo_labels_Shallow)
+                coor_label_edgesLo_All = prot.find_edges(MatrixLo_labels_All)
 
-                coor_prot_edgesLo_Deep = pdist.find_edges(MatrixLo_prot_Deep)[1]
-                coor_prot_edgesLo_Shallow = pdist.find_edges(MatrixLo_prot_Shallow)[1]
-                coor_prot_edgesLo_All = pdist.find_edges(MatrixLo_prot_All)[1]
+                coor_prot_edgesLo_Deep = prot.find_edges(MatrixLo_prot_Deep)[1]
+                coor_prot_edgesLo_Shallow = prot.find_edges(MatrixLo_prot_Shallow)[1]
+                coor_prot_edgesLo_All = prot.find_edges(MatrixLo_prot_All)[1]
 
-                DefectsLo_labels_group_Deep = pdist.assign_dist_group(coor_prot_edgesLo_Deep, coor_label_edgesLo_Deep, 100)
-                DefectsLo_labels_group_Shallow = pdist.assign_dist_group(coor_prot_edgesLo_Shallow, coor_label_edgesLo_Shallow, 100)
-                DefectsLo_labels_group_All = pdist.assign_dist_group(coor_prot_edgesLo_All, coor_label_edgesLo_All, 100)
+                DefectsLo_labels_group_Deep = prot.assign_dist_group(coor_prot_edgesLo_Deep, coor_label_edgesLo_Deep, 100)
+                DefectsLo_labels_group_Shallow = prot.assign_dist_group(coor_prot_edgesLo_Shallow, coor_label_edgesLo_Shallow, 100)
+                DefectsLo_labels_group_All = prot.assign_dist_group(coor_prot_edgesLo_All, coor_label_edgesLo_All, 100)
 
-                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Lo_Deep", DefectsLo_labels_group_Deep, area_labelsLo_Deep)
-                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Lo_Shallow", DefectsLo_labels_group_Shallow, area_labelsLo_Shallow)
-                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Lo_All", DefectsLo_labels_group_All, area_labelsLo_All)
+                prot.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Lo_Deep", DefectsLo_labels_group_Deep, area_labelsLo_Deep)
+                prot.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Lo_Shallow", DefectsLo_labels_group_Shallow, area_labelsLo_Shallow)
+                prot.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Lo_All", DefectsLo_labels_group_All, area_labelsLo_All)
