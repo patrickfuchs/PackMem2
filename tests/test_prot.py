@@ -65,7 +65,7 @@ def test_assign_dist_group():
                         3: np.array([np.array([8, 3]), np.array([7, 4]), np.array([6, 1]), np.array([8, 8])]),
                         4: np.array([np.array([0, 4]), np.array([6, 8]), np.array([4, 1]), np.array([5, 9])])}
     prot_edge = np.array([np.array([0, 1]), np.array([2, 5]), np.array([3, 4])])
-    dist_threshold = 3
+    dist_threshold = 9
 
     tested_out = prot.assign_dist_group(prot_edge, dict_edge_defect, dist_threshold)
     wanted_out = {1: 'far', 3: 'far', 4: 'close'}

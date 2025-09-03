@@ -104,7 +104,7 @@ def find_shortest_sqdist(coor_prot_edge, coor_defect_edge):
     min_sqdist = np.min(square_dist)
     return min_sqdist
 
-def assign_dist_group(coor_prot_edge, dict_coor_defect_edge, dist_thres):
+def assign_dist_group(coor_prot_edge, dict_coor_defect_edge, sqdist_thres):
     """
     Assign distance groups to packing defects based on their proximity to the protein.
 
@@ -114,8 +114,8 @@ def assign_dist_group(coor_prot_edge, dict_coor_defect_edge, dist_thres):
         Contains the coordinates of the protein edge cells
     dict_coor_defect_edge: dictionary
         Contains labels as keys and arrays of defects edge cells coordinates as values
-    dist_thres: int
-        Distance threshold to determine if a packing defect is 'close' or 'far' from the protein
+    sqdist_thres: int
+        Squared distance threshold to determine if a packing defect is 'close' or 'far' from the protein
 
     --------------------
     INPUT
@@ -125,14 +125,11 @@ def assign_dist_group(coor_prot_edge, dict_coor_defect_edge, dist_thres):
     # Create a dictionnary to associate each label with their distance group
     defects_labels_group = {}
 
-    # Set squared distance threshold
-    sqdist_thr = dist_thres**2
-
     for label in dict_coor_defect_edge:
         # Find the shortest squared distance to the protein
         dist2_tmp = find_shortest_sqdist(coor_prot_edge, dict_coor_defect_edge[label])
         # Assign a distance group to the label
-        if dist2_tmp < sqdist_thr:
+        if dist2_tmp < sqdist_thres:
             defects_labels_group[label] = 'close'
         else :
             defects_labels_group[label] = 'far'
