@@ -1,14 +1,78 @@
 # -*- coding: utf-8 -*-
-
 ##### Here is implemented the Connected-component_labeling algorithm
 ##### Source: http://en.wikipedia.org/wiki/Connected-component_labeling
-#####
-##### P. Fuchs 08/2014
-#####
+# P. Fuchs 08/2014
+# M. Zygadlo 2025
 
 import numpy as np
 import sys
 from bin import matrix as m
+
+def intersect(l1, l2):
+    """
+    Returns the intersection of 2 lists
+
+    --------------------
+    INPUT
+    l1: list
+        Contains
+    l2: list
+        Contains
+    
+    --------------------
+    OUTPUT
+    list
+        Contains the set of the intersection of the two lists
+    """
+    return list(set(l1) & set(l2))
+
+def merge_avoid_duplicate_sort_list(l1,l2):
+    new_l = list(set(l1 + l2))
+    new_l.sort()
+    return new_l
+
+def is_duplicate_in_list_of_lists(list_of_lists, starting_index):
+    L = len(list_of_lists)
+    for i in range(starting_index+1,L):
+        if len(intersect(list_of_lists[starting_index],list_of_lists[i])) > 0:
+            return True
+    return False
+
+def is_empty_sublist(list_of_lists):
+    L = len(list_of_lists)
+    for i in range(L):
+        if len(list_of_lists[i]) == 0:
+            return True
+    return False
+
+# merge a list of list
+def merge_list_of_lists(list_of_lists):
+    # we want to merge the sublists that intersect in a list_of_lists, e.g.
+    # init list_of_lists:  [[1, 2, 3, 9], [4, 5, 8], [1, 7, 9], [8, 9, 10], [13, 16], [12, 44], [16, 54]]
+    # final list_of_lists: [[1, 2, 3, 4, 5, 7, 8, 9, 10], [13, 16, 54], [12, 44]]
+    #print "Intial list_of_lists", list_of_lists
+    L = len(list_of_lists)
+    starting_index = 0
+    while starting_index <= L - 1:
+        # we try to merge sublist starting_index with all other sublists
+        while is_duplicate_in_list_of_lists(list_of_lists,starting_index):
+            for i in range(starting_index+1,L):
+                if len(intersect(list_of_lists[starting_index],list_of_lists[i])) > 0:
+                    # OK we merge sublist starting_index with sublist i
+                    list_of_lists[starting_index] = merge_avoid_duplicate_sort_list(list_of_lists[starting_index], list_of_lists[i])
+                    # we delete sublist i
+                    list_of_lists[i] = []
+        # we increment starting index
+        starting_index += 1
+    # cleanup empty sublists
+    while is_empty_sublist(list_of_lists):
+        L = len(list_of_lists)
+        for i in range(L):
+            if len(list_of_lists[i]) == 0:
+                list_of_lists.pop(i)
+                break
+    #print "Final list_of_lists" , list_of_lists
+    return list_of_lists
 
 def get_uniq_labels(nb_labels,list_equiv_labels):
     # list_equiv_labels looks like that: [[1,2], [3,4,5,8], [6,7]...]
@@ -41,59 +105,6 @@ def get_uniq_labels(nb_labels,list_equiv_labels):
         print("root labels are:"); print(root_labels)
         #exit()
     return dico_uniq_labels, root_labels
-
-# returns the intersection of 2 lists
-def intersect(l1, l2):
-    return list(set(l1) & set(l2))
-
-def merge_avoid_duplicate_sort_list(l1,l2):
-    new_l = list(set(l1 + l2))
-    new_l.sort()
-    return new_l
-
-def is_duplicate_in_list_of_lists(list_of_lists, starting_index):
-    L = len(list_of_lists)
-    for i in range(starting_index+1,L):
-        if len(intersect(list_of_lists[starting_index],list_of_lists[i])) > 0:
-            return True
-    return False
-
-def is_empty_sublist(list_of_lists):
-    L = len(list_of_lists)
-    for i in range(L):
-        if len(list_of_lists[i]) == 0:
-            return True
-    return False
-    
-# merge a list of list
-def merge_list_of_lists(list_of_lists):
-    # we want to merge the sublists that intersect in a list_of_lists, e.g.
-    # init list_of_lists:  [[1, 2, 3, 9], [4, 5, 8], [1, 7, 9], [8, 9, 10], [13, 16], [12, 44], [16, 54]]
-    # final list_of_lists: [[1, 2, 3, 4, 5, 7, 8, 9, 10], [13, 16, 54], [12, 44]]
-    #print "Intial list_of_lists", list_of_lists
-    L = len(list_of_lists)
-    starting_index = 0
-    while starting_index <= L - 1:
-        # we try to merge sublist starting_index with all other sublists
-        while is_duplicate_in_list_of_lists(list_of_lists,starting_index):
-            for i in range(starting_index+1,L):
-                if len(intersect(list_of_lists[starting_index],list_of_lists[i])) > 0:
-                    # OK we merge sublist starting_index with sublist i
-                    list_of_lists[starting_index] = merge_avoid_duplicate_sort_list(list_of_lists[starting_index], list_of_lists[i])
-                    # we delete sublist i
-                    list_of_lists[i] = []
-        # we increment starting index
-        starting_index += 1
-    # cleanup empty sublists
-    while is_empty_sublist(list_of_lists):
-        L = len(list_of_lists)
-        for i in range(L):
-            if len(list_of_lists[i]) == 0:
-                list_of_lists.pop(i)
-                break
-    #print "Final list_of_lists" , list_of_lists
-    return list_of_lists
-
 
 # this is the important fct 
 def get_connected_components(M, val_bin=0):
