@@ -4,7 +4,6 @@
 # M. Zygadlo 2025
 
 import numpy as np
-from scipy.spatial import KDTree
 
 from bin import matrix as m
 
@@ -105,40 +104,39 @@ def find_shortest_sqdist(coor_prot_edge, coor_defect_edge):
     min_sqdist = np.min(square_dist)
     return min_sqdist
 
-
-def assign_dist_group(prot_bord_coor, dico_pd_bord_coor, dist_thr):
-
-    """Assign distance groups to packing defects based on their proximity to the protein.
-
-    Args:
-        prot_bord_coor (list): List of coordinates (tuples) of the protein border cells.
-        dico_pd_bord_coor (dict): Dictionary where keys are labels and values are lists of coordinates (tuples) of the packing defect border cells.
-        dist_thr (int): Distance threshold to determine if a packing defect is 'close' or 'far' from the protein.
-
-    Returns:
-        dict: A dictionary where keys are labels and values are 'close' or 'far' based on the distance threshold.
+def assign_dist_group(coor_prot_edge, dict_coor_defect_edge, dist_thres):
     """
+    Assign distance groups to packing defects based on their proximity to the protein.
 
-    if np.sum(prot_bord_coor) == 0:
-        print(f"assign_dist_group : No protein found") # If the protein is not in the given leaflet.
-        return 0
+    --------------------
+    INPUT
+    coor_prot_edge: numpy array
+        Contains the coordinates of the protein edge cells
+    dict_coor_defect_edge: dictionary
+        Contains labels as keys and arrays of defects edge cells coordinates as values
+    dist_thres: int
+        Distance threshold to determine if a packing defect is 'close' or 'far' from the protein
 
-    # Create a dictionnary to associate each label with their distance group. {key=label : value=dist_group}
-    pd_labels_group = {}
+    --------------------
+    INPUT
+    dictionary
+        Contains labels as keys and group ('close'/'far') based on the distance threshold as values
+    """
+    # Create a dictionnary to associate each label with their distance group
+    defects_labels_group = {}
 
     # Set squared distance threshold
-    dist2_thr = dist_thr**2
+    sqdist_thr = dist_thres**2
 
-    # For each label, find the shortest squared distance to the protein. Given this result and the threshold, assign a distance group to the label.
-    for label in dico_pd_bord_coor:
-        dist2_tmp = find_shortest_sqdist(prot_bord_coor, dico_pd_bord_coor[label])
-
-        if dist2_tmp < dist2_thr:
-            pd_labels_group[label] = 'close'
+    for label in dict_coor_defect_edge:
+        # Find the shortest squared distance to the protein
+        dist2_tmp = find_shortest_sqdist(coor_prot_edge, dict_coor_defect_edge[label])
+        # Assign a distance group to the label
+        if dist2_tmp < sqdist_thr:
+            defects_labels_group[label] = 'close'
         else :
-            pd_labels_group[label] = 'far'
-
-    return pd_labels_group
+            defects_labels_group[label] = 'far'
+    return defects_labels_group
 
 def outputTXT_defects_prot(outputname, FlagPDtype, leaflet, dico_labels_group, dico_def_area):
     """Output a text file with information about the packing defects and their distance groups.

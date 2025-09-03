@@ -51,12 +51,25 @@ def test_find_edges():
     # Compare each element
     for label in wanted_out:
         assert np.allclose(tested_out[label], wanted_out[label])
-    #np.testing.assert_array_equal(tested_out == wanted_out)
 
 def test_find_shortest_sqdist():
     coor_A = np.array([np.array([0, 1]), np.array([2, 5]), np.array([3, 4])])
     coor_B = np.array([np.array([6, 7]), np.array([5, 1]), np.array([9, 0]), np.array([4, 8])])
 
-    expected_out = prot.find_shortest_sqdist(coor_A, coor_B)
+    tested_out = prot.find_shortest_sqdist(coor_A, coor_B)
     wanted_out = 13
-    assert expected_out == wanted_out
+    assert tested_out == wanted_out
+
+def test_assign_dist_group():
+    dict_edge_defect = {1: np.array([np.array([6, 7]), np.array([5, 1]), np.array([9, 0]), np.array([4, 8])]),
+                        3: np.array([np.array([8, 3]), np.array([7, 4]), np.array([6, 1]), np.array([8, 8])]),
+                        4: np.array([np.array([0, 4]), np.array([6, 8]), np.array([4, 1]), np.array([5, 9])])}
+    prot_edge = np.array([np.array([0, 1]), np.array([2, 5]), np.array([3, 4])])
+    dist_threshold = 3
+
+    tested_out = prot.assign_dist_group(prot_edge, dict_edge_defect, dist_threshold)
+    wanted_out = {1: 'far', 3: 'far', 4: 'close'}
+
+    # Compare each element
+    for label in wanted_out:
+        assert tested_out[label] == wanted_out[label]
