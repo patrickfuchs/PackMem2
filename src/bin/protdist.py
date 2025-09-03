@@ -135,24 +135,20 @@ def assign_dist_group(coor_prot_edge, dict_coor_defect_edge, sqdist_thres):
             defects_labels_group[label] = 'far'
     return defects_labels_group
 
-def outputTXT_defects_prot(outputname, FlagPDtype, leaflet, dico_labels_group, dico_def_area):
-    """Output a text file with information about the packing defects and their distance groups.
-
-    Args:
-        outputname (str): The base name of the output file.
-        FlagPDtype (str): The type of packing defects.
-        leaflet (str): The leaflet ('Up' or 'Lo') being processed.
-        dico_labels_group (dict): Dictionary where keys are labels and values are 'close' or 'far' based on the distance threshold.
-        dico_def_area (dict): Dictionary where keys are labels and values are the areas of the defects.
+def outputTXT_defects_prot(out_name, dict_labels_group, dict_defect_area):
     """
-    flag_to_defect = ["All", "Deep", "Shallow"]
-    outputname = outputname + "_" + leaflet+ "_"+ FlagPDtype +"_prot.txt"
+    Create output file with information about the packing defects and their distance groups.
 
-    if dico_labels_group == 0:
-        with open(outputname,"w") as f:
-            f.write(f"0,NA,0\n")
-
-    with open(outputname,"w") as f:
-        for label in dico_labels_group:
-            if label in dico_labels_group.keys() and label in dico_def_area.keys():
-                f.write("%s,%s,%s\n" % (label, dico_labels_group[label], dico_def_area[label]))
+    --------------------
+    INPUT
+    out_name: string
+        The output file name
+    dict_labels_group: dictionary
+        Contains labels as keys and group ('close' or 'far') as values
+    dict_defect_area: dictionary
+        Contains labels as keys and areas of each defect as values
+    """
+    with open(f"{out_name}.txt","w") as f:
+        for label in dict_labels_group:
+            if label in dict_defect_area.keys():
+                f.write(f"{label},{dict_labels_group[label]},{dict_defect_area[label]}\n")

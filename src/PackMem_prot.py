@@ -428,9 +428,9 @@ if __name__ == '__main__':
 
                 # Write the result in a text file
                 # format : label,dist_group,area
-                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}", "deep", "Up", DefectsUp_labels_group_Deep, area_labelsUp_Deep)
-                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}", "shallow", "Up", DefectsUp_labels_group_Shallow, area_labelsUp_Shallow)
-                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}", "all", "Up", DefectsUp_labels_group_All, area_labelsUp_All)
+                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Up_Deep", DefectsUp_labels_group_Deep, area_labelsUp_Deep)
+                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Up_Shallow", DefectsUp_labels_group_Shallow, area_labelsUp_Shallow)
+                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Up_All", DefectsUp_labels_group_All, area_labelsUp_All)
 
             # If there are proteins on the lower leaflet
             elif len(np.argwhere(MatrixLo_prot_All > 0)) > 0:
@@ -446,6 +446,6 @@ if __name__ == '__main__':
                 DefectsLo_labels_group_Shallow = pdist.assign_dist_group(coor_prot_edgesLo_Shallow, coor_label_edgesLo_Shallow, 100)
                 DefectsLo_labels_group_All = pdist.assign_dist_group(coor_prot_edgesLo_All, coor_label_edgesLo_All, 100)
 
-                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}", "deep", "Lo", DefectsLo_labels_group_Deep, area_labelsLo_Deep)
-                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}", "shallow", "Lo", DefectsLo_labels_group_Shallow, area_labelsLo_Shallow)
-                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}", "all", "Lo", DefectsLo_labels_group_All, area_labelsLo_All)
+                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Lo_Deep", DefectsLo_labels_group_Deep, area_labelsLo_Deep)
+                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Lo_Shallow", DefectsLo_labels_group_Shallow, area_labelsLo_Shallow)
+                pdist.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Lo_All", DefectsLo_labels_group_All, area_labelsLo_All)
