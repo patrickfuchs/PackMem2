@@ -115,6 +115,7 @@ def test_get_area_first_coor_defects():
     assert tested_coor  == wanted_coor
 
 def test_get_connected_components():
+    mat_labels = np.full((7, 8), 0)
     mat = np.array([[1, 1, 1, 1, 1, 1, 1, 1],
                     [1, 0, 0, 1, 1, 1, 0, 1],
                     [1, 0, 1, 1, 0, 0, 0, 1],
@@ -123,7 +124,7 @@ def test_get_connected_components():
                     [1, 0, 1, 1, 1, 0, 1, 1],
                     [1, 1, 1, 1, 1, 1, 1, 1]])
     
-    tested_out1, tested_out2, tested_out3, tested_out4 = cc.get_connected_components(mat)
+    tested_out1, tested_out2, tested_out3, tested_out4 = cc.get_connected_components(mat, mat_labels)
     wanted_out1 = np.array([[0, 0, 0, 0, 0, 0, 0, 0],
                             [0, 1, 1, 0, 0, 0, 2, 0],
                             [0, 1, 0, 0, 2, 2, 2, 0],

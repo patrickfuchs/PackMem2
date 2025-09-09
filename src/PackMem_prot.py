@@ -202,11 +202,13 @@ if __name__ == '__main__':
         MatrixLo_Shallowbin = m.binarize_matrix_without0(MatrixLo_Shallow, MatrixLo_Shallowbin, -0.01, 0.99)
     
         # Get temporary packing defects
+        MatrixUp_labels_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
+        MatrixLo_labels_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
         # Connect the packing defects + label them + count the area
         MatrixUp_labels_Shallow, uniq_labelsUp_Shallow, area_defectsUp_Shallow, firstCoorUp_defects_Shallow = \
-            cc.get_connected_components(MatrixUp_Shallowbin)
+            cc.get_connected_components(MatrixUp_Shallowbin, MatrixUp_labels_Shallow)
         MatrixLo_labels_Shallow, uniq_labelsLo_Shallow, area_defectsLo_Shallow, firstCoorLo_defects_Shallow = \
-            cc.get_connected_components(MatrixLo_Shallowbin)
+            cc.get_connected_components(MatrixLo_Shallowbin, MatrixLo_labels_Shallow)
         # Get the labels on the edge
         edge_labelsUp_Shallow = cc.get_edge_defects(MatrixUp_labels_Shallow)
         edge_labelsLo_Shallow = cc.get_edge_defects(MatrixLo_labels_Shallow)
@@ -225,11 +227,13 @@ if __name__ == '__main__':
         MatrixUp_Deepbin = m.binarize_matrix_without0(MatrixUp_Deep, MatrixUp_Deepbin, -0.01, 0.001)
         MatrixLo_Deepbin = m.binarize_matrix_without0(MatrixLo_Deep, MatrixLo_Deepbin, -0.01, 0.001)
         # Packing defects determination
+        MatrixUp_labels_Deep = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
+        MatrixLo_labels_Deep = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
         # Connect the packing defects + label them + count the area
         MatrixUp_labels_Deep, uniq_labelsUp_Deep, area_defectsUp_Deep, firstCoorUp_defects_Deep = \
-            cc.get_connected_components(MatrixUp_Deepbin)
+            cc.get_connected_components(MatrixUp_Deepbin, MatrixUp_labels_Deep)
         MatrixLo_labels_Deep, uniq_labelsLo_Deep, area_defectsLo_Deep, firstCoorLo_defects_Deep = \
-            cc.get_connected_components(MatrixLo_Deepbin)
+            cc.get_connected_components(MatrixLo_Deepbin, MatrixLo_labels_Deep)
         # Get cluster on the edge
         edge_labelsUp_Deep = cc.get_edge_defects(MatrixUp_labels_Deep)
         edge_labelsLo_Deep = cc.get_edge_defects(MatrixLo_labels_Deep)
@@ -252,11 +256,13 @@ if __name__ == '__main__':
         MatrixUp_Shallowbin = m.modify_matrix(MatrixUp_labels_Shallow, MatrixUp_Shallowbin, edge_labelsUp_Shallow)
         MatrixLo_Shallowbin = m.modify_matrix(MatrixLo_labels_Shallow, MatrixLo_Shallowbin, edge_labelsLo_Shallow)
         # Packing defects determination
+        MatrixUp_labels_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
+        MatrixLo_labels_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
         # Connect the packing defects + label them + count the area
         MatrixUp_labels_Shallow, uniq_labelsUp_Shallow, area_defectsUp_Shallow, firstCoorUp_defects_Shallow = \
-            cc.get_connected_components(MatrixUp_Shallowbin)
+            cc.get_connected_components(MatrixUp_Shallowbin, MatrixUp_labels_Shallow)
         MatrixLo_labels_Shallow, uniq_labelsLo_Shallow, area_defectsLo_Shallow, firstCoorLo_defects_Shallow = \
-            cc.get_connected_components(MatrixLo_Shallowbin)
+            cc.get_connected_components(MatrixLo_Shallowbin, MatrixLo_labels_Shallow)
         # Get cluster on the edge
         edge_labelsUp_Shallow = cc.get_edge_defects(MatrixUp_labels_Shallow)
         edge_labelsLo_Shallow = cc.get_edge_defects(MatrixLo_labels_Shallow)
@@ -289,11 +295,13 @@ if __name__ == '__main__':
         MatrixUp_Allbin = m.binarize_matrix_without0(MatrixUp_All, MatrixUp_Allbin, -0.01, 0.99)
         MatrixLo_Allbin = m.binarize_matrix_without0(MatrixLo_All, MatrixLo_Allbin, -0.01, 0.99)
         # Packing defects determination
+        MatrixUp_labels_All = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
+        MatrixLo_labels_All = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
         # Connect the packing defects + label them + count the area
         MatrixUp_labels_All, uniq_labelsUp_All, area_defectsUp_All, firstCoorUp_defects_All = \
-            cc.get_connected_components(MatrixUp_Allbin)
+            cc.get_connected_components(MatrixUp_Allbin, MatrixUp_labels_All)
         MatrixLo_labels_All, uniq_labelsLo_All, area_defectsLo_All, firstCoorLo_defects_All = \
-            cc.get_connected_components(MatrixLo_Allbin)
+            cc.get_connected_components(MatrixLo_Allbin, MatrixLo_labels_All)
         # Get cluster on the edge
         edge_labelsUp_All = cc.get_edge_defects(MatrixUp_labels_All)
         edge_labelsLo_All = cc.get_edge_defects(MatrixLo_labels_All)
