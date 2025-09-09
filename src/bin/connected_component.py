@@ -326,13 +326,13 @@ def get_connected_components(matrix):
                 
     return mat_labels, uniq_labels, area_defects, first_coor_defects
 
-def get_clusters_on_the_edge(M_labels):
+def get_edge_defects(mat_labels):
     """
-    Get the labels that are on the edge of the matrix
+    Get the labels that are on the edge of the matrix.
 
     --------------------
     INPUT
-    M_labels : numpy matrix
+    mat_labels : numpy matrix
         Contains the labels of the packing defects (+ aliphatic atoms)
     
     --------------------
@@ -340,23 +340,16 @@ def get_clusters_on_the_edge(M_labels):
     list
         Contains the labels of each edge of the matrix
     """
-    nrows = M_labels.shape[0]
-    ncols = M_labels.shape[1]
-    clusters_on_the_edge = []
+    edge_defects = []
     # Get set of labels on 1st & last row
-    clusters_on_the_edge += list(set([i for i in M_labels[0] if i != 0]))
-    clusters_on_the_edge += list(set([i for i in M_labels[nrows-1] if i != 0]))
-    # check clusters on 1st & last col
-    clusters_on_the_edge += list(set([i for i in M_labels[:, 0] if i != 0]))
-    clusters_on_the_edge += list(set([i for i in M_labels[:, ncols-1] if i != 0]))
-    #for i in range(nrows):
-    #    if M_labels[i][0] not in clusters_on_the_edge and M_labels[i][0] != 0:
-    #        clusters_on_the_edge.append(M_labels[i][0])
-    #    if M_labels[i][ncols-1] not in clusters_on_the_edge and M_labels[i][ncols-1] != 0:
-    #        clusters_on_the_edge.append(M_labels[i][ncols-1])
+    edge_defects += list(set(mat_labels[0, np.where(mat_labels[0] != 0)][0]))
+    edge_defects += list(set(mat_labels[-1, np.where(mat_labels[-1] != 0)][0]))
+    # Get set of labels on 1st & last column
+    edge_defects += list(set(mat_labels[np.where(mat_labels[:, 0] != 0), 0][0]))
+    edge_defects += list(set(mat_labels[np.where(mat_labels[:, -1] != 0), -1][0]))
     # get rid of duplicates & sort
-    clusters_on_the_edge = sorted(list(set(clusters_on_the_edge)))
-    return clusters_on_the_edge
+    edge_defects = sorted(list(set(edge_defects)))
+    return edge_defects
 
 def delete_NApoints_inside(clustPb, Matrix_labels, root_labels, area_clusters):
     """

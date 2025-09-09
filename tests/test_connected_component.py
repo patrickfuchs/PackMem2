@@ -139,3 +139,15 @@ def test_get_connected_components():
     assert tested_out2 == wanted_out2
     assert tested_out3 == wanted_out3
     assert tested_out4 == wanted_out4
+
+def test_get_edge_defects():
+    mat = np.array([[0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 2, 2, 0, 0, 0, 3, 0],
+                    [0, 2, 0, 0, 3, 3, 3, 0],
+                    [0, 0, 0, 0, 0, 3, 0, 0],
+                    [0, 5, 0, 6, 0, 0, 0, 8],
+                    [0, 5, 0, 0, 0, 7, 0, 8],
+                    [0, 0, 0, 1, 0, 0, 0, 8]])
+    tested_out = cc.get_edge_defects(mat)
+    wanted_out = [1, 8]
+    assert tested_out == wanted_out    

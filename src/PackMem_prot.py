@@ -208,8 +208,8 @@ if __name__ == '__main__':
         MatrixLo_labels_Shallow, uniq_labelsLo_Shallow, area_defectsLo_Shallow, firstCoorLo_defects_Shallow = \
             cc.get_connected_components(MatrixLo_Shallowbin)
         # Get the labels on the edge
-        edge_labelsUp_Shallow=cc.get_clusters_on_the_edge(MatrixUp_labels_Shallow)
-        edge_labelsLo_Shallow=cc.get_clusters_on_the_edge(MatrixLo_labels_Shallow)
+        edge_labelsUp_Shallow = cc.get_edge_defects(MatrixUp_labels_Shallow)
+        edge_labelsLo_Shallow = cc.get_edge_defects(MatrixLo_labels_Shallow)
 
 
         # Initalise matrices to 0.0
@@ -231,8 +231,8 @@ if __name__ == '__main__':
         MatrixLo_labels_Deep, uniq_labelsLo_Deep, area_defectsLo_Deep, firstCoorLo_defects_Deep = \
             cc.get_connected_components(MatrixLo_Deepbin)
         # Get cluster on the edge
-        edge_labelsUp_Deep = cc.get_clusters_on_the_edge(MatrixUp_labels_Deep)
-        edge_labelsLo_Deep = cc.get_clusters_on_the_edge(MatrixLo_labels_Deep)
+        edge_labelsUp_Deep = cc.get_edge_defects(MatrixUp_labels_Deep)
+        edge_labelsLo_Deep = cc.get_edge_defects(MatrixLo_labels_Deep)
         # Count area of the edge
         area_edgeUp_Deep = m.count_edge_area(area_defectsUp_Deep, edge_labelsUp_Deep)
         area_edgeLo_Deep = m.count_edge_area(area_defectsLo_Deep, edge_labelsLo_Deep)
@@ -258,8 +258,8 @@ if __name__ == '__main__':
         MatrixLo_labels_Shallow, uniq_labelsLo_Shallow, area_defectsLo_Shallow, firstCoorLo_defects_Shallow = \
             cc.get_connected_components(MatrixLo_Shallowbin)
         # Get cluster on the edge
-        edge_labelsUp_Shallow = cc.get_clusters_on_the_edge(MatrixUp_labels_Shallow)
-        edge_labelsLo_Shallow = cc.get_clusters_on_the_edge(MatrixLo_labels_Shallow)
+        edge_labelsUp_Shallow = cc.get_edge_defects(MatrixUp_labels_Shallow)
+        edge_labelsLo_Shallow = cc.get_edge_defects(MatrixLo_labels_Shallow)
         # Count area of the edge
         area_edgeUp_Shallow = m.count_edge_area(area_defectsUp_Shallow, edge_labelsUp_Shallow)
         area_edgeLo_Shallow = m.count_edge_area(area_defectsLo_Shallow, edge_labelsLo_Shallow)
@@ -300,8 +300,8 @@ if __name__ == '__main__':
         MatrixLo_labels_All, uniq_labelsLo_All, area_defectsLo_All, firstCoorLo_defects_All = \
             cc.get_connected_components(MatrixLo_Allbin)
         # Get cluster on the edge
-        edge_labelsUp_All = cc.get_clusters_on_the_edge(MatrixUp_labels_All)
-        edge_labelsLo_All = cc.get_clusters_on_the_edge(MatrixLo_labels_All)
+        edge_labelsUp_All = cc.get_edge_defects(MatrixUp_labels_All)
+        edge_labelsLo_All = cc.get_edge_defects(MatrixLo_labels_All)
         # Count area of the edge
         area_edgeUp_All = m.count_edge_area(area_defectsUp_All, edge_labelsUp_All)
         area_edgeLo_All = m.count_edge_area(area_defectsLo_All, edge_labelsLo_All)
