@@ -1,5 +1,5 @@
 #-*- coding: utf-8 -*-
-# Functions to create, analyse list variables
+"""Functions to create, analyse list variables."""
 # R. Gautier 2015
 # M. Zygadlo 2025
 
@@ -77,17 +77,17 @@ def create_arrayZ(residues, array_resids, resname_glyc, dist_suppl_Z, z_extr, up
 
     --------------------
     INPUT
-    residues : MDAnalysis ResidueGroup
+    residues: MDAnalysis ResidueGroup
         Contains the names of all the residues selected
-    array_resids : numpy array
+    array_resids: numpy array
         Contains all the residue numbers selected
-    resname_glyc : dictionary
+    resname_glyc: dictionary
         Contains the residue name as key and the reference atom as value
-    dist_suppl_Z : float
+    dist_suppl_Z: float
         Supplementary distance from the z coord
-    z_extr : float
+    z_extr: float
         Either maximum or minimum value of z coord
-    up : boolean
+    up: boolean
         If we are on the upper leaflet
     --------------------
     OUTPUT

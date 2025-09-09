@@ -1,51 +1,49 @@
 # -*- coding: utf-8 -*-
-##### Here is implemented the Connected-component_labeling algorithm
+"""Here is implemented the Connected-component_labeling algorithm."""
 ##### Source: http://en.wikipedia.org/wiki/Connected-component_labeling
 # P. Fuchs 08/2014
 # M. Zygadlo 2025
 
 import numpy as np
-import sys
-from bin import matrix as m
 
-def find_neighbours(matrix, ind_i, ind_j):
+def find_neighbours(mat, ind_i, ind_j):
     """
     Find the defect neighbour cells in the upper left corner of a defect cell.
 
     --------------------
     INPUT
-    matrix: numpy array 2D
+    mat: numpy array 2D
         Contains the positions of the defects (0), 1 otherwise
-    ind_i : int
+    ind_i: int
         The index i in the matrix
-    ind j : int
+    ind j: int
         The index j in the matrix
     
     --------------------
     OUTPUT
     list
-        Contains the index of the defect neighbours of the given cell
+        Contains the indexes of the defect neighbours of the given cell
     """
     defect_neighbours = []
     # Look for connectivity of the current cell
     if ind_i > 0:
-        if ind_j >0 and matrix[(ind_i-1) % matrix.shape[0], (ind_j-1) % matrix.shape[1]] == 0: # North-West
-            defect_neighbours.append([(ind_i-1) % matrix.shape[0], (ind_j-1) % matrix.shape[1]])                
-        if matrix[(ind_i-1) % matrix.shape[0], ind_j] == 0: # North
-            defect_neighbours.append([(ind_i-1) % matrix.shape[0], ind_j])
-        if matrix[(ind_i-1) % matrix.shape[0], (ind_j+1) % matrix.shape[1]] == 0: # North-East
-            defect_neighbours.append([(ind_i-1) % matrix.shape[0], (ind_j+1) % matrix.shape[1]])
-    if ind_j > 0 and matrix[ind_i, (ind_j-1) % matrix.shape[1]] == 0: # West
-        defect_neighbours.append([ind_i, (ind_j-1) % matrix.shape[1]])
+        if ind_j >0 and mat[(ind_i-1) % mat.shape[0], (ind_j-1) % mat.shape[1]] == 0: # North-West
+            defect_neighbours.append([(ind_i-1) % mat.shape[0], (ind_j-1) % mat.shape[1]])                
+        if mat[(ind_i-1) % mat.shape[0], ind_j] == 0: # North
+            defect_neighbours.append([(ind_i-1) % mat.shape[0], ind_j])
+        if mat[(ind_i-1) % mat.shape[0], (ind_j+1) % mat.shape[1]] == 0: # North-East
+            defect_neighbours.append([(ind_i-1) % mat.shape[0], (ind_j+1) % mat.shape[1]])
+    if ind_j > 0 and mat[ind_i, (ind_j-1) % mat.shape[1]] == 0: # West
+        defect_neighbours.append([ind_i, (ind_j-1) % mat.shape[1]])
     return defect_neighbours
 
-def find_label_neighbours(matrix, defect_neighbours):
+def find_label_neighbours(mat, defect_neighbours):
     """
     Find the label of the neighbours coordinates given.
     
     --------------------
     INPUT
-    matrix: numpy array 2D
+    mat: numpy array 2D
         Contains the labels of the defects
     defect_neighbours: list of lists
         Contains the indexes of the neighbouring cells
@@ -61,7 +59,7 @@ def find_label_neighbours(matrix, defect_neighbours):
         neighbour_i = neighbour[0]
         neighbour_j = neighbour[1]
         # Store their label in a list
-        label_neighbours.append(matrix[neighbour_i, neighbour_j])
+        label_neighbours.append(mat[neighbour_i, neighbour_j])
     # Eliminate duplicate & sort
     label_neighbours = list(set(label_neighbours))
     label_neighbours.sort()
@@ -165,7 +163,7 @@ def connect_labels_in_matrix(mat_labels, dict_connected_labels):
     """
     Change the labels in mat_labels to the smallest one they are connected to.
 
-    If tthe input is:
+    If the input is:
     mat = np.array([[0, 0, 0, 0, 0, 0, 0],
                     [0, 1, 2, 0, 0, 8, 0],
                     [0, 1, 0, 0, 3, 9, 0],
@@ -198,7 +196,7 @@ def connect_labels_in_matrix(mat_labels, dict_connected_labels):
         mat_labels = np.where(mat_labels == label, dict_connected_labels[label], mat_labels)
     return mat_labels
 
-def get_area_first_coor_defects(matrix, uniq_labels):
+def get_area_first_coor_defects(mat, uniq_labels):
     """
     Get the area of each defect and their first coordinates.
 
@@ -234,8 +232,8 @@ def get_area_first_coor_defects(matrix, uniq_labels):
 
     for label in uniq_labels:
         # Get the positions of this label
-        label_X = np.where(matrix == label)[0]
-        label_Y = np.where(matrix == label)[1]
+        label_X = np.where(mat == label)[0]
+        label_Y = np.where(mat == label)[1]
         # Add the surface they cover to area_defects
         if label not in area_defects:
             area_defects[label] = 0
@@ -244,7 +242,7 @@ def get_area_first_coor_defects(matrix, uniq_labels):
         area_defects[label] += len(label_X)
     return area_defects, first_coor_defects
 
-def get_connected_components(matrix):
+def get_connected_components(mat, mat_labels):
     """
     Connect and label the defects. Get a list of the labels, tehir area and ttheir first coordinates.
 
@@ -264,20 +262,18 @@ def get_connected_components(matrix):
     dictionnary
         Contains the first appearance of the label in the matrix
     """
-    mat_labels = m.initialize_matrix2D(matrix.shape[0], matrix.shape[1], 0)
-
     nb_labels = 0 
     equiv_labels = []
 
     # Find where there are defects
-    defect_X = np.where(matrix == 0)[0]
-    defect_Y = np.where(matrix == 0)[1]
+    defect_X = np.where(mat == 0)[0]
+    defect_Y = np.where(mat == 0)[1]
 
     for i in range(len(defect_X)):
         indX = defect_X[i]
         indY = defect_Y[i]
         # Create a list that contains the coordinates of the defect neighbours
-        defect_neighbours = find_neighbours(matrix, indX, indY)
+        defect_neighbours = find_neighbours(mat, indX, indY)
         
         # If the cell is an upper left defect edge corner, this cell is a new label
         if len(defect_neighbours) == 0:
@@ -332,7 +328,7 @@ def get_edge_defects(mat_labels):
 
     --------------------
     INPUT
-    mat_labels : numpy matrix
+    mat_labels : numpy array 2D
         Contains the labels of the packing defects (+ aliphatic atoms)
     
     --------------------
@@ -357,15 +353,15 @@ def delete_NApoints_inside(clustPb, mat_labels, uniq_labels, area_defects, first
 
     --------------------
     INPUT
-    clustPb : dictionnary
+    clustPb: dictionnary
         Contains the labels and the number of cells concerned that has nan in Matrix_ini
-    mat_labels : numpy matrix
+    mat_labels: numpy matrix
         Contains the labels
-    uniq_labels : list
+    uniq_labels: list
         Contains the set of labels in this matrix
-    area_defects : dictionnary
+    area_defects: dictionnary
         Contains the area of each label
-    first_coor : dictionnary
+    first_coor: dictionnary
         Contains the first coordinates of each label
 
     --------------------
@@ -392,4 +388,3 @@ def delete_NApoints_inside(clustPb, mat_labels, uniq_labels, area_defects, first
             # Reset the first coordinates
             first_coor[label] = [np.where(mat_labels == label)[0][0], np.where(mat_labels == label)[1][0]]
     return uniq_labels, area_defects, first_coor
-    

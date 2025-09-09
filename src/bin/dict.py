@@ -1,5 +1,5 @@
 #-*- coding: utf-8 -*-
-# Functions about dictionaries
+"""Functions about dictionaries."""
 # R. Gautier 2015
 # M. Zygadlo 2025
 
@@ -20,12 +20,12 @@ def get_value(dict_info, resname, atom_name):
     
     --------------------
     OUTPUT
-    float
+    float / str
         The atom radius or nature
     """
     key = resname+" "+atom_name
     if key not in dict_info.keys():
-        print(f"ERROR : Association of lipid {resname} and atom {atom_name} not found in parameter file")
+        print(f"ERROR : Association of lipid {resname} and atom {atom_name} not found in vdw radii file")
         sys.exit()
     return dict_info[key]
 

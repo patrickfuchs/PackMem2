@@ -1,10 +1,9 @@
 #-*- coding: utf-8 -*-
-# Funtions for matrix
+"""Funtions for matrix."""
 # R. Gautier A. Bacle 2015
 # M. Zygadlo 2025
 
 import math
-import sys
 import numpy as np
 
 # matrix size  (square size = 1A)
@@ -15,13 +14,13 @@ SIZE_SIDE=0.5*(math.sqrt((math.pow(SIZE, 2))* 3.))
 
 def initialize_matrix2D(val1, val2, default):
     """
-    Initialise a 2D matrix with a default value
+    Initialise a 2D matrix with a default value.
     
     --------------------
     INPUT
-    val1 : int
+    val1: int
         Dimension in X/Y for the array
-    val2 : int
+    val2: int
         Dimension in X/Y for the array
     default : int / float / string
         Default value in the matrix cells
@@ -34,17 +33,16 @@ def initialize_matrix2D(val1, val2, default):
     matrix = np.full((val1, val2), default)
     return matrix
 
-def diff_Z(listZ, coordZ):
+def diff_Z(arrayZ, coordZ):
     """
-    Compute the difference between the last value in listZ
-    and the Z for one atom
+    Compute the difference between the last value in listZ and the Z for one atom.
 
     --------------------
     INPUT
-    listZ : numpy array
+    arrayZ: numpy array
         List from zmax+1 to z_C2_coord-1 by step of 1.0  OR
         List from z_C2_coord+1 to zmin-1 by step of 1.0
-    coordZ : float
+    coordZ: float
         The z coordinate for one atom
 
     --------------------
@@ -52,20 +50,21 @@ def diff_Z(listZ, coordZ):
     float
         The difference between the last value in listZ and the Z for one atom
     """
-    return listZ[-1]-coordZ
+    return arrayZ[-1] - coordZ
 
 def find_X_Y(coord, matX, matY):
     """
-    Determine from x,y coordinates the index in matX and matY
-    Has  been said to determine the central value in matrix
+    Determine from x,y coordinates the index in matX and matY.
+    
+    Has been said to determine the central value in matrix
 
     --------------------
     INPUT
-    coord : list
+    coord: numpy array
         Contains the coordinates x,y,z of an atom
-    matX : list
+    matX: numpy array
         Contains integer from xmin-1 to xmax+1 by step of 1.0
-    matY : list
+    matY: numpy array
         Contains integer from ymin-1 to ymax+1 by step of 1.0
     
     --------------------
@@ -83,16 +82,15 @@ def find_X_Y(coord, matX, matY):
 
 def check_edges(val, val_lim1, val_lim2):
     """
-    Check if the cell index is lower than 5 or higher than dimension-5
-    Changes the value of the cell index if so
+    Check if the cell index is lower than val_lim1 or higher than val_lim2. Changes the value of the cell index if so.
 
     --------------------
     INPUT
-    val : int
+    val: int
         Index of the coordinate of the atom in listX or listY
-    val_lim1 : int
+    val_lim1: int
         The number of cell to work around the atom
-    val_lim2 : int
+    val_lim2: int
         The length of listX or listY
 
     --------------------
@@ -107,25 +105,51 @@ def check_edges(val, val_lim1, val_lim2):
     else:
         return val
 
-# distance for one axis without square root
-def dist_oneAxis(axe1,axe2):
-    return (axe1-axe2)**2
+def dist_oneAxis(coord1, coord2):
+    """
+    Compute the distance for one axis without square root.
 
-# Euclidian distance without square root
+    --------------------
+    INPUT
+    coord1: float
+        The position on one axis
+    coord2:
+        The position on one axis
+    --------------------
+    OUTPUT
+    float
+        The distance between the two input points
+    """
+    return (coord1 - coord2)**2
+
 def dist(coord1, coord2):
+    """
+    Compute the euclidean distance in x,y,z without square root.
+
+    --------------------
+    INPUT
+    coord1: numpy array
+        The position in x,y,z
+    coord2: numpy array
+        The position in x,y,z
+    --------------------
+    OUTPUT
+    float
+        The distance between the two input points
+    """
     return ((coord1[0]-coord2[0])**2 +
            (coord1[1]-coord2[1])**2 +
            (coord1[2]-coord2[2])**2)
 
 def setDefects(type_aliphatic, val_mat):
     """
-    Fill matrix cell depending on the defect type (Deep, Shallow)
+    Fill matrix cell depending on the defect type (Deep, Shallow).
 
     --------------------
     INPUT
-    type_aliphatic : string
+    type_aliphatic: string
         The nature of the atom. a : aliphatique / n : polar
-    val_mat : float
+    val_mat: float
         The value in the matrix cell corresponding to the atom
 
     --------------------
@@ -139,46 +163,49 @@ def setDefects(type_aliphatic, val_mat):
         val_mat += 1.
     return val_mat
 
-def fill_matrix(matrix, coordtmp, listX, listY, listZ,
+def fill_matrix(mat, coordtmp, arrayX, arrayY, arrayZ,
                 radius_res, FlagPDtype, aliph_atoms):
     """
-    fill the matrix for each atom
+    Fill the matrix for each atom.
+
     ---------------
     INPUT
-    matrix : numpy matrix
+    mat: numpy array 2D
         Matrix to be filled where there are atoms
-    coordtmp : list
+    coordtmp: numpy array
         Contains the coordinates x,y,z of the atom
-    listX : list
-        List from xmin-1 to xmax+1 by step of 1.0
-    listY : list
-        List from ymin-1 to ymax+1 by step of 1.0
-    listZ : numpy array
-        List from zmax+1 to z_C2_coord-1 by step of 1.0  OR
-        List from z_C2_coord+1 to zmin-1 by step of 1.0
-    radius_res : float
+    arrayX: numpy array
+        Array from xmin-1 to xmax+1 by step of 1.0
+    arrayY: numpy array
+        Array from ymin-1 to ymax+1 by step of 1.0
+    arrayZ: numpy array
+        Array from zmax+1 to z_C2_coord-1 by step of 1.0  OR
+        Array from z_C2_coord+1 to zmin-1 by step of 1.0
+    radius_res: float
         the radius of the atom type for the residue
-    FlagPDtype : str
+    FlagPDtype: str
         The type of defect to analyse. all / deep / shallow
-    aliph_atoms : string
+    aliph_atoms: string
         The nature of the atom. a : aliphatique / n : polar
 
     -----------------
     OUTPUT
-    numpy matrix
-        Matrix filled where there are atoms
+    numpy array 2D
+        Contains a value 0 < a < 1 for aliphatic atom
+        > 1 if polar OR deep
+        Defects = 0
     """
     # Number of cells to work around
     v=5
     # Find the index of x_atom and y_atom in listX and listY
     # this corresponds to the location of the atom in the matrix
-    iX,iY = find_X_Y(coordtmp, listX, listY)
+    iX,iY = find_X_Y(coordtmp, arrayX, arrayY)
     # Change the indexes (cell index in matrix) if < v or > len(matrix)-5
-    iX = check_edges(iX, v, len(listX))
-    iY = check_edges(iY, v, len(listY))
+    iX = check_edges(iX, v, len(arrayX))
+    iY = check_edges(iY, v, len(arrayY))
     # Select the cells to work in at i+-v
-    listXM = listX[iX - v : iX + (v + 1)]
-    listYM = listY[iY - v : iY + (v + 1)]
+    listXM = arrayX[iX - v : iX + (v + 1)]
+    listYM = arrayY[iY - v : iY + (v + 1)]
     # Limit distance in a radius
     dist_lim = (SIZE + radius_res) ** 2
     # Limit distance in diagonal
@@ -186,7 +213,7 @@ def fill_matrix(matrix, coordtmp, listX, listY, listZ,
 
     # Select valid positions to search in the radius of the distance
     # from the position of the atom to the slice in Z / X / Y
-    validZ = [z for z in listZ if dist_oneAxis(coordtmp[2], z) <= dist_lim]
+    validZ = [z for z in arrayZ if dist_oneAxis(coordtmp[2], z) <= dist_lim]
     validX = [(ix, x) for ix, x in enumerate(listXM) if dist_oneAxis(coordtmp[0], x) <= dist_lim]
     validY = [(iy, y) for iy, y in enumerate(listYM) if dist_oneAxis(coordtmp[1], y) <= dist_lim]
     # Loop on the different z positions of the upper OR lower leaflet
@@ -203,31 +230,31 @@ def fill_matrix(matrix, coordtmp, listX, listY, listZ,
                 # Compute the distance between the atom and this position of the matrix
                 distance = dist(coordCenter, coordtmp)
                 # If the matrix cell was empty, put 0.0
-                if np.isnan(matrix[X, Y]):
-                    matrix[X, Y] = 0.
+                if np.isnan(mat[X, Y]):
+                    mat[X, Y] = 0.
                 # Get the value in this cell of the matrix
                 if distance <= dist_meet:
                     # If shallow or all defect
                     if FlagPDtype == "shallow" or FlagPDtype == "all":
-                        matrix[X, Y] = setDefects(aliph_atoms, matrix[X, Y])
+                        mat[X, Y] = setDefects(aliph_atoms, mat[X, Y])
                     # If deep defect
                     elif FlagPDtype == "deep":
-                        matrix[X, Y] += 1.
-    return matrix
+                        mat[X, Y] += 1.
+    return mat
 
-def binarize_matrix_without0(matrix, matrix_ini, val1=0, val2=0.99):
+def binarize_matrix_without0(mat, mat_ini, val1=0, val2=0.99):
     """
-    Binarise the presence / absence of aliphatic atom (and packing defects) in matrix
+    Binarise the presence / absence of aliphatic atom (and packing defects) in matrix.
 
     --------------------
     INPUT
-    matrix : numpy matrix
+    mat: numpy matrix
         Contains where there are atoms in the simulation box and their type
-    matrix_ini : numpy matrix
+    mat_ini: numpy matrix
         Matrix to be binarised
-    val1 : float
+    val1: float
         lower limit value
-    val2 : float
+    val2: float
         higher limit value
 
     --------------------
@@ -238,44 +265,19 @@ def binarize_matrix_without0(matrix, matrix_ini, val1=0, val2=0.99):
     """
     # Get the index of the polar atoms / deep defects if val2 = 0.99
     # Get the index of the apolar atoms if val 2 = 0.001
-    index = np.argwhere((matrix >= val2) | (matrix <= val1))
-    matrix_ini[index[:,0], index[:,1]] = 1. 
-    return matrix_ini
+    index = np.argwhere((mat >= val2) | (mat <= val1))
+    mat_ini[index[:,0], index[:,1]] = 1. 
+    return mat_ini
 
-def modify_matrix(mat1, mat2, listval):
+def count_edge_area(area_defects, edge_labels):
     """
-    Modify the binary matrix to take account edges (determined by all packing defects)
-    The edges are put to 0.0
+    Count the total area of the clusters on the edge.
 
     --------------------
     INPUT
-    mat1 : numpy matrix
-        Contains the labels of the packing defects + aliphatic atoms
-    mat2 : numpy matrix
-        Contains the position of the aliphatic atoms (0)
-    listval : list
-        Contains the labels of the clusters on the edges
-    
-    --------------------
-    OUTPUT
-    matrix
-        Contains mat2 where the clusters on the edge were put to 0.0
-    """
-    # Get the index in mat1 where the labels are in listval
-    mask = np.isin(mat1, listval)
-    index = np.argwhere(mask)
-    mat2[index[:,0], index[:,1]] = 0. 
-    return mat2
-
-def count_edge_area(area_cluster, cluster_edge):
-    """
-    Count the total area of the clusters on the edge
-
-    --------------------
-    INPUT
-    area_cluster : dictionary
+    area_defects: dictionary
         Contains the labels of each defects and their areas
-    cluster_edge : numpy array
+    edge_labels: list
         Contains the labels of the defects on the edge
     
     --------------------
@@ -284,23 +286,49 @@ def count_edge_area(area_cluster, cluster_edge):
         The sum of the defect areas on the edge
     """
     total_edge_area = 0
-    for key in cluster_edge:
-        total_edge_area += area_cluster[key]
+    for key in edge_labels:
+        total_edge_area += area_defects[key]
     return  total_edge_area
 
-def clean_NA_inside(Matrix_labels, labels_edge, Matrix_ini, total_edge):
+def modify_matrix(mat_labels, mat, edge_labels):
     """
-    Clean up the label matrix, the total edge area if there were NaN
-    that weren't changed in the first fill matrix
-    Then gives a dictionary of the wrongly labeled defects
+    Modify the binary matrix to take account edges (determined by all packing defects).
+    
+    The edges are put to 0.0
 
     --------------------
     INPUT
-    Matrix_labels : numpy matrix
-        Contains the labels
-    labels_edge : numpy array
+    mat_labels: numpy matrix
+        Contains the labels of the packing defects + aliphatic atoms
+    mat: numpy matrix
+        Contains the position of the aliphatic atoms (0)
+    edge_labels: list
+        Contains the labels of the clusters on the edges
+    
+    --------------------
+    OUTPUT
+    matrix
+        Contains mat where the clusters on the edge were put to 0.0
+    """
+    # Get the index in mat1 where the labels are in listval
+    mask = np.isin(mat_labels, edge_labels)
+    index = np.argwhere(mask)
+    mat[index[:,0], index[:,1]] = 0. 
+    return mat
+
+def clean_NA_inside(mat_labels, edge_labels, mat_ini, total_edge):
+    """
+    Clean up the label matrix, the total edge area if there were NaN that weren't changed in the first fill matrix.
+    
+    Then gives a dictionary of the wrongly labeled defects.
+
+    --------------------
+    INPUT
+    mat_labels : numpy matrix
+        Contains the defects' labels
+    edge_labels : list
         Contains the labels on each edge of the matrix
-    Matrix_ini : numpy matrix
+    mat_ini : numpy matrix
         Contains the positions of the polar atoms (int)
         aliphatic atoms (0.0 < float < 0.99)
         and packing defects (0.0)
@@ -317,13 +345,13 @@ def clean_NA_inside(Matrix_labels, labels_edge, Matrix_ini, total_edge):
         Contains the labels and their area concerned by the NaN problem
     """
     # Select the NaN that are inside the memb and not registered as edges
-    index_nan_inside = np.argwhere((np.isnan(Matrix_ini)) & (~np.isin(Matrix_labels, labels_edge)))
-    labels_Pb = Matrix_labels[index_nan_inside[:,0], index_nan_inside[:,1]]
+    index_nan_inside = np.argwhere((np.isnan(mat_ini)) & (~np.isin(mat_labels, edge_labels)))
+    labels_Pb = mat_labels[index_nan_inside[:,0], index_nan_inside[:,1]]
     # Get the unique labels and count their occurrence => dict
     unique, counts = np.unique(labels_Pb, return_counts=True)
     clustPb = dict(zip(unique, counts))
     # Correct the nan by giving it the first label of clust_edge
-    Matrix_labels[index_nan_inside[:,0], index_nan_inside[:,1]] = labels_edge[0]
+    mat_labels[index_nan_inside[:,0], index_nan_inside[:,1]] = edge_labels[0]
     # Correcy the total edge area
     total_edge += len(labels_Pb)
-    return Matrix_labels, total_edge, clustPb
+    return mat_labels, total_edge, clustPb

@@ -1,5 +1,5 @@
 #-*- coding: utf-8 -*-
-# Pg assign a distance group for each packing defect
+"""Compute packing defects analysis with a protein."""
 # R. Gerard 2024
 # M. Zygadlo 2025
 
@@ -7,23 +7,23 @@ import numpy as np
 
 from bin import matrix as m
 
-def find_protein(matrix, defect, protein, arrayX, arrayY, zmean):
+def find_protein(mat, defect, protein, arrayX, arrayY, zmean):
     """
     Locate the protein in the matrix.
 
     --------------------
     INPUT
-    matrix : numpy array 2D
+    mat: numpy array 2D
         Empty matrix (filled with 0)
-    defect : string
+    defect: string
         Take 'up' or 'lo' value. If we are working with the up or lo matrix
-    protein : MDAnalysis group
+    protein: MDAnalysis group
         The protein(s)
-    arrayX : numpy array
+    arrayX: numpy array
         List from xmin-1 to xmax+1 by step of 1.0
-    arrayY : numpy array
+    arrayY: numpy array
         List from ymin-1 to ymax+1 by step of 1.0
-    zmean : float
+    zmean: float
         The mean z position of the membrane
 
     --------------------
@@ -37,11 +37,11 @@ def find_protein(matrix, defect, protein, arrayX, arrayY, zmean):
         iX,iY = m.find_X_Y(coordtmp, arrayX, arrayY)
         # Upper leaflet
         if coordtmp[2] > zmean and defect == "up":
-            matrix[iX, iY] = 1
+            mat[iX, iY] = 1
         # Lower leaflet
         if coordtmp[2] < zmean and defect == "lo":
-            matrix[iX, iY] = 1
-    return matrix
+            mat[iX, iY] = 1
+    return mat
 
 def find_edges(mat):
     """
@@ -49,7 +49,7 @@ def find_edges(mat):
 
     --------------------
     INPUT
-    mat : numpy array 2D
+    mat: numpy array 2D
         Contains the packing defect labels or the value 0
         OR
         Contains the position of the protein(s) marked by 1 (0 otherwise)
@@ -104,7 +104,7 @@ def find_shortest_sqdist(coor_prot_edge, coor_defect_edge):
     min_sqdist = np.min(square_dist)
     return min_sqdist
 
-def assign_dist_group(coor_prot_edge, dict_coor_defect_edge, sqdist_thres):
+def assign_dist_group(coor_prot_edge, coor_defect_edge, sqdist_thres):
     """
     Assign distance groups to packing defects based on their proximity to the protein.
 
@@ -112,7 +112,7 @@ def assign_dist_group(coor_prot_edge, dict_coor_defect_edge, sqdist_thres):
     INPUT
     coor_prot_edge: numpy array
         Contains the coordinates of the protein edge cells
-    dict_coor_defect_edge: dictionary
+    coor_defect_edge: dictionary
         Contains labels as keys and arrays of defects edge cells coordinates as values
     sqdist_thres: int
         Squared distance threshold to determine if a packing defect is 'close' or 'far' from the protein
@@ -125,9 +125,9 @@ def assign_dist_group(coor_prot_edge, dict_coor_defect_edge, sqdist_thres):
     # Create a dictionnary to associate each label with their distance group
     defects_labels_group = {}
 
-    for label in dict_coor_defect_edge:
+    for label in coor_defect_edge:
         # Find the shortest squared distance to the protein
-        dist2_tmp = find_shortest_sqdist(coor_prot_edge, dict_coor_defect_edge[label])
+        dist2_tmp = find_shortest_sqdist(coor_prot_edge, coor_defect_edge[label])
         # Assign a distance group to the label
         if dist2_tmp < sqdist_thres:
             defects_labels_group[label] = 'close'
@@ -135,7 +135,7 @@ def assign_dist_group(coor_prot_edge, dict_coor_defect_edge, sqdist_thres):
             defects_labels_group[label] = 'far'
     return defects_labels_group
 
-def outputTXT_defects_prot(out_name, dict_labels_group, dict_defect_area):
+def outputTXT_defects_prot(out_name, labels_group, defect_area):
     """
     Create output file with information about the packing defects and their distance groups.
 
@@ -143,12 +143,12 @@ def outputTXT_defects_prot(out_name, dict_labels_group, dict_defect_area):
     INPUT
     out_name: string
         The output file name
-    dict_labels_group: dictionary
+    labels_group: dictionary
         Contains labels as keys and group ('close' or 'far') as values
-    dict_defect_area: dictionary
+    defect_area: dictionary
         Contains labels as keys and areas of each defect as values
     """
     with open(f"{out_name}.txt","w") as f:
-        for label in dict_labels_group:
-            if label in dict_defect_area.keys():
-                f.write(f"{label},{dict_labels_group[label]},{dict_defect_area[label]}\n")
+        for label in labels_group:
+            if label in defect_area.keys():
+                f.write(f"{label},{labels_group[label]},{defect_area[label]}\n")

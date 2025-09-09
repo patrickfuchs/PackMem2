@@ -1,12 +1,12 @@
 #-*- coding: utf-8 -*-
-# Functions about PDB data and output files
+"""Functions about PDB data and output files."""
 # R. Gautier A. Bacle 2015
 # M. Zygadlo 2025
 
 import numpy as np
 
 
-def outputTXT_defects(out_name, dict_def_area, dict_def_coor, 
+def outputTXT_defects(out_name, area_defects, first_coord, 
                         total_size, total_edge, arrayX, arrayY):
     """
     Create output file for packing defects in TXT format.
@@ -20,9 +20,9 @@ def outputTXT_defects(out_name, dict_def_area, dict_def_coor,
     INPUT
     out_name: string
         Name of the output result txt file
-    dict_def_area: dictionary
+    area_defects: dictionary
         Contains the area of each label
-    dict_def_coor: dictionary
+    first_coord: dictionary
         Contains the first appearance of the label in the matrix
     total_size: int
         The total area of the matrix
@@ -35,24 +35,22 @@ def outputTXT_defects(out_name, dict_def_area, dict_def_coor,
     """
     with open(f"{out_name}.txt","w") as f_result:
         f_result.write(f"## MatrixSize {total_size-total_edge:5d} {total_size:5d} \n")
-        if len(dict_def_coor) != 0:
-            f_result.write(f"## Total {len(dict_def_area):4d} {sum(dict_def_area.values()):5d} {sum(dict_def_area.values())/float(len(dict_def_area)):4.2f} {(sum(dict_def_area.values())*100.)/(total_size-total_edge):5.3f}\n")
+        if len(first_coord) != 0:
+            f_result.write(f"## Total {len(area_defects):4d} {sum(area_defects.values()):5d} {sum(area_defects.values())/float(len(area_defects)):4.2f} {(sum(area_defects.values())*100.)/(total_size-total_edge):5.3f}\n")
         else:
             #exception if no defect 
             f_result.write("## Total 0 0 0.0 0.0\n")
         i=0
-        for key in dict_def_coor:
-            f_result.write(f"{i+1:3d} {dict_def_area[key]:4d}   {arrayX[dict_def_coor[key][0]]:6.2f}   {arrayY[dict_def_coor[key][1]]:6.2f} \n")
+        for key in first_coord:
+            f_result.write(f"{i+1:3d} {area_defects[key]:4d}   {arrayX[first_coord[key][0]]:6.2f}   {arrayY[first_coord[key][1]]:6.2f} \n")
             i+=1
 
 def write_a_pdb_line(nb_atm, atm_name, nb_res, coords, nb_defect):
     """
-    Write a PDB line in a given file.
+    Write a PDB line.
 
     --------------------
     INPUT
-    file: file
-        An open file to write into
     nb_atm: int
         The atom number
     atm_name: string
@@ -66,7 +64,7 @@ def write_a_pdb_line(nb_atm, atm_name, nb_res, coords, nb_defect):
     """
     return f"{'ATOM  ':6s}{nb_atm:5d} {'  H1':4s} {atm_name:3s}  {nb_res:4d}    {float(coords[0]):8.3f}{float(coords[1]):8.3f}{float(coords[2]):8.3f}{1.0:6.2f}{nb_defect:6.2f}\n"
 
-def outputPDB_Total_matrix(out_name, num_frame, arrayX, arrayY, z_extr, Matrix_final):
+def outputPDB_Total_matrix(out_name, num_frame, arrayX, arrayY, z_extr, mat_final):
     """
     Create output file with Total Matrix in pdb format.
 
@@ -82,7 +80,7 @@ def outputPDB_Total_matrix(out_name, num_frame, arrayX, arrayY, z_extr, Matrix_f
         Array from ymin-1 to ymax+1 by step of 1.0
     z_extr: float
         The maximum or  minimum z value
-    Matrix_final: numpy array
+    mat_final: numpy array 2D
         Contains the types of the defects or np.nan for the edges
     """
     with open(f'{out_name}.pdb',"w") as f_tot:
@@ -92,14 +90,14 @@ def outputPDB_Total_matrix(out_name, num_frame, arrayX, arrayY, z_extr, Matrix_f
             nb+=1
             for j, ind_matY in enumerate(arrayY):
                 coordtmp = [ind_matX, ind_matY, z_extr]
-                if np.isnan(Matrix_final[i][j]):
+                if np.isnan(mat_final[i][j]):
                     f_tot.write(write_a_pdb_line(nb, "EDG", nb, coordtmp, -1))
                 else:
-                    f_tot.write(write_a_pdb_line(nb, "MAT", nb, coordtmp, Matrix_final[i][j]))
+                    f_tot.write(write_a_pdb_line(nb, "MAT", nb, coordtmp, mat_final[i][j]))
         f_tot.write("ENDMDL\n")
 
 def outputPDB_defects(out_name, num_frame, arrayX, arrayY, z_extr, 
-                        Matrix_final, cluster_edge):
+                        mat_final, edge_labels):
     """
     Create output file with defects only in pdb format.
 
@@ -115,7 +113,7 @@ def outputPDB_defects(out_name, num_frame, arrayX, arrayY, z_extr,
         Array from ymin-1 to ymax+1 by step of 1.0
     z_extr: float
         The maximum or  minimum z value
-    Matrix_final: numpy array
+    mat_final: numpy array 2D
         Contains the label of the defects or 0.0 for the edges
     edge_labels: list
         Contains the labels on the edge of the matrix
@@ -126,8 +124,8 @@ def outputPDB_defects(out_name, num_frame, arrayX, arrayY, z_extr,
         dict_Def={}
         for i, ind_matX in enumerate(arrayX):
             for j, ind_matY in enumerate(arrayY):
-                label_def = Matrix_final[i][j]
-                if label_def !=0. and label_def not in cluster_edge:
+                label_def = mat_final[i][j]
+                if label_def !=0. and label_def not in edge_labels:
                     if int(label_def) not in dict_Def:
                         dict_Def[int(label_def)]=[]
                     nb+=1

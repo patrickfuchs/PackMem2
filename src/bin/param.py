@@ -1,4 +1,5 @@
 #-*- coding: utf-8 -*-
+"""Get the arguments and parameter files."""
 # R. Gautier A. Bacle 2015
 # M. Zygadlo 2025
 
@@ -193,12 +194,12 @@ def read_ndx(ndx_file):
         Name if the index file
     --------------------
     OUTPUT
-    array numpy
+    arrays numpy
         Contains the residue number of each lipid in the upper/lower leaflet
     """
     # Read the lines in the index file
     lines = read_file(ndx_file)
-    # Get the 2nd and last last into a numpy array
+    # Get the 2nd and last lines into a numpy array
     # Because these lines are where the residue numbers are
     index1 = np.array(lines[1].strip().split(' '), dtype=int)
     index2 = np.array(lines[3].strip().split(' '), dtype=int)
