@@ -151,3 +151,23 @@ def test_get_edge_defects():
     tested_out = cc.get_edge_defects(mat)
     wanted_out = [1, 8]
     assert tested_out == wanted_out    
+
+def test_delete_NApoints_inside():
+    mat = np.array([[0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 2, 2, 0, 0, 0, 0, 0],
+                    [0, 2, 0, 0, 3, 3, 3, 0],
+                    [0, 0, 0, 0, 0, 3, 0, 0],
+                    [0, 4, 0, 5, 0, 0, 0, 0],
+                    [0, 4, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0]])
+    clustPB = {3:1, 6:1}
+    uniq_labels = [2, 3, 4, 5, 6]
+    area_defects = {2:3, 3:5, 4:2, 5:1, 6:1}
+    first_coor = {2:[1,1], 3:[1,6], 4:[4,1], 5:[4,3], 6:[5,5]}
+    tested_labels, tested_area, tested_coor = cc.delete_NApoints_inside(clustPB, mat, uniq_labels, area_defects, first_coor)
+    wanted_labels = [2, 3, 4, 5]
+    wanted_area = {2:3, 3:4, 4:2, 5:1}
+    wanted_coor = {2:[1,1], 3:[2,4], 4:[4,1], 5:[4,3]}
+    assert tested_labels == wanted_labels
+    assert tested_area == wanted_area
+    assert tested_coor == wanted_coor

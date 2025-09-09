@@ -274,19 +274,14 @@ if __name__ == '__main__':
                               MatrixUp_Shallow, area_edgeUp_Shallow)
         uniq_labelsUp_Shallow, area_defectsUp_Shallow, firstCoorUp_defects_Shallow = \
             cc.delete_NApoints_inside(labelsPb_Up_Shallow, MatrixUp_labels_Shallow,
-                                    uniq_labelsUp_Shallow, area_defectsUp_Shallow)
+                                    uniq_labelsUp_Shallow, area_defectsUp_Shallow, firstCoorUp_defects_Shallow)
 
         MatrixLo_labels_Shallow, area_edgeLo_Shallow, labelsPb_Lo_Shallow = \
             m.clean_NA_inside(MatrixLo_labels_Shallow, edge_labelsLo_Shallow,
                               MatrixLo_Shallow, area_edgeLo_Shallow)
         uniq_labelsLo_Shallow, area_defectsLo_Shallow, firstCoorLo_defects_Shallow = \
             cc.delete_NApoints_inside(labelsPb_Lo_Shallow, MatrixLo_labels_Shallow,
-                                    uniq_labelsLo_Shallow, area_defectsLo_Shallow)
-        # Reclean dico defects (without edge)
-        area_defectsUp_Shallow = d.del_key_dict(area_defectsUp_Shallow, edge_labelsUp_Shallow)
-        firstCoorUp_defects_Shallow = d.del_key_dict(firstCoorUp_defects_Shallow, edge_labelsUp_Shallow)
-        area_defectsLo_Shallow = d.del_key_dict(area_defectsLo_Shallow, edge_labelsLo_Shallow)
-        firstCoorLo_defects_Shallow = d.del_key_dict(firstCoorLo_defects_Shallow, edge_labelsLo_Shallow)
+                                    uniq_labelsLo_Shallow, area_defectsLo_Shallow, firstCoorLo_defects_Shallow)
 
 
         #### All ####

@@ -351,20 +351,22 @@ def get_edge_defects(mat_labels):
     edge_defects = sorted(list(set(edge_defects)))
     return edge_defects
 
-def delete_NApoints_inside(clustPb, Matrix_labels, root_labels, area_clusters):
+def delete_NApoints_inside(clustPb, mat_labels, uniq_labels, area_defects, first_coor):
     """
-    Get rid of the defect comprised enterely of nan
+    Get rid of the defect comprised enterely of NaN.
 
     --------------------
     INPUT
     clustPb : dictionnary
         Contains the labels and the number of cells concerned that has nan in Matrix_ini
-    Matrix_labels : numpy matrix
+    mat_labels : numpy matrix
         Contains the labels
-    root_labels : list
+    uniq_labels : list
         Contains the set of labels in this matrix
-    area_clusters : dictionnary
+    area_defects : dictionnary
         Contains the area of each label
+    first_coor : dictionnary
+        Contains the first coordinates of each label
 
     --------------------
     OUTPUT
@@ -375,36 +377,19 @@ def delete_NApoints_inside(clustPb, Matrix_labels, root_labels, area_clusters):
     dictionnary
         Contains the first appearance of the non-nan labels in the matrix
     """
-    clust_2_delete=[]
     # Loop on all the clusters that had nan in them
-    for key in clustPb:
+    for label in clustPb:
         #  If one of the clusters is enterely composed of nan
-        if area_clusters[key] == clustPb[key]:
-            # Add this label to the delete list
-            clust_2_delete.append(key)
-    # if there are some labels to be deleted
-    if len(clust_2_delete) != 0:
-        for num in clust_2_delete:
-            # Get their indexes in root_label
-            tmp=root_labels.index(num)
-            # Delete them from root_label
-            del root_labels[tmp]
-    # to store the area of each cluster
-    area_clusters = {}
-    # to store the coor (in the matrix) of the 1st element of each cluster
-    coor_clusters = {}
-    # Loop on the packing labels in the matrix
-    for root_label in root_labels:
-        area_clusters[root_label] = 0
-    # Loop on label matrix to compute the area of starting cell of cluster
-    for i in range(Matrix_labels.shape[0]):
-        for j in range(Matrix_labels.shape[1]):
-            # if there is a label
-            if Matrix_labels[i][j]:
-                # Add this cell to the area of the label
-                area_clusters[Matrix_labels[i][j]] += 1
-                # Store the coordinates of the first appearance of the label
-                if Matrix_labels[i][j] not in coor_clusters:
-                    coor_clusters[Matrix_labels[i][j]]=[i,j]
-    return root_labels, area_clusters, coor_clusters
+        if area_defects[label] == clustPb[label]:
+            # Delete the label
+            ind_lab = uniq_labels.index(label)
+            del uniq_labels[ind_lab]
+            del area_defects[label]
+            del first_coor[label]
+        else:
+            # Recount the area
+            area_defects[label] = len(np.where(mat_labels == label)[0])
+            # Reset the first coordinates
+            first_coor[label] = [np.where(mat_labels == label)[0][0], np.where(mat_labels == label)[1][0]]
+    return uniq_labels, area_defects, first_coor
     
