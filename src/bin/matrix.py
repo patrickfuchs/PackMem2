@@ -192,8 +192,8 @@ def fill_matrix(mat, coordtmp, arrayX, arrayY, arrayZ,
     OUTPUT
     numpy array 2D
         Contains a value 0 < a < 1 for aliphatic atom
-        > 1 if polar OR deep
-        Defects = 0
+        > 1 if polar OR just an atom (if defect = deep)
+        0 if it's a defect
     """
     # Number of cells to work around
     v=5
