@@ -7,6 +7,12 @@
 
 import sys
 import warnings
+# Ignore the warning for longdouble due to MDAnalysis' import of h5py
+warnings.filterwarnings(
+    "ignore",
+    message="Signature .* for <class 'numpy.longdouble'> does not match any known type.*",
+    category=UserWarning,
+)
 import numpy as np
 import MDAnalysis as mda
 from MDAnalysis.analysis.leaflet import LeafletFinder 

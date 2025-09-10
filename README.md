@@ -8,7 +8,9 @@ This version presents a code written in python 3 and some new mechanisms such as
 These are the packages required to get this version of PackMem running :\
 * argparse
 * numpy
-* MDAnalysis
+* MDAnalysis\
+All of them are already put in the yaml file and the environment can be set up with:\
+`conda env create -f PackMem_env.yml`
 
 -------------------------------------------------------------------------------
 
