@@ -1,142 +1,141 @@
 #-*- coding: utf-8 -*-
-# Functions about PDB data and output files
+"""Functions about PDB data and output files."""
 # R. Gautier A. Bacle 2015
+# M. Zygadlo 2025
 
-# modify data from PDB with the good lipid name
-# Rename lipid from 3 letters to 4 
-def modifyPDBdata(datapdb, dico,startID,endID):
-    for i, val in enumerate(datapdb):
-        if val[0:4] == "ATOM":
-            for key in dico:
-                if int(val[startID:endID]) in dico[key] and len(key) < 3:
-                    datapdb[i]=val[:17]+key+"  "+val[21:]
-                if int(val[startID:endID]) in dico[key] and len(key) == 3:
-                    datapdb[i]=val[:17]+key+" "+val[21:]
-    return datapdb
-
-#determine position of res_identifier in pdb file
-def determine_pos_resid(data):
-    # The residue number can exceed PDB_limit(9999)
-    flagID=0
-    i=0
-    while flagID == 0:
-        if data[i][:4] == "ATOM":
-            flagID=1
-            try:
-                resid=int(data[i][22:26])
-            except:
-                startID=21
-                endID=27
-            else:
-                startID=22
-                endID=26
-        i=i+1
-    #print(startID,endID)
-    return startID,endID
-
-#find num frame in pdb file (line MODEL) or 1 by default
-def find_numframe(data):
-    num_frame = 1
-    for line in data:
-        if line[:6].strip() == "MODEL":
-            num_frame = int(line.split()[-1])
-    return num_frame
-    
-# create output file of atoms in list_res in PDB format
-def outputPDB_leaflet(res_ids, res_names, atom_names, atom_pos, list_res, outputname, num_frame=1):
-    with open(outputname,"w") as f:
-        f.write(f"MODEL        {num_frame+1}\n")
-        atom_num = 0
-        for i in range(len(res_ids)):
-                if res_ids[i] in list_res:
-                    atom_num += 1
-                    f.write(f"{'ATOM':6s}{atom_num:5d} {atom_names[i]:^5s}{res_names[i]:3s}  {res_ids[i]:4d}{atom_pos[i][0]:12.3f}{atom_pos[i][1]:8.3f}{atom_pos[i][2]:8.3f}{1.00:6.2f}  {0.00:<16.2f}\n")
-        f.write("ENDMDL\n")
-
-# create output file of atm_name in listres in PDB format
-def outputPDB_leafletAtm(data, listres, outputname, startID, endID, atm_name):
-    with open(outputname,"w") as f:
-        for val in data:
-            if val[0:4] == "ATOM":
-                res_number=int(val[startID:endID])
-                atm=val[12:16].strip()
-                if res_number in listres and atm == atm_name:
-                    f.write(val)
-
-def write_a_pdb_line(file, nb_atm, atm_name, nb_res, coords, nb_defect):
-    file.write("%6s%5d %4s %3s  %4d    %8.3f%8.3f%8.3f%6.2f%6.2f\n"%
-                ("ATOM  ",nb_atm,"  H1", atm_name, nb_res ,float(coords[0]),float(coords[1]),
-                float(coords[2]),1.0,nb_defect))
-
-# create output file with Total Matrix in pdb format
-def outputPDB_Total_matrix(outputname, FlagPDtype, leaflet, num_frame, listX, 
-                            listY, Rpos, Matrix_final):
-    outputname = outputname + "_Total" + leaflet+ "_" + FlagPDtype + ".pdb"
-    with open(outputname,"w") as f:
-        f.write("MODEL      %3d\n"%(num_frame))
-        nb=0
-        for j, sliceX in enumerate(listX):
-            nb+=1
-            for k, sliceY in enumerate(listY):
-                coordtmp = [sliceX, sliceY, Rpos]
-                if Matrix_final[j][k] == "NA":
-                    write_a_pdb_line(f, nb, "EDG",  nb, coordtmp, -1)
-                else:
-                    write_a_pdb_line(f, nb, "MAT", nb, coordtmp, Matrix_final[j][k])
-        f.write("ENDMDL\n")
+import numpy as np
 
 
-# create output file with defects only in pdb format
-def outputPDB_defects(outputname, FlagPDtype, leaflet, num_frame, listX, listY, Rpos, 
-                        Matrix_fin, cluster_edge):
-    outputname = outputname + "_Defect" + leaflet+ "_"+ FlagPDtype +".pdb"
-    with open(outputname,"w") as f:
-        f.write("MODEL      %3d\n"%(num_frame))
-        nb=0
-        dicoDef={}
-        for j, sliceX in enumerate(listX):
-            for k, sliceY in enumerate(listY):
-                num_def = Matrix_fin[j][k]
-                if num_def !=0. and num_def not in cluster_edge:
-                    if int(num_def) not in dicoDef:
-                        dicoDef[int(num_def)]=[]
-                    nb+=1
-                    coordtmp=[sliceX,sliceY, Rpos]
-                    dicoDef[int(num_def)].append(
-                                "%6s%5d %4s %3s  %4d    %8.3f%8.3f%8.3f%6.2f%6.2f\n"%
-                                ("ATOM  ", nb,"  H1", "DEF", int(num_def),
-                                float(coordtmp[0]),float(coordtmp[1]),float(coordtmp[2]),
-                                1.0,num_def))
-        listdef = list(dicoDef.keys())
-        listdef.sort()
-        nb=0
-        for l in listdef:
-            for line in dicoDef[l]:
-                nb+=1
-                f.write("%s%5d%s"%(line[:6],nb,line[11:]))
-        f.write("ENDMDL\n")
+def outputTXT_defects(out_name, area_defects, first_coord, 
+                        total_size, total_edge, arrayX, arrayY):
+    """
+    Create output file for packing defects in TXT format.
 
+    ## MatrixSize  9646  9801           # Membrane_matrix_size  Total_matrix_size
+    ## Total   51   582 11.41 6.034     # Total_packing_defect_number, total_packing_defect_area, average_size, pourcent_of_membrane
+    1    7     7.00    55.00            # Defect_label  defect_size  X_position  Y_position
+    2    1     7.00    58.00
 
-#create output file for packing defects in TXT format
-## MatrixSize  9646  9801         # Membrane matrix size, Total matrix size
-## Total   51   582 11.41 6.034   # number of packing defects, total area of packing defects, average size, pourcent of membrane (Membrane matrix size)
-# 1    7     7.00    55.00        #defect size Xposition   Yposition
-# 2    1     7.00    58.00
-def outputTXT_defects(outputname, FlagPDtype, leaflet, dico_def_area, dico_def_coor, 
-                        total_size, total_edge, listX, listY):
-    outputname = outputname + "_" + leaflet+ "_"+FlagPDtype+"_result.txt"
-    with open(outputname,"w") as f:
-        f.write("## MatrixSize %5d %5d \n"%(total_size-total_edge,total_size))
-        if len(dico_def_coor) != 0:
-            f.write("## Total %4d %5d %4.2f %5.3f\n"%(len(dico_def_area),sum(dico_def_area.values()), sum(dico_def_area.values())/float(len(dico_def_area)), (sum(dico_def_area.values())*100.)/(total_size-total_edge)))
+    --------------------
+    INPUT
+    out_name: string
+        Name of the output result txt file
+    area_defects: dictionary
+        Contains the area of each label
+    first_coord: dictionary
+        Contains the first appearance of the label in the matrix
+    total_size: int
+        The total area of the matrix
+    total_edge: int
+        The sum of the defect areas on the edge
+    arrayX: numpy array
+        Array from xmin-1 to xmax+1 by step of 1.0
+    arrayY: numpy array
+        Array from ymin-1 to ymax+1 by step of 1.0
+    """
+    with open(f"{out_name}.txt","w") as f_result:
+        f_result.write(f"## MatrixSize {total_size-total_edge:5d} {total_size:5d} \n")
+        if len(first_coord) != 0:
+            f_result.write(f"## Total {len(area_defects):4d} {sum(area_defects.values()):5d} {sum(area_defects.values())/float(len(area_defects)):4.2f} {(sum(area_defects.values())*100.)/(total_size-total_edge):5.3f}\n")
         else:
             #exception if no defect 
-            f.write("## Total 0 0 0.0 0.0\n")
+            f_result.write("## Total 0 0 0.0 0.0\n")
         i=0
-        for key in dico_def_coor:
-            # version with matrice position
-            #f.write("%3d %4d   %6.2f   %6.2f \n"%(i+1, dico_def_area[key], dico_def_coor[key][0], dico_def_coor[key][1]))
-            # version with x, y coordinates
-            f.write("%3d %4d   %6.2f   %6.2f \n"%(i+1, dico_def_area[key], listX[dico_def_coor[key][0]], listY[dico_def_coor[key][1]]))
+        for key in first_coord:
+            f_result.write(f"{i+1:3d} {area_defects[key]:4d}   {arrayX[first_coord[key][0]]:6.2f}   {arrayY[first_coord[key][1]]:6.2f} \n")
             i+=1
 
+def write_a_pdb_line(nb_atm, atm_name, nb_res, coords, nb_defect):
+    """
+    Write a PDB line.
+
+    --------------------
+    INPUT
+    nb_atm: int
+        The atom number
+    atm_name: string
+        The atom name
+    nb_res: int
+        The residue number
+    coords: list
+        Contains the coordinates x,y,z of the atom
+    nb_defect: int
+        The label of the defect
+    """
+    return f"{'ATOM  ':6s}{nb_atm:5d} {'  H1':4s} {atm_name:3s}  {nb_res:4d}    {float(coords[0]):8.3f}{float(coords[1]):8.3f}{float(coords[2]):8.3f}{1.0:6.2f}{nb_defect:6.2f}\n"
+
+def outputPDB_Total_matrix(out_name, num_frame, arrayX, arrayY, z_extr, mat_final):
+    """
+    Create output file with Total Matrix in pdb format.
+
+    --------------------
+    INPUT
+    out_name: string
+        Name of the output PDB file
+    num_frame: int
+        The  frame number
+    arrayX: numpy array
+        Array from xmin-1 to xmax+1 by step of 1.0
+    arrayY: numpy array
+        Array from ymin-1 to ymax+1 by step of 1.0
+    z_extr: float
+        The maximum or  minimum z value
+    mat_final: numpy array 2D
+        Contains the types of the defects or np.nan for the edges
+    """
+    with open(f'{out_name}.pdb',"w") as f_tot:
+        f_tot.write(f"MODEL      {num_frame:3d}\n")
+        nb=0
+        for i, ind_matX in enumerate(arrayX):
+            nb+=1
+            for j, ind_matY in enumerate(arrayY):
+                coordtmp = [ind_matX, ind_matY, z_extr]
+                if np.isnan(mat_final[i][j]):
+                    f_tot.write(write_a_pdb_line(nb, "EDG", nb, coordtmp, -1))
+                else:
+                    f_tot.write(write_a_pdb_line(nb, "MAT", nb, coordtmp, mat_final[i][j]))
+        f_tot.write("ENDMDL\n")
+
+def outputPDB_defects(out_name, num_frame, arrayX, arrayY, z_extr, 
+                        mat_final, edge_labels):
+    """
+    Create output file with defects only in pdb format.
+
+    --------------------
+    INPUT
+    out_name: string
+        Name of the output PDB file
+    num_frame: int
+        The  frame number
+    arrayX: numpy array
+        Array from xmin-1 to xmax+1 by step of 1.0
+    arrayY: numpy array
+        Array from ymin-1 to ymax+1 by step of 1.0
+    z_extr: float
+        The maximum or  minimum z value
+    mat_final: numpy array 2D
+        Contains the label of the defects or 0.0 for the edges
+    edge_labels: list
+        Contains the labels on the edge of the matrix
+    """
+    with open(f"{out_name}.pdb","w") as f:
+        f.write(f"MODEL      {num_frame:3d}\n")
+        nb=0
+        dict_Def={}
+        for i, ind_matX in enumerate(arrayX):
+            for j, ind_matY in enumerate(arrayY):
+                label_def = mat_final[i][j]
+                if label_def !=0. and label_def not in edge_labels:
+                    if int(label_def) not in dict_Def:
+                        dict_Def[int(label_def)]=[]
+                    nb+=1
+                    coordtmp=[ind_matX, ind_matY, z_extr]
+                    dict_Def[int(label_def)].append(write_a_pdb_line(nb, 'DEF', int(label_def), coordtmp, label_def))
+        keys_def= list(dict_Def.keys())
+        keys_def.sort()
+        nb=0
+        for key in keys_def:
+            for line in dict_Def[key]:
+                nb+=1
+                f.write(f"{line[:6]}{nb:5d}{line[11:]}")
+        f.write("ENDMDL\n")

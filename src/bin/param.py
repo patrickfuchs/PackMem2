@@ -1,17 +1,33 @@
 #-*- coding: utf-8 -*-
-# R. Gautier  A. Bacle 2015
+"""Get the arguments and parameter files."""
+# R. Gautier A. Bacle 2015
+# M. Zygadlo 2025
 
 import argparse
 import os
-from bin import BasicFunctions as bfrg
-import re
-import sys
+import numpy as np
 
 def file_present(filename):
+    """
+    Check if the file exists.
+
+    --------------------
+    INPUT
+    filename: str
+        The name if the file to test the presence of
+    """
     if not os.path.isfile(filename):
         raise FileNotFoundError(f"ERROR : file '{filename}' not found.")
 
 def get_args():
+    """
+    Get the arguments for the script and check that the inputfiles are valid.
+
+    --------------------
+    OUTPUT
+    parser.parse_args
+        Contains all the arguments for the script
+    """
     parser = argparse.ArgumentParser(description = 'Arguments for PackMem_prot.py')
     parser.add_argument('-f', action='store', dest='traj', required=True,
                         help = 'Trajectory file (.xtc)')
@@ -46,120 +62,151 @@ def get_args():
                         
     args = parser.parse_args()
 
+    # Check that the files exist
     file_present(args.traj)
     file_present(args.topo)
     file_present(args.paramFile)
     file_present(args.filesrad)    
 
+    # Check that the variable d is positive
     if args.dist_suppl_Z < 0.0 :
         raise Exception("ERROR : The distance for the -d option must be > 0.0")
     
     return args
 
-# read the parameters file and return 3 tables
-#lis le fichier de paramètres en renvoir 3 tableaux
-#tab1 : correspondence between PDB name and Lipid name in the script
-#tab2 : Glycerol atoms by lipid type
-#tab3 : Dictionary of aliphatic atoms for each lipid type
-def set_params(filename):
-    lines = bfrg.read_file(filename)
-    searchRegex = re.compile("^#").search
-    limits = filterPick(lines, searchRegex)
-    tab_limits = limits_list(lines, limits)
-    lines_tab = split_list(lines, tab_limits)
-    tab1, tab2 = lines_tab[0], lines_tab[1]
-    dict_3L = dict_2columns(tab1)
-    resname_glyc = dict_2columns(tab2)
-    lipid=dict_lipid(dict_3L)
-    return(dict_3L, resname_glyc, lipid)
+def read_file(filename):
+    """
+    Read an input file and test if file is readable.
 
-
-#return index of table matching with the regexpression
-def filterPick(list, filter):
-    return [ (i) for i, l in enumerate(list) for m in (filter(l),) if m]
-
-
-#Argument: list of lines from the file and limits table
-#return limits (start and end) for each sublist of file
-def limits_list(lines, limits):
-    list_limit_tab = []
-    len_limits = len(limits) - 1
-    for i in range(len_limits):
-        list_limit_tab.append( (limits[i] + 1, limits[i + 1] - 1))
-    list_limit_tab.append((limits[i+1] + 1,len(lines)))
-    return list_limit_tab
-
-#Argument: list of lines from the file and limits table
-#return table with X subtables of file
-def split_list(lines, limits_tab):
-    tab= []
-    for i in limits_tab:
-        tab.append(lines[i[0] : i[1]])
-    return tab
-
-# transform 2 columns of file to a dictionary
-def dict_2columns(tab1):
-    lipid_3L  = {}
-    for i in tab1:
-        data = i.strip().split(' ')
-        lipid_3L[data[0]] = data[1]
-    return lipid_3L
-
-#RG 2016 01 11
-# transform  a lipid dictionary [LIPIDFILE_ATOMFILE]=LIPID3L to a list of LIPIDFILE
-def dict_lipid(lipid_3L):
-    lipid  = []
-    for key in lipid_3L:
-        data = key.strip().split('_')
-        lipid.append(data[0])
-    return lipid
-
-#return the lines number for each lipid
-def limits_lip(tab):
-    list_limit_lip = []
-    for i, lip in enumerate(tab):
-        line = len(lip.strip().split(' '))
-        if line > 1:
-            list_limit_lip.append(i)
-    return list_limit_lip
-
-#build dictionary with key= lipd name, values = aliphatic atoms list
-def dic_aliph_atoms(tab, list_limits):
-    dic_aliph_atoms = {}
-    for limit in list_limits :
-        name_lip = tab[limit].strip().split(' ')[0]
-        nb_aliph = int(tab[limit].strip().split(' ')[1])
-        tab_aliph = []
-        for i in range(nb_aliph):
-            tab_aliph.append(tab[limit+i+1].strip())
-        dic_aliph_atoms[name_lip] = tab_aliph
-    return(dic_aliph_atoms)
-
-#Read a ndx file to set the lower/upper residue number lists
-def read_ndx(ndx_file):
-    lines = bfrg.read_file(ndx_file)
-    lower_leaflet = []
-    upper_leaflet = []
-    index1 = lines[1].split(' ')
-    index2 = lines[3].split(' ')
-    for number in index1:
-        res_num = int(number.strip())
-        if "Lower" in lines[0] or "lower" in lines[0]:
-            lower_leaflet.append(res_num)
-        else: 
-            upper_leaflet.append(res_num)
-    for number in index2:
-        res_num = int(number.strip())
-        if "Lower" in lines[0] or "lower" in lines[0]:
-            upper_leaflet.append(res_num)
-        else:
-            lower_leaflet.append(res_num)
-    return(lower_leaflet, upper_leaflet)
+    --------------------
+    INPUT
+    filename: str
+        Name of the input file
     
+    --------------------
+    OUTPUT
+    list
+        Contains the lines of the file as a list of strings
+    """
+    try: 
+        with open(filename) as f:
+            data = f.readlines()
+    except : 
+        print(f"ERROR : Something went wrong with the file {filename}")
+    return data
 
+def dict_2columns(list_str):
+    """
+    Transform list of strings with 2 columns into a dictionary.
 
+    --------------------
+    INPUT
+    list_str: list
+        Contains strings as values
+    
+    --------------------
+    OUTPUT
+    dictionary
+        Contains for each string the key as first word and value as second word
+    """
+    dic = {}
+    for line in list_str:
+        # Use space a separator
+        data = line.strip().split(' ')
+        dic[data[0]] = data[1]
+    return dic
 
+def set_params(filename):
+    """
+    Read the parameter file and return a dictionary of the information.
 
+    --------------------
+    INPUT
+    filename: str
+        Name of the parameter file
+    
+    --------------------
+    OUTPUT
+    dictionary
+        Contains the name of the lipids as key and their central atoms as value
+    """
+    # Read the file
+    lines = read_file(filename)
+    # Create a dictionary from the file
+    resname_glyc = dict_2columns(lines)
+    return resname_glyc
 
+def dict_4columns(list_str, nb):
+    """
+    Transform list of strings with 4 columns into a dictionary.
 
+    --------------------
+    INPUT
+    list_str: list
+        Contains strings as values
+    nb: int
+        index of the column that will be put as key
+    
+    --------------------
+    OUTPUT
+    dictionary
+        Contains for each string the key as first and second word
+        and value as third or fourth word
+    """
+    dic = {}
+    for line in list_str:
+        # Use space a separator
+        data = line.strip().split()
+        if nb == 2:
+            dic[data[0]+' '+data[1]] = float(data[nb])
+        else:
+            dic[data[0]+' '+data[1]] = data[nb]
+    return dic
 
+def set_rad_ali(filename):
+    """
+    Read the vdw_radii file and return two dictionaries.
+
+    --------------------
+    INPUT
+    filename: str
+        Name of the parameter file
+    
+    --------------------
+    OUTPUT
+    dictionary
+        Contains the radius of the atom
+    dictionary
+        Contains the aliphatic information of the atom
+    """
+    lines = read_file(filename)
+    radius = dict_4columns(lines, 2)
+    aliph = dict_4columns(lines, 3)
+    return  radius, aliph
+
+def read_ndx(ndx_file):
+    """
+    Read a .ndx file to set the lower/upper residue number lists.
+
+    --------------------
+    INPUT
+    ndx_file: str
+        Name if the index file
+    --------------------
+    OUTPUT
+    arrays numpy
+        Contains the residue number of each lipid in the upper/lower leaflet
+    """
+    # Read the lines in the index file
+    lines = read_file(ndx_file)
+    # Get the 2nd and last lines into a numpy array
+    # Because these lines are where the residue numbers are
+    index1 = np.array(lines[1].strip().split(' '), dtype=int)
+    index2 = np.array(lines[3].strip().split(' '), dtype=int)
+
+    # If the first line : "[ Upper leaflet ]" or "[ upper leaflet ]"
+    if "upper" in lines[0] or "Upper" in lines[0]:
+        return index1, index2
+    # If the first  line : "[ Lower leaflet ]" or "[ lower leaflet ]"
+    else:
+        return index2, index1
