@@ -63,14 +63,14 @@ return (decays)
 pdf(paste("Res_",PREFIX,".pdf",sep=""))
 # Initialize a data frame to store packdef constants + errors
 packdef_constants = data.frame(matrix(0,nrow=6,ncol=3),row.names=c("PackDef_cst_global","PackDef_cst_block1","PackDef_cst_block2","PackDef_cst_block3","PackDef_cst_all_blocks","error_all_blocks"))
-names(packdef_constants) = c("deep","shallow","all")
+names(packdef_constants) = c("Deep","Shallow","All")
 # print the results also to a text file
 sink(paste("Res_",PREFIX,".txt",sep=""))
 
 ######
 # Now loop over the three default types
 ######
-for (DEFECT in c("deep","shallow","all")) {
+for (DEFECT in c("Deep","Shallow","All")) {
 
 # we want to use 4 rainbow colors
 palette(rainbow(4))
@@ -179,7 +179,7 @@ perc_errors = as.numeric(packdef_constants["error_all_blocks",]) / abs(yvals)
 # go on for the barplot
 par(mar=c(7, 4.6, 4, 2) + 0.1) 
 bp = barplot(yvals,names.arg="",ylab=expression(paste("defect size constant (",A^2,")")),ylim=c(4,max(yvals)+4),cex.axis=1.4,cex.lab=1.4,xaxt="n",col=palette(),main= "Packing defect constants computed by block averaging",xpd=FALSE)
-LABELS = c("deep","shallow","all")
+LABELS = c("Deep","Shallow","All")
 axis(1, at=bp, labels = FALSE, tick=FALSE)
 text(bp, par("usr")[3] - 0.6, labels = LABELS, pos = 1, xpd = TRUE,cex = 1.3,adj=1,col=palette())
 box(lwd=2)

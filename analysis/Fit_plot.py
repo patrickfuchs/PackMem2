@@ -108,12 +108,12 @@ if __name__=="__main__":
     # Create a single PDF file
     pdf = PdfPages(f'{args.output}.pdf')
     # Initialize a data frame to store packdef constants + errors
-    packdef_constants = pd.DataFrame(columns = ['deep', 'shallow', 'all'], 
+    packdef_constants = pd.DataFrame(columns = ['Deep', 'Shallow', 'All'], 
                        index = ["PackDef_cst_global", "PackDef_cst_block1", "PackDef_cst_block2", 
                                 "PackDef_cst_block3","PackDef_cst_all_blocks","error_all_blocks"])
     
     # Now loop over the three default types
-    for DEFECT in ["deep","shallow","all"]:
+    for DEFECT in ["Deep","Shallow","All"]:
         # load PackMem data
         filename = args.prefix+"_"+DEFECT+"_clean.txt"
         packdef_data = pd.read_csv(filename, header=None, sep=r"\s+")[1]

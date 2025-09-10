@@ -54,67 +54,67 @@ done
 # packing defects accumulated over all frames (one file per membrane leaflet)
 # Delete those files if they already exist before launching the main loop
 # (the -f flag avoids an error if the file doesn't exist)
-#rm -f Total_Up_${prefix}_deep.txt
-#rm -f Total_Lo_${prefix}_deep.txt
-#rm -f Total_Up_${prefix}_shallow.txt
-#rm -f Total_Lo_${prefix}_shallow.txt
-#rm -f Total_Up_${prefix}_all.txt
-#rm -f Total_Lo_${prefix}_all.txt
+#rm -f Total_Up_${prefix}_Deep.txt
+#rm -f Total_Lo_${prefix}_Deep.txt
+#rm -f Total_Up_${prefix}_Shallow.txt
+#rm -f Total_Lo_${prefix}_Shallow.txt
+#rm -f Total_Up_${prefix}_All.txt
+#rm -f Total_Lo_${prefix}_All.txt
 
 
 
 for pdbnum in $(seq ${first_frame} ${last_frame})
 do
     # Accumulate packing defects of the current frame in Total_*.txt files per leaflet
-    cat  ${prefix}${pdbnum}_Up_deep_result.txt >> Total_Up_${prefix}_deep.txt
-    cat  ${prefix}${pdbnum}_Lo_deep_result.txt >> Total_Lo_${prefix}_deep.txt
-    cat  ${prefix}${pdbnum}_Up_shallow_result.txt >> Total_Up_${prefix}_shallow.txt
-    cat  ${prefix}${pdbnum}_Lo_shallow_result.txt >> Total_Lo_${prefix}_shallow.txt
-    cat  ${prefix}${pdbnum}_Up_all_result.txt >> Total_Up_${prefix}_all.txt
-    cat  ${prefix}${pdbnum}_Lo_all_result.txt >> Total_Lo_${prefix}_all.txt
+    cat  ${prefix}${pdbnum}_Up_Deep_result.txt >> Total_Up_${prefix}_Deep.txt
+    cat  ${prefix}${pdbnum}_Lo_Deep_result.txt >> Total_Lo_${prefix}_Deep.txt
+    cat  ${prefix}${pdbnum}_Up_Shallow_result.txt >> Total_Up_${prefix}_Shallow.txt
+    cat  ${prefix}${pdbnum}_Lo_Shallow_result.txt >> Total_Lo_${prefix}_Shallow.txt
+    cat  ${prefix}${pdbnum}_Up_All_result.txt >> Total_Up_${prefix}_All.txt
+    cat  ${prefix}${pdbnum}_Lo_All_result.txt >> Total_Lo_${prefix}_All.txt
 
     # we no longer need the defects of the current frame
-    rm -f ${prefix}${pdbnum}_Up_deep_result.txt
-    rm -f ${prefix}${pdbnum}_Lo_deep_result.txt
-    rm -f ${prefix}${pdbnum}_Up_shallow_result.txt
-    rm -f ${prefix}${pdbnum}_Lo_shallow_result.txt
-    rm -f ${prefix}${pdbnum}_Up_all_result.txt
-    rm -f ${prefix}${pdbnum}_Lo_all_result.txt
+    rm -f ${prefix}${pdbnum}_Up_Deep_result.txt
+    rm -f ${prefix}${pdbnum}_Lo_Deep_result.txt
+    rm -f ${prefix}${pdbnum}_Up_Shallow_result.txt
+    rm -f ${prefix}${pdbnum}_Lo_Shallow_result.txt
+    rm -f ${prefix}${pdbnum}_Up_All_result.txt
+    rm -f ${prefix}${pdbnum}_Lo_All_result.txt
+
+    if [ ${prot} = true ]
+    then
+        # Accumulate packing defects of the current frame in Total_*.txt files per leaflet
+        cat  ${prefix}${pdbnum}_Up_All_prot.txt >> Total_Up_${prefix}_All_prot.txt
+        cat  ${prefix}${pdbnum}_Up_Deep_prot.txt >> Total_Up_${prefix}_Deep_prot.txt
+        cat  ${prefix}${pdbnum}_Up_Shallow_prot.txt >> Total_Up_${prefix}_Shallow_prot.txt
+
+        # we no longer need the defects of the current frame
+        rm -f ${prefix}${pdbnum}_Up_All_prot.txt
+        rm -f ${prefix}${pdbnum}_Up_Deep_prot.txt
+        rm -f ${prefix}${pdbnum}_Up_Shallow_prot.txt
+    fi
 done
 
-if [ ${prot} = true ]
-then
-    # Accumulate packing defects of the current frame in Total_*.txt files per leaflet
-    cat  ${prefix}${pdbnum}_Up_all_prot.txt >> Total_Up_${prefix}_all_prot.txt
-    cat  ${prefix}${pdbnum}_Up_deep_prot.txt >> Total_Up_${prefix}_deep_prot.txt
-    cat  ${prefix}${pdbnum}_Up_shallow_prot.txt >> Total_Up_${prefix}_shallow_prot.txt
-
-    # we no longer need the defects of the current frame
-    rm -f ${prefix}${pdbnum}_Up_all_prot.txt
-    rm -f ${prefix}${pdbnum}_Up_deep_prot.txt
-    rm -f ${prefix}${pdbnum}_Up_shallow_prot.txt
-fi
-
 # Concatenate the packing defects statistics of the lower and upper leaflets
-cat Total_Up_${prefix}_deep.txt Total_Lo_${prefix}_deep.txt > Total_${prefix}_deep.txt
-cat Total_Up_${prefix}_shallow.txt Total_Lo_${prefix}_shallow.txt > Total_${prefix}_shallow.txt
-cat Total_Up_${prefix}_all.txt Total_Lo_${prefix}_all.txt > Total_${prefix}_all.txt
+cat Total_Up_${prefix}_Deep.txt Total_Lo_${prefix}_Deep.txt > Total_${prefix}_Deep.txt
+cat Total_Up_${prefix}_Shallow.txt Total_Lo_${prefix}_Shallow.txt > Total_${prefix}_Shallow.txt
+cat Total_Up_${prefix}_All.txt Total_Lo_${prefix}_All.txt > Total_${prefix}_All.txt
 
 # Clean txt file for python script
-egrep -v "#" Total_${prefix}_deep.txt > Total_${prefix}_deep_clean.txt
-egrep -v "#" Total_${prefix}_shallow.txt > Total_${prefix}_shallow_clean.txt
-egrep -v "#" Total_${prefix}_all.txt > Total_${prefix}_all_clean.txt
+egrep -v "#" Total_${prefix}_Deep.txt > Total_${prefix}_Deep_clean.txt
+egrep -v "#" Total_${prefix}_Shallow.txt > Total_${prefix}_Shallow_clean.txt
+egrep -v "#" Total_${prefix}_All.txt > Total_${prefix}_All_clean.txt
 
 # Clean leaflet txt file for python script
-egrep -v "#" Total_Up_${prefix}_deep.txt > Total_Up_${prefix}_deep_clean.txt
-egrep -v "#" Total_Up_${prefix}_shallow.txt > Total_Up_${prefix}_shallow_clean.txt
-egrep -v "#" Total_Up_${prefix}_all.txt > Total_Up_${prefix}_all_clean.txt
-egrep -v "#" Total_Lo_${prefix}_deep.txt > Total_Lo_${prefix}_deep_clean.txt
-egrep -v "#" Total_Lo_${prefix}_shallow.txt > Total_Lo_${prefix}_shallow_clean.txt
-egrep -v "#" Total_Lo_${prefix}_all.txt > Total_Lo_${prefix}_all_clean.txt
+egrep -v "#" Total_Up_${prefix}_Deep.txt > Total_Up_${prefix}_Deep_clean.txt
+egrep -v "#" Total_Up_${prefix}_Shallow.txt > Total_Up_${prefix}_Shallow_clean.txt
+egrep -v "#" Total_Up_${prefix}_All.txt > Total_Up_${prefix}_All_clean.txt
+egrep -v "#" Total_Lo_${prefix}_Deep.txt > Total_Lo_${prefix}_Deep_clean.txt
+egrep -v "#" Total_Lo_${prefix}_Shallow.txt > Total_Lo_${prefix}_Shallow_clean.txt
+egrep -v "#" Total_Lo_${prefix}_All.txt > Total_Lo_${prefix}_All_clean.txt
 
 # Finally remove the the non clean .txt files
-rm -f Total_*${prefix}_deep.txt
-rm -f Total_*${prefix}_shallow.txt
-rm -f Total_*${prefix}_all.txt
+rm -f Total_*${prefix}_Deep.txt
+rm -f Total_*${prefix}_Shallow.txt
+rm -f Total_*${prefix}_All.txt
 
