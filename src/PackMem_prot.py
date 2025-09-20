@@ -185,34 +185,12 @@ if __name__ == '__main__':
                                             arrayX, arrayY, lower_arrayZ[res_id])
         
         # Initalise matrices to 0.0
-        #testUp_Shallowbin1 = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
-        #testLo_Shallowbin1 = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
-        # Binarise
-        #testUp_Shallowbin1 = m.binarize_matrix_without0(test_Up, testUp_Shallowbin1, -0.01, 0.99)
-        #testLo_Shallowbin1 = m.binarize_matrix_without0(test_Lo, testLo_Shallowbin1, -0.01, 0.99)
-        # Get temporary packing defects
-        #testUp_labels_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
-        #testLo_labels_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
-        # Connect the packing defects + label them + count the area
-        #testUp_labels_Shallow, uniq_labelsUp_Shallow, area_defectsUp_Shallow, firstCoorUp_defects_Shallow = \
-        #    cc.get_connected_components(testUp_Shallowbin1, testUp_labels_Shallow)
-        #testLo_labels_Shallow, uniq_labelsLo_Shallow, area_defectsLo_Shallow, firstCoorLo_defects_Shallow = \
-        #    cc.get_connected_components(testLo_Shallowbin1, testLo_labels_Shallow)
-        # Get the labels on the edge
-        #edge_labelsUp_Shallow = cc.get_edge_defects(testUp_labels_Shallow)
-        #edge_labelsLo_Shallow = cc.get_edge_defects(testLo_labels_Shallow)
-
         testUp_Deepbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
         testLo_Deepbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
         testUp_Shallowbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
         testLo_Shallowbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
         testUp_Allbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
         testLo_Allbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
-
-        # Modify the binary matrix to take account edges (determined by all packing defects)
-        # The clusters that had their labels on the edge are put to 0.0
-        #testUp_Shallowbin = m.modify_matrix(testUp_labels_Shallow, testUp_Shallowbin, edge_labelsUp_Shallow)
-        #testLo_Shallowbin = m.modify_matrix(testLo_labels_Shallow, testLo_Shallowbin, edge_labelsLo_Shallow)
         
         #### Deep ####
         # Binarise
@@ -264,35 +242,31 @@ if __name__ == '__main__':
 
         #### Shallow ####
         # Binarise
-        testUp_Shalbin = testUp_Allbin - testUp_Deepbin
-        testLo_Shalbin = testLo_Allbin - testLo_Deepbin
-        testUp_Shallowbin = m.binarize_matrix_without0(test_Up, testUp_Shallowbin, -0.01, 1.0)
-        testLo_Shallowbin = m.binarize_matrix_without0(test_Lo, testLo_Shallowbin, -0.01, 1.0)
-        #ind_diff = np.argwhere(testUp_Shallowbin != testUp_Shalbin)
-        #print(f"Frame {ts.frame}, {len(ind_diff)} differences found in Shallow bin Up: {ind_diff[:,0]}, {ind_diff[:,1]}")
-        #for i in range(10):
-        #    print(f"i, j: {ind_diff[i,0]}, {ind_diff[i,1]}. normal: {testUp_Shallowbin[ind_diff[i,0],ind_diff[i,1]]}. vers_soustra: {testUp_Shalbin[ind_diff[i,0],ind_diff[i,1]]}")
-        #ind_diff = np.argwhere(testLo_Shallowbin != testLo_Shalbin)
-        #print(f"Frame {ts.frame}, {len(ind_diff)} differences found in Shallow bin Lo: {ind_diff[:,0]}, {ind_diff[:,1]}")
+        testUp_Shallowbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 1.)
+        testLo_Shallowbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 1.)
+        ind_diff_Up = np.argwhere(testUp_Deepbin != testUp_Allbin)
+        ind_diff_Lo = np.argwhere(testLo_Deepbin != testLo_Allbin)
+        testUp_Shallowbin[ind_diff_Up[:,0],ind_diff_Up[:,1]] = 0.
+        testLo_Shallowbin[ind_diff_Lo[:,0],ind_diff_Lo[:,1]] = 0.
         # Packing defects determination
         testUp_labels_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
         testLo_labels_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
         # Connect the packing defects + label them + count the area
-        testUp_labels_Shallow, uniq_labelsUp_Shallow, area_defectsUp_Shallow, firstCoorUp_defects_Shallow = \
+        testUp_labels_Shallow, tuniq_labelsUp_Shallow, tarea_defectsUp_Shallow, tfirstCoorUp_defects_Shallow = \
             cc.get_connected_components(testUp_Shallowbin, testUp_labels_Shallow)
-        testLo_labels_Shallow, uniq_labelsLo_Shallow, area_defectsLo_Shallow, firstCoorLo_defects_Shallow = \
+        testLo_labels_Shallow, tuniq_labelsLo_Shallow, tarea_defectsLo_Shallow, tfirstCoorLo_defects_Shallow = \
             cc.get_connected_components(testLo_Shallowbin, testLo_labels_Shallow)
         # Get cluster on the edge
-        edge_labelsUp_Shallow = cc.get_edge_defects(testUp_labels_Shallow)
-        edge_labelsLo_Shallow = cc.get_edge_defects(testLo_labels_Shallow)
+        tedge_labelsUp_Shallow = cc.get_edge_defects(testUp_labels_Shallow)
+        tedge_labelsLo_Shallow = cc.get_edge_defects(testLo_labels_Shallow)
         # Count area of the edge
-        area_edgeUp_Shallow = m.count_edge_area(area_defectsUp_Shallow, edge_labelsUp_Shallow)
-        area_edgeLo_Shallow = m.count_edge_area(area_defectsLo_Shallow, edge_labelsLo_Shallow)
+        tarea_edgeUp_Shallow = m.count_edge_area(tarea_defectsUp_Shallow, tedge_labelsUp_Shallow)
+        tarea_edgeLo_Shallow = m.count_edge_area(tarea_defectsLo_Shallow, tedge_labelsLo_Shallow)
         # Clean dico defects (without edge)
-        area_defectsUp_Shallow = d.del_key_dict(area_defectsUp_Shallow, edge_labelsUp_Shallow)
-        firstCoorUp_defects_Shallow = d.del_key_dict(firstCoorUp_defects_Shallow, edge_labelsUp_Shallow)
-        area_defectsLo_Shallow = d.del_key_dict(area_defectsLo_Shallow, edge_labelsLo_Shallow)
-        firstCoorLo_defects_Shallow = d.del_key_dict(firstCoorLo_defects_Shallow, edge_labelsLo_Shallow)
+        tarea_defectsUp_Shallow = d.del_key_dict(tarea_defectsUp_Shallow, tedge_labelsUp_Shallow)
+        tfirstCoorUp_defects_Shallow = d.del_key_dict(tfirstCoorUp_defects_Shallow, tedge_labelsUp_Shallow)
+        tarea_defectsLo_Shallow = d.del_key_dict(tarea_defectsLo_Shallow, tedge_labelsLo_Shallow)
+        tfirstCoorLo_defects_Shallow = d.del_key_dict(tfirstCoorLo_defects_Shallow, tedge_labelsLo_Shallow)
 
         # Eliminate nan inside (deep not shallow defect)
         #testUp_labels_Shallow, area_edgeUp_Shallow, labelsPb_Up_Shallow = \
@@ -313,10 +287,10 @@ if __name__ == '__main__':
                             firstCoorUp_defects_Deep, total_area, area_edgeUp_Deep, arrayX, arrayY)
         pdb.outputTXT_defects(f"{args.outputname}{ts.frame}_Lo_De_result", area_defectsLo_Deep, 
                             firstCoorLo_defects_Deep, total_area, area_edgeLo_Deep, arrayX, arrayY)
-        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}_Up_Shal_result", area_defectsUp_Shallow, 
-                            firstCoorUp_defects_Shallow, total_area, area_edgeUp_Shallow, arrayX, arrayY)
-        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}_Lo_Shal_result", area_defectsLo_Shallow, 
-                            firstCoorLo_defects_Shallow, total_area, area_edgeLo_Shallow, arrayX, arrayY)
+        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}_Up_Shal_result", tarea_defectsUp_Shallow, 
+                            tfirstCoorUp_defects_Shallow, total_area, tarea_edgeUp_Shallow, arrayX, arrayY)
+        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}_Lo_Shal_result", tarea_defectsLo_Shallow, 
+                            tfirstCoorLo_defects_Shallow, total_area, tarea_edgeLo_Shallow, arrayX, arrayY)
         pdb.outputTXT_defects(f"{args.outputname}{ts.frame}_Up_Al_result", area_defectsUp_All, 
                             firstCoorUp_defects_All, total_area, area_edgeUp_All, arrayX, arrayY)
         pdb.outputTXT_defects(f"{args.outputname}{ts.frame}_Lo_Al_result", area_defectsLo_All, 
@@ -345,9 +319,9 @@ if __name__ == '__main__':
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}_DefectsLo_De", ts.frame,
                                 arrayX, arrayY, valZmin, testLo_labels_Deep, edge_labelsLo_Deep)
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}_DefectsUp_Shal", ts.frame,
-                                arrayX, arrayY, valZmax, testUp_labels_Shallow, edge_labelsUp_Shallow)
+                                arrayX, arrayY, valZmax, testUp_labels_Shallow, tedge_labelsUp_Shallow)
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}_DefectsLo_Shal", ts.frame,
-                                arrayX, arrayY, valZmin, testLo_labels_Shallow, edge_labelsLo_Shallow)
+                                arrayX, arrayY, valZmin, testLo_labels_Shallow, tedge_labelsLo_Shallow)
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}_DefectsUp_Al", ts.frame,
                                 arrayX, arrayY, valZmax, testUp_labels_All, edge_labelsUp_All)
             pdb.outputPDB_defects(f"{args.outputname}{ts.frame}_DefectsLo_Al", ts.frame,
@@ -402,33 +376,6 @@ if __name__ == '__main__':
 
 
         ####################  Binarise the matrix    #################
-        # Preliminary process for shallow defect and problem of the edges 
-        # To eliminate shallow defects on edges first: binarize on all defects and storage edges coord
-        # Initalise matrices to 0.0
-        MatrixUp_Shallowbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
-        MatrixLo_Shallowbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
-        # Binarise these matrices, with 0 for aliphatic atoms + packing defects and 1 otherwise
-        MatrixUp_Shallowbin = m.binarize_matrix_without0(MatrixUp_Shallow, MatrixUp_Shallowbin, -0.01, 0.99)
-        MatrixLo_Shallowbin = m.binarize_matrix_without0(MatrixLo_Shallow, MatrixLo_Shallowbin, -0.01, 0.99)
-        #print(f"Matrix size: {len(arrayX)*len(arrayY)}")
-        #ind_diff = np.argwhere(testUp_Shallowbin1 != MatrixUp_Shallowbin)
-        #print(f"Frame {ts.frame}, {len(ind_diff)} differences found in Shallow bin Up: {ind_diff[:,0]}, {ind_diff[:,1]}")
-        #ind_diff = np.argwhere(testLo_Shallowbin1 != MatrixLo_Shallowbin)
-        #print(f"Frame {ts.frame}, {len(ind_diff)} differences found in Shallow bin Lo: {ind_diff[:,0]}, {ind_diff[:,1]}")
-
-        # Get temporary packing defects
-        MatrixUp_labels_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
-        MatrixLo_labels_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
-        # Connect the packing defects + label them + count the area
-        MatrixUp_labels_Shallow, uniq_labelsUp_Shallow, area_defectsUp_Shallow, firstCoorUp_defects_Shallow = \
-            cc.get_connected_components(MatrixUp_Shallowbin, MatrixUp_labels_Shallow)
-        MatrixLo_labels_Shallow, uniq_labelsLo_Shallow, area_defectsLo_Shallow, firstCoorLo_defects_Shallow = \
-            cc.get_connected_components(MatrixLo_Shallowbin, MatrixLo_labels_Shallow)
-        # Get the labels on the edge
-        edge_labelsUp_Shallow = cc.get_edge_defects(MatrixUp_labels_Shallow)
-        edge_labelsLo_Shallow = cc.get_edge_defects(MatrixLo_labels_Shallow)
-
-
         # Initalise matrices to 0.0
         MatrixUp_Deepbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
         MatrixLo_Deepbin = m.initialize_matrix2D(len(arrayX), len(arrayY), 0.)
@@ -441,6 +388,10 @@ if __name__ == '__main__':
         # Binarise these matrices, with 0 if deep defect, 1 otherwise
         MatrixUp_Deepbin = m.binarize_matrix_without0(MatrixUp_Deep, MatrixUp_Deepbin, -0.01, 0.001)
         MatrixLo_Deepbin = m.binarize_matrix_without0(MatrixLo_Deep, MatrixLo_Deepbin, -0.01, 0.001)
+        ind_diff = np.argwhere(testUp_Deepbin != MatrixUp_Deepbin)
+        print(f"Frame {ts.frame}, {len(ind_diff)} differences found in Deep bin Up: {ind_diff[:,0]}, {ind_diff[:,1]}")
+        ind_diff = np.argwhere(testLo_Deepbin != MatrixLo_Deepbin)
+        print(f"Frame {ts.frame}, {len(ind_diff)} differences found in Deep bin Lo: {ind_diff[:,0]}, {ind_diff[:,1]}")
         # Packing defects determination
         MatrixUp_labels_Deep = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
         MatrixLo_labels_Deep = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
@@ -460,25 +411,54 @@ if __name__ == '__main__':
         firstCoorUp_defects_Deep = d.del_key_dict(firstCoorUp_defects_Deep, edge_labelsUp_Deep)
         area_defectsLo_Deep = d.del_key_dict(area_defectsLo_Deep, edge_labelsLo_Deep)
         firstCoorLo_defects_Deep = d.del_key_dict(firstCoorLo_defects_Deep, edge_labelsLo_Deep)
-        
+
+
+        #### All ####
+        # Binarise these matrices, with 0 for aliphatic atoms + packing defects and 1 otherwise
+        MatrixUp_Allbin = m.binarize_matrix_without0(MatrixUp_All, MatrixUp_Allbin, -0.01, 0.99)
+        MatrixLo_Allbin = m.binarize_matrix_without0(MatrixLo_All, MatrixLo_Allbin, -0.01, 0.99)
+        ind_diff = np.argwhere(testUp_Allbin != MatrixUp_Allbin)
+        print(f"Frame {ts.frame}, {len(ind_diff)} differences found in All bin Up: {ind_diff[:,0]}, {ind_diff[:,1]}")
+        ind_diff = np.argwhere(testLo_Allbin != MatrixLo_Allbin)
+        print(f"Frame {ts.frame}, {len(ind_diff)} differences found in All bin Lo: {ind_diff[:,0]}, {ind_diff[:,1]}")
+        # Packing defects determination
+        MatrixUp_labels_All = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
+        MatrixLo_labels_All = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
+        # Connect the packing defects + label them + count the area
+        MatrixUp_labels_All, uniq_labelsUp_All, area_defectsUp_All, firstCoorUp_defects_All = \
+            cc.get_connected_components(MatrixUp_Allbin, MatrixUp_labels_All)
+        MatrixLo_labels_All, uniq_labelsLo_All, area_defectsLo_All, firstCoorLo_defects_All = \
+            cc.get_connected_components(MatrixLo_Allbin, MatrixLo_labels_All)
+        # Get cluster on the edge
+        edge_labelsUp_All = cc.get_edge_defects(MatrixUp_labels_All)
+        edge_labelsLo_All = cc.get_edge_defects(MatrixLo_labels_All)
+        # Count area of the edge
+        area_edgeUp_All = m.count_edge_area(area_defectsUp_All, edge_labelsUp_All)
+        area_edgeLo_All = m.count_edge_area(area_defectsLo_All, edge_labelsLo_All)
+        # Clean dico defects (without edge)
+        area_defectsUp_All = d.del_key_dict(area_defectsUp_All, edge_labelsUp_All)
+        firstCoorUp_defects_All = d.del_key_dict(firstCoorUp_defects_All, edge_labelsUp_All)
+        area_defectsLo_All = d.del_key_dict(area_defectsLo_All, edge_labelsLo_All)
+        firstCoorLo_defects_All = d.del_key_dict(firstCoorLo_defects_All, edge_labelsLo_All)
+
 
         #### Shallow ####
         # Binarise these matrices, with 0 for aliphatic atoms and 1 otherwise
         MatrixUp_Shallowbin = m.binarize_matrix_without0(MatrixUp_Shallow, MatrixUp_Shallowbin, 0, 0.99)
         MatrixLo_Shallowbin = m.binarize_matrix_without0(MatrixLo_Shallow, MatrixLo_Shallowbin, 0, 0.99)
-        ind_diff = np.argwhere(testUp_Shallowbin != MatrixUp_Shallowbin)
-        print(f"Frame {ts.frame}, {len(ind_diff)} differences found in Shallow bin Up")
-        for i in range(10):
-            print(f"i, j: {ind_diff[i,0]}, {ind_diff[i,1]}. normal: {MatrixUp_Shallowbin[ind_diff[i,0],ind_diff[i,1]]}. vers_soustra: {testUp_Shallowbin[ind_diff[i,0],ind_diff[i,1]]}")
-    
-        ind_diff = np.argwhere(testLo_Shalbin != MatrixLo_Shallowbin)
-        print(f"Frame {ts.frame}, {len(ind_diff)} differences found in Shallow bin Lo")
-        
-        
         # Modify the binary matrix to take account edges (determined by all packing defects)
         # The clusters that had their labels on the edge are put to 0.0
-        MatrixUp_Shallowbin = m.modify_matrix(MatrixUp_labels_Shallow, MatrixUp_Shallowbin, edge_labelsUp_Shallow)
-        MatrixLo_Shallowbin = m.modify_matrix(MatrixLo_labels_Shallow, MatrixLo_Shallowbin, edge_labelsLo_Shallow)
+        MatrixUp_Shallowbin = m.modify_matrix(MatrixUp_labels_All, MatrixUp_Shallowbin, edge_labelsUp_All)
+        MatrixLo_Shallowbin = m.modify_matrix(MatrixLo_labels_All, MatrixLo_Shallowbin, edge_labelsLo_All)
+        ind_diff = np.argwhere(testUp_Shallowbin != MatrixUp_Shallowbin)
+        print(f"Frame {ts.frame}, {len(ind_diff)} differences found in Shallow bin Up: {ind_diff[:,0]}, {ind_diff[:,1]}")
+        ind_diff = np.argwhere(testLo_Shallowbin != MatrixLo_Shallowbin)
+        print(f"Frame {ts.frame}, {len(ind_diff)} differences found in Shallow bin Lo: {ind_diff[:,0]}, {ind_diff[:,1]}")
+        #for i in range(MatrixUp_Shallowbin.shape[0]):
+        #    if MatrixUp_Shallowbin1[i,:].any() != MatrixUp_Shallowbin[i,:].any():
+        #        print("MatrixUp_Shallow:\n", MatrixUp_Shallow[i,:])
+        #        print("MatrixUp_Shallowbin before modify:\n", MatrixUp_Shallowbin1[i,:])
+        #        print("MatrixUp_Shallowbin after modify:\n", MatrixUp_Shallowbin[i,:])
         # Packing defects determination
         MatrixUp_labels_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
         MatrixLo_labels_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
@@ -512,31 +492,41 @@ if __name__ == '__main__':
         uniq_labelsLo_Shallow, area_defectsLo_Shallow, firstCoorLo_defects_Shallow = \
             cc.delete_NApoints_inside(labelsPb_Lo_Shallow, MatrixLo_labels_Shallow,
                                     uniq_labelsLo_Shallow, area_defectsLo_Shallow, firstCoorLo_defects_Shallow)
+        for edge_lab in edge_labelsUp_Shallow:
+            ind = np.where(MatrixUp_labels_Shallow == edge_lab)
+            MatrixUp_labels_Shallow[ind] = 0
+        for edge_lab in tedge_labelsUp_Shallow:
+            ind = np.where(testUp_labels_Shallow == edge_lab)
+            testUp_labels_Shallow[ind] = 0
+        ind_lab_test = np.argwhere(testUp_labels_Shallow != 0)
+        ind_lab_Mat = np.argwhere(MatrixUp_labels_Shallow != 0)
+        print(f"Frame {ts.frame}, {abs(len(ind_lab_test[:,0]) - len(ind_lab_Mat[:,0]))} differences found in labels Shallow bin Up: {ind_lab_test}, {ind_lab_Mat}")
+        for ind in ind_lab_test:
+            occ = False
+            for indM in ind_lab_Mat:
+                if ind[0] == indM[0] and ind[1] == indM[1]:
+                    occ = True
+            if occ == False:
+                print("Romain's:")
+                print(MatrixUp_Shallow[ind[0], ind[1]])
+                print(MatrixUp_Shallowbin[ind[0], ind[1]])
+                print(MatrixUp_labels_Shallow[ind[0], ind[1]])
+                print("Mine:")
+                print(test_Up[ind[0], ind[1]])
+                print(testUp_Shallowbin[ind[0], ind[1]])
+                print(testUp_labels_Shallow[ind[0], ind[1]])
+        print(tedge_labelsUp_Shallow)
 
-
-        #### All ####
-        # Binarise these matrices, with 0 for aliphatic atoms + packing defects and 1 otherwise
-        MatrixUp_Allbin = m.binarize_matrix_without0(MatrixUp_All, MatrixUp_Allbin, -0.01, 0.99)
-        MatrixLo_Allbin = m.binarize_matrix_without0(MatrixLo_All, MatrixLo_Allbin, -0.01, 0.99)
-        # Packing defects determination
-        MatrixUp_labels_All = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
-        MatrixLo_labels_All = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
-        # Connect the packing defects + label them + count the area
-        MatrixUp_labels_All, uniq_labelsUp_All, area_defectsUp_All, firstCoorUp_defects_All = \
-            cc.get_connected_components(MatrixUp_Allbin, MatrixUp_labels_All)
-        MatrixLo_labels_All, uniq_labelsLo_All, area_defectsLo_All, firstCoorLo_defects_All = \
-            cc.get_connected_components(MatrixLo_Allbin, MatrixLo_labels_All)
-        # Get cluster on the edge
-        edge_labelsUp_All = cc.get_edge_defects(MatrixUp_labels_All)
-        edge_labelsLo_All = cc.get_edge_defects(MatrixLo_labels_All)
-        # Count area of the edge
-        area_edgeUp_All = m.count_edge_area(area_defectsUp_All, edge_labelsUp_All)
-        area_edgeLo_All = m.count_edge_area(area_defectsLo_All, edge_labelsLo_All)
-        # Clean dico defects (without edge)
-        area_defectsUp_All = d.del_key_dict(area_defectsUp_All, edge_labelsUp_All)
-        firstCoorUp_defects_All = d.del_key_dict(firstCoorUp_defects_All, edge_labelsUp_All)
-        area_defectsLo_All = d.del_key_dict(area_defectsLo_All, edge_labelsLo_All)
-        firstCoorLo_defects_All = d.del_key_dict(firstCoorLo_defects_All, edge_labelsLo_All)
+        
+        for edge_lab in edge_labelsLo_Shallow:
+            ind = np.where(MatrixLo_labels_Shallow == edge_lab)
+            MatrixLo_labels_Shallow[ind] = 0
+        for edge_lab in tedge_labelsLo_Shallow:
+            ind = np.where(testLo_labels_Shallow == edge_lab)
+            testLo_labels_Shallow[ind] = 0
+        ind_lab_test = np.argwhere(testLo_labels_Shallow != 0)
+        ind_lab_Mat = np.argwhere(MatrixLo_labels_Shallow != 0)
+        print(f"Frame {ts.frame}, {abs(len(ind_lab_test[:,0]) - len(ind_lab_Mat[:,0]))} differences found in labels Shallow bin Up: {ind_lab_test[:,0]}, {ind_lab_Mat[:,0]}") 
 
 
         ####################  Output text file  #################
