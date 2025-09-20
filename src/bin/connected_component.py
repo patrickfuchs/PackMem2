@@ -150,6 +150,10 @@ def get_uniq_labels(nb_labels, equiv_labels):
     """
     dict_connected_labels = {}
     uniq_labels = []
+
+    if len(equiv_labels) == 0:
+        return dict_connected_labels, list(range(1, nb_labels+1))
+    
     for label in range(1, nb_labels+1):
         for sublist in equiv_labels:
             if label in sublist:
