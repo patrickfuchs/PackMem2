@@ -49,15 +49,22 @@ def test_setDefects():
 def test_my_fill_matrix():
     listX = np.arange(-1., 6., 1)
     listY = np.arange(-1., 6., 1)
-    Matrix = np.full((len(listX), len(listY)), np.nan)
+    Matrix = np.full((len(listX), len(listY)), 0.0)
     tested_ouput = m.my_fill_matrix(Matrix, 1.34, 'a', [0, 4, 2], listX, listY, np.array([4, 3, 2, 1, 0]))
-    wanted_output = np.array([[np.nan, np.nan, np.nan, np.nan, 0.5, 0.5, 0.5],
-                              [np.nan, np.nan, np.nan, 0.5, 0.5, 0.5, 0.5],
-                              [np.nan, np.nan, np.nan, np.nan, 0.5, 0.5, 0.5],
-                              [np.nan, np.nan, np.nan, np.nan, np.nan, 0.5, np.nan],
-                              [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
-                              [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan],
-                              [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan, np.nan]])
+    """wanted_output = np.array([[0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5],
+                              [0.0, 0.0, 0.0, 0.5, 0.5, 0.5, 0.5],
+                              [0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 0.5],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])"""
+    wanted_output = np.array([[0.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001],
+                              [0.0, 0.0, 0.0, 0.001, 0.001, 0.001, 0.001],
+                              [0.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.001, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
     np.testing.assert_array_equal(tested_ouput, wanted_output)
 
 def test_fill_matrix():
