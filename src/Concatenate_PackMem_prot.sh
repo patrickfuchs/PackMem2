@@ -84,14 +84,14 @@ do
     if [ ${prot} = true ]
     then
         # Accumulate packing defects of the current frame in Total_*.txt files per leaflet
-        cat  ${prefix}${pdbnum}_Up_All_prot.txt >> Total_Up_${prefix}_All_prot.txt
-        cat  ${prefix}${pdbnum}_Up_Deep_prot.txt >> Total_Up_${prefix}_Deep_prot.txt
-        cat  ${prefix}${pdbnum}_Up_Shallow_prot.txt >> Total_Up_${prefix}_Shallow_prot.txt
+        cat  Prot_${prefix}${pdbnum}_Up_All.txt >> Total_Up_${prefix}_All_prot.txt
+        cat  Prot_${prefix}${pdbnum}_Up_Deep.txt >> Total_Up_${prefix}_Deep_prot.txt
+        cat  Prot_${prefix}${pdbnum}_Up_Shallow.txt >> Total_Up_${prefix}_Shallow_prot.txt
 
         # we no longer need the defects of the current frame
-        rm -f ${prefix}${pdbnum}_Up_All_prot.txt
-        rm -f ${prefix}${pdbnum}_Up_Deep_prot.txt
-        rm -f ${prefix}${pdbnum}_Up_Shallow_prot.txt
+        rm -f Prot_${prefix}${pdbnum}_Up_All_prot.txt
+        rm -f Prot_${prefix}${pdbnum}_Up_Deep_prot.txt
+        rm -f Prot_${prefix}${pdbnum}_Up_Shallow_prot.txt
     fi
 done
 
