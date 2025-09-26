@@ -187,24 +187,24 @@ def my_fill_matrix(mat, radius_atm, aliph_atom, coordtmp, arrayX, arrayY, arrayZ
     # Select the cells to work in at i+-v (to not spend too much time on useless cells)
     gridX = arrayX[iX-v:iX+v+1]
     gridY = arrayY[iY-v:iY+v+1]
-    # Filter the Z positions
-    validZ = np.array([z for z in arrayZ if (coordtmp[2]-z)**2 <= dist_lim])
+    # Find the closest distance in Z
+    dZ2_min = np.min((arrayZ - coordtmp[2])**2)
+    if dZ2_min > dist_lim:   # no close Z found
+        return mat
 
-    # Get all the pair of x,y,z possible around the atom
-    Xg, Yg, Zg = np.meshgrid(gridX, gridY, validZ, indexing="ij")
+    # Get all the pair of x,y possible around the atom
+    Xg, Yg = np.meshgrid(gridX, gridY, indexing="ij")
 
-    distances = (Xg-coordtmp[0])**2 + (Yg-coordtmp[1])**2 + (Zg-coordtmp[2])**2
+    distances = (Xg-coordtmp[0])**2 + (Yg-coordtmp[1])**2
     # Get the distances that are in the effective radius of the atom
-    mask = distances <= dist_meet
-    # Pass the mask to 2D
-    mask2D = mask.any(axis=2)
+    mask = distances <= dist_meet - dZ2_min
 
     # Convert the indexes to get the location in the matrix (global index) and not in the sublist (local)
     Xind = np.arange(iX-v, iX+v+1)
     Yind = np.arange(iY-v, iY+v+1)
     # Put the indexes that are in the effective radius (local) to be globalised to the matrix length
-    X_idx, Y_idx = np.where(mask2D)  # local
-    X_idx = Xind[X_idx]              # Get to global
+    X_idx, Y_idx = np.where(mask)  # local
+    X_idx = Xind[X_idx]            # Get to global
     Y_idx = Yind[Y_idx]
 
     # Update the matrix
