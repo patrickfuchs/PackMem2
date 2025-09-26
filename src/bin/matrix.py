@@ -138,9 +138,9 @@ def fill_matrix(mat, radius_atm, aliph_atom, coordtmp, arrayX, arrayY, arrayZ):
     # Number of cells to work around
     v = min(5, len(arrayX)//2, len(arrayY)//2)
     # Limit distance to roughly select the cells that are near the atom+radius
-    dist_lim = (SIZE + radius_atm)**2
+    sqrtdist_lim = (SIZE + radius_atm)**2
     # Limit distance to select the cells that intersect the atom+radius
-    dist_meet = (SIZE_SIDE + radius_atm)**2
+    sqrtdist_meet = (SIZE_SIDE + radius_atm)**2
     # Find the equivalent index in the matrix of the x,y positions
     iX, iY = find_X_Y(coordtmp, arrayX, arrayY)
     # Change if too close to the edge
@@ -150,16 +150,16 @@ def fill_matrix(mat, radius_atm, aliph_atom, coordtmp, arrayX, arrayY, arrayZ):
     gridX = arrayX[iX-v:iX+v+1]
     gridY = arrayY[iY-v:iY+v+1]
     # Find the closest distance in Z
-    dZ2_min = np.min((arrayZ - coordtmp[2])**2)
-    if dZ2_min > dist_lim:   # no close Z found
+    sqrtdZ_min = np.min((arrayZ - coordtmp[2])**2)
+    if sqrtdZ_min > sqrtdist_lim:   # no close Z found
         return mat
 
     # Get all the pair of x,y possible around the atom
     Xg, Yg = np.meshgrid(gridX, gridY, indexing="ij")
 
-    distances = (Xg-coordtmp[0])**2 + (Yg-coordtmp[1])**2
+    sqrt_distances = (Xg-coordtmp[0])**2 + (Yg-coordtmp[1])**2
     # Get the distances that are in the effective radius of the atom
-    mask = distances <= dist_meet - dZ2_min
+    mask = sqrt_distances <= sqrtdist_meet - sqrtdZ_min
 
     # Convert the indexes to get the location in the matrix (global index) and not in the sublist (local)
     Xind = np.arange(iX-v, iX+v+1)
