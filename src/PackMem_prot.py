@@ -159,7 +159,7 @@ if __name__ == '__main__':
                     # Fill the matrix with value 0 < a < 1 for aliphatic
                     # Or with > 1 if polar OR deep
                     # Defects = 0
-                    Matrix_Up = m.my_fill_matrix(Matrix_Up, radius_atm, aliph_atom, coordtmp,
+                    Matrix_Up = m.fill_matrix(Matrix_Up, radius_atm, aliph_atom, coordtmp,
                                             arrayX, arrayY, upper_arrayZ[res_id])
             #### Lower leaflet ####
             if res_id in lower_leaflet :
@@ -171,7 +171,7 @@ if __name__ == '__main__':
                     # Fill the matrix with value 0 < a < 1 for aliphatic
                     # Or with > 1 if polar OR deep
                     # Defects = 0
-                    Matrix_Lo = m.my_fill_matrix(Matrix_Lo, radius_atm, aliph_atom, coordtmp,
+                    Matrix_Lo = m.fill_matrix(Matrix_Lo, radius_atm, aliph_atom, coordtmp,
                                             arrayX, arrayY, lower_arrayZ[res_id])
         
 
