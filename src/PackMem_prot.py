@@ -207,6 +207,12 @@ if __name__ == '__main__':
         firstCoorUp_defects_Deep = d.del_key_dict(firstCoorUp_defects_Deep, edge_labelsUp_Deep)
         area_defectsLo_Deep = d.del_key_dict(area_defectsLo_Deep, edge_labelsLo_Deep)
         firstCoorLo_defects_Deep = d.del_key_dict(firstCoorLo_defects_Deep, edge_labelsLo_Deep)
+        for edge_lab in edge_labelsUp_Deep:
+            ind = np.where(MatrixUp_labels_Deep == edge_lab)
+            MatrixUp_labels_Deep[ind] = 0
+        for edge_lab in edge_labelsLo_Deep:
+            ind = np.where(MatrixLo_labels_Deep == edge_lab)
+            MatrixLo_labels_Deep[ind] = 0
 
 
         #### All ####
@@ -232,12 +238,28 @@ if __name__ == '__main__':
         firstCoorUp_defects_All = d.del_key_dict(firstCoorUp_defects_All, edge_labelsUp_All)
         area_defectsLo_All = d.del_key_dict(area_defectsLo_All, edge_labelsLo_All)
         firstCoorLo_defects_All = d.del_key_dict(firstCoorLo_defects_All, edge_labelsLo_All)
+        for edge_lab in edge_labelsUp_All:
+            ind = np.where(MatrixUp_labels_All == edge_lab)
+            MatrixUp_labels_All[ind] = 0
+        for edge_lab in edge_labelsLo_All:
+            ind = np.where(MatrixLo_labels_All == edge_lab)
+            MatrixLo_labels_All[ind] = 0
 
 
         #### Shallow ####
         # Binarise
-        ind_diff_Up = np.argwhere(MatrixUp_Deepbin != MatrixUp_Allbin)
-        ind_diff_Lo = np.argwhere(MatrixLo_Deepbin != MatrixLo_Allbin)
+        # Get where there are labels
+        ind_lab_Deep_Up = np.argwhere(MatrixUp_labels_Deep != 0)
+        ind_lab_All_Up = np.argwhere(MatrixUp_labels_All != 0)
+        ind_lab_Deep_Lo = np.argwhere(MatrixLo_labels_Deep != 0)
+        ind_lab_All_Lo = np.argwhere(MatrixLo_labels_All != 0)
+        # Convert them to be array of tuple to compare them
+        set_ind_Deep_Up = set(map(tuple, ind_lab_Deep_Up))
+        set_ind_Deep_Lo = set(map(tuple, ind_lab_Deep_Lo))
+        # Get the  indexes that are in All but not in Deep
+        ind_diff_Up = np.array([row for row in ind_lab_All_Up if tuple(row) not in set_ind_Deep_Up])
+        ind_diff_Lo = np.array([row for row in ind_lab_All_Lo if tuple(row) not in set_ind_Deep_Lo])
+        # Get the indexes that differs
         MatrixUp_Shallowbin[ind_diff_Up[:,0],ind_diff_Up[:,1]] = 0.
         MatrixLo_Shallowbin[ind_diff_Lo[:,0],ind_diff_Lo[:,1]] = 0.
         # Packing defects determination
@@ -317,15 +339,6 @@ if __name__ == '__main__':
             # Select only the protein
             protein = u.select_atoms("protein")
             pos_prot = protein.positions
-
-            # Label 1 corresponds to the void around the simulation
-            # So we replace it by 0
-            MatrixUp_labels_Deep = np.where(MatrixUp_labels_Deep == 1, 0, MatrixUp_labels_Deep)
-            MatrixLo_labels_Deep = np.where(MatrixLo_labels_Deep == 1, 0, MatrixLo_labels_Deep)
-            MatrixUp_labels_Shallow = np.where(MatrixUp_labels_Shallow == 1, 0, MatrixUp_labels_Shallow)
-            MatrixLo_labels_Shallow = np.where(MatrixLo_labels_Shallow == 1, 0, MatrixLo_labels_Shallow)
-            MatrixUp_labels_All = np.where(MatrixUp_labels_All == 1, 0, MatrixUp_labels_All)
-            MatrixLo_labels_All = np.where(MatrixLo_labels_All == 1, 0, MatrixLo_labels_All)
 
             # Create empty arrays
             MatrixUp_prot_Deep = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
