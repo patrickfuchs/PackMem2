@@ -8,7 +8,7 @@ import numpy as np
 
 # matrix size  (square size = 1A)
 SIZE=1.0
-# calculate limit size (half diagonal) 3D (= 1.5 A)
+# calculate limit size (half diagonal) 3D (= 0.87 A)
 SIZE_SIDE=0.5*(math.sqrt((math.pow(SIZE, 2))* 3.))
 
 
