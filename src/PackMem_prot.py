@@ -31,11 +31,7 @@ if __name__ == '__main__':
     """
     Python
     Script to compute Packing defect in flat bilayers
-    Lipids parameters adapted to either Berger lipid (with corrections), CHARMM36 (with Klauda corrections) or Martini FF. Be careful to the atoms name if you use other lipids
-    fileRadius.txt example:
-    DOPC  C02 1.875 a (aliphatic)
-    DOPC  O8  1.48 n (non aliphatic)
-    DOPC  C25 1.98 n (non aliphatic)
+    Lipids parameters adapted to either Berger lipid (with corrections), CHARMM36 (with Klauda corrections) or Martini FF.
 
     Output files:
         outputname_Up/Lo_Shallow/Deep/All_result.txt
@@ -65,6 +61,9 @@ if __name__ == '__main__':
 
         if -prot option:
             Prot_outputnameFrame_Up/Lo_Deep/Shallow/All_prot.txt
+            1,far,2
+            2,far,3
+            3,close,6
     """
     ####### PARAMETERS and INPUT #####
     try:
