@@ -61,6 +61,15 @@ rm -f Total_Lo_${lipid_name}_Shallow.txt
 rm -f Total_Up_${lipid_name}_All.txt
 rm -f Total_Lo_${lipid_name}_All.txt
 
+if [ ${prot} = true ]
+then
+    rm -f Total_Up_${lipid_name}_Deep_prot.txt
+    rm -f Total_Up_${lipid_name}_Shallow_prot.txt
+    rm -f Total_Up_${lipid_name}_All_prot.txt
+    rm -f Total_Lo_${lipid_name}_Deep_prot.txt
+    rm -f Total_Lo_${lipid_name}_Shallow_prot.txt
+    rm -f Total_Lo_${lipid_name}_All_prot.txt
+fi
 
 
 for pdbnum in $(seq ${first_frame} ${last_frame})
@@ -84,14 +93,25 @@ do
     if [ ${prot} = true ]
     then
         # Accumulate packing defects of the current frame in Total_*.txt files per leaflet
-        cat  Prot_${lipid_name}${pdbnum}_Up_All.txt >> Total_Up_${lipid_name}_All_prot.txt
-        cat  Prot_${lipid_name}${pdbnum}_Up_Deep.txt >> Total_Up_${lipid_name}_Deep_prot.txt
-        cat  Prot_${lipid_name}${pdbnum}_Up_Shallow.txt >> Total_Up_${lipid_name}_Shallow_prot.txt
+        if [ -f Prot_${lipid_name}${pdbnum}_Up_All.txt ]
+        then
+            cat  Prot_${lipid_name}${pdbnum}_Up_All.txt >> Total_Up_${lipid_name}_All_prot.txt
+            cat  Prot_${lipid_name}${pdbnum}_Up_Deep.txt >> Total_Up_${lipid_name}_Deep_prot.txt
+            cat  Prot_${lipid_name}${pdbnum}_Up_Shallow.txt >> Total_Up_${lipid_name}_Shallow_prot.txt
+        elif [ -f Prot_${lipid_name}${pdbnum}_Lo_All.txt ]
+        then
+            cat  Prot_${lipid_name}${pdbnum}_Lo_All.txt >> Total_Lo_${lipid_name}_All_prot.txt
+            cat  Prot_${lipid_name}${pdbnum}_Lo_Deep.txt >> Total_Lo_${lipid_name}_Deep_prot.txt
+            cat  Prot_${lipid_name}${pdbnum}_Lo_Shallow.txt >> Total_Lo_${lipid_name}_Shallow_prot.txt
+        fi
 
         # we no longer need the defects of the current frame
-        rm -f Prot_${lipid_name}${pdbnum}_Up_All_prot.txt
-        rm -f Prot_${lipid_name}${pdbnum}_Up_Deep_prot.txt
-        rm -f Prot_${lipid_name}${pdbnum}_Up_Shallow_prot.txt
+        rm -f Prot_${lipid_name}${pdbnum}_Up_All.txt
+        rm -f Prot_${lipid_name}${pdbnum}_Up_Deep.txt
+        rm -f Prot_${lipid_name}${pdbnum}_Up_Shallow.txt
+        rm -f Prot_${lipid_name}${pdbnum}_Lo_All.txt
+        rm -f Prot_${lipid_name}${pdbnum}_Lo_Deep.txt
+        rm -f Prot_${lipid_name}${pdbnum}_Lo_Shallow.txt
     fi
 done
 
@@ -117,4 +137,3 @@ egrep -v "#" Total_Lo_${lipid_name}_All.txt > Total_Lo_${lipid_name}_All_clean.t
 rm -f Total_*${lipid_name}_Deep.txt
 rm -f Total_*${lipid_name}_Shallow.txt
 rm -f Total_*${lipid_name}_All.txt
-
