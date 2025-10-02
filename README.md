@@ -45,10 +45,8 @@ In the end, you should have at least 9 files :\
 If you had the `-prot` option, you also have 3 or 6 files:
 * 3 or 6 for the defects that are in near and far from the protein - which are named `Total_[leaflet]_[lipid name]_[type of defects]_prot.txt`
 
-Once you have all the data files, you can run the plot-making script `Fit_plot.py` or its R equivalent `Script_fit_and_plot.R`.\
-`python analysis/Fit_plot.py -f Total_[lipid name]`\
-OR\
-`R --vanilla < Script_fit_and_plot.R`\
+Once you have all the data files, you can run the plot-making script `Fit_plot.py`.\
+`python analysis/Fit_plot.py -l [lipid name] -o [output name]`\
 
 If you studied also the packing defacts near/far from the protein, you should run `Script_fit_and_plot_prot.R`\
 `R --vanilla < Script_fit_and_plot_prot.R`\
