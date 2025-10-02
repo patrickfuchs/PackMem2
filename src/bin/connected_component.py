@@ -150,6 +150,10 @@ def get_uniq_labels(nb_labels, equiv_labels):
     """
     dict_connected_labels = {}
     uniq_labels = []
+
+    if len(equiv_labels) == 0:
+        return dict_connected_labels, list(range(1, nb_labels+1))
+    
     for label in range(1, nb_labels+1):
         for sublist in equiv_labels:
             if label in sublist:
@@ -346,45 +350,3 @@ def get_edge_defects(mat_labels):
     # get rid of duplicates & sort
     edge_defects = sorted(list(set(edge_defects)))
     return edge_defects
-
-def delete_NApoints_inside(clustPb, mat_labels, uniq_labels, area_defects, first_coor):
-    """
-    Get rid of the defect comprised enterely of NaN.
-
-    --------------------
-    INPUT
-    clustPb: dictionnary
-        Contains the labels and the number of cells concerned that has nan in Matrix_ini
-    mat_labels: numpy matrix
-        Contains the labels
-    uniq_labels: list
-        Contains the set of labels in this matrix
-    area_defects: dictionnary
-        Contains the area of each label
-    first_coor: dictionnary
-        Contains the first coordinates of each label
-
-    --------------------
-    OUTPUT
-    list
-        Contains the set of labels in this matrix that are attributed to a non-nan cluster
-    dictionnary
-        Contains the area of each non-nan label
-    dictionnary
-        Contains the first appearance of the non-nan labels in the matrix
-    """
-    # Loop on all the clusters that had nan in them
-    for label in clustPb:
-        #  If one of the clusters is enterely composed of nan
-        if area_defects[label] == clustPb[label]:
-            # Delete the label
-            ind_lab = uniq_labels.index(label)
-            del uniq_labels[ind_lab]
-            del area_defects[label]
-            del first_coor[label]
-        else:
-            # Recount the area
-            area_defects[label] = len(np.where(mat_labels == label)[0])
-            # Reset the first coordinates
-            first_coor[label] = [np.where(mat_labels == label)[0][0], np.where(mat_labels == label)[1][0]]
-    return uniq_labels, area_defects, first_coor
