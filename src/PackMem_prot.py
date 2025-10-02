@@ -6,6 +6,7 @@
 # M. Zygadlo august 2024
 
 import sys
+import time
 import warnings
 # Ignore the warning for longdouble due to MDAnalysis' import of h5py
 warnings.filterwarnings(
@@ -65,6 +66,7 @@ if __name__ == '__main__':
             2,far,3
             3,close,6
     """
+    start_time = time.time()
     ####### PARAMETERS and INPUT #####
     try:
         args = p.get_args()
@@ -106,6 +108,7 @@ if __name__ == '__main__':
 
     ############################## Main loop ##################################
     for ts in u.trajectory[args.start:args.end+1]:
+        print(f"Frame {ts.frame} {f'/ {args.end}':>5}", end='\r', flush=True)
         # select all atoms in systems
         system = u.select_atoms(f"resname {lipid_names} or protein")
 
@@ -399,3 +402,12 @@ if __name__ == '__main__':
                 prot.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Lo_Deep", DefectsLo_labels_group_Deep, area_defectsLo_Deep)
                 prot.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Lo_Shallow", DefectsLo_labels_group_Shallow, area_defectsLo_Shallow)
                 prot.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Lo_All", DefectsLo_labels_group_All, area_defectsLo_All)
+    
+    print("-- Analysis over --")
+    ran_time = round((time.time() - start_time)/60, 2)
+    if ran_time < 1:
+        print(f"-- Ran for {round((time.time() - start_time), 2)} second(s) --")
+    elif  ran_time < 60:
+        print(f"-- Ran for {ran_time} minute(s) --")
+    else:
+        print(f"-- Ran for {round((ran_time / 60), 2)} hour(s) --")
