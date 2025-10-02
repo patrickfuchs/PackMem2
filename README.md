@@ -47,10 +47,7 @@ If you had the `-prot` option, you also have 3 or 6 files:
 
 Once you have all the data files, you can run the plot-making script `Fit_plot.py`.\
 `python analysis/Fit_plot.py -l [lipid name] -o [output name]`\
-
-If you studied also the packing defacts near/far from the protein, you should run `Script_fit_and_plot_prot.R`\
-`R --vanilla < Script_fit_and_plot_prot.R`\
-For the R scripts, be careful to change the variables inside the script.\
+Here again, you can also use the `-prot` option if you ran the analysis of the packing defects near/far from the protein.\
 
 -------------------------------------------------------------------------------
 
