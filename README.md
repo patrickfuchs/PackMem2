@@ -9,6 +9,7 @@ These are the packages required to get this version of PackMem running :\
 * argparse
 * numpy
 * MDAnalysis\
+
 All of them are already put in the yaml file and the environment can be set up with:\
 `conda env create -f PackMem_env.yml`
 
@@ -16,17 +17,16 @@ All of them are already put in the yaml file and the environment can be set up w
 
 ## How to run the code
 In order to have the script running smoothly, you first need to launch the script `gen_packmem_launch_prot.py` :\
-`python src/gen_packmem_launch_prot.py -f [file.xtc] -s [file.gro] -c [number of cores] -fm [number of frames] -n [lipid name]`\
+`python src/gen_packmem_launch_prot.py -f [file.xtc] -s [file.gro] -c [number of cores] -fm [number of frames] -l [lipid name]`\
 Note that you can also use the `-prot` option if you also want to analysis the packing defects near/far from the protein.\
 
 This script then gives you the command line(s) to copy/paste in the terminal to launch the actual analysis of the packing defects.\
 The command line(s) given should look like this :\
-`nice -19 bash src/ScriptPackMem_prot.sh -f [file.xtc] -s [file.gro] -n [lipid name] -b [frame start] -e [frame end] >& OUT_packmem0 &`\
+`nice -19 python [path]src/PackMem_prot.py -f [file.xtc] -s [file.gro] -l [lipid name] -r [path]data/vdw_radii_Charmm.txt -p [path]data/param_Charmm.txt -b [frame start] -e [frame end] -o [lipid name] >& OUT_packmem0 &`\
 With each command line corresponding to a core and the number of frames divided into these number of cores.\
-Again, if you chose the `-prot` option ealier, then you will have the `-p` option written in the command line(s).\
-Just be careful to change the path of the `.sh` script if you want to launch it from elsewhere.\
+Again, if you chose the `-prot` option ealier, then you will have the `-prot` option written in the command line(s).\
 
-This script `ScriptPackMem_prot.sh` launches the actual PackMem script `PackMem_prot.py` that will compute the packing defects, first for the deep defects, then the shallow ons and finaly all of them sequentially.\
+This script `PackMem_prot.py` will compute the packing defects, divided into 3 categories: deep, shallow and all packing defects.\
 
 If you parallelised this script by using multiple cores, you then need to do one more action, that is to run the `Concatenate_PackMem_prot.sh` script.\
 `bash src/Concatenate_PackMem_prot.sh -n [lipid name] -b [frame start] -e [frame stop]`\
