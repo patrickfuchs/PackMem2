@@ -32,7 +32,7 @@ Again, if you chose the `-prot` option ealier, then you will have the `-prot` op
 This script `PackMem_prot.py` will compute the packing defects, divided into 3 categories: deep, shallow and all packing defects.\
 
 If you parallelised this script by using multiple cores, you then need to do one more action, that is to run the `Concatenate_PackMem_prot.sh` script.\
-`bash src/Concatenate_PackMem_prot.sh -n [lipid name] -b [frame start] -e [frame stop]`\
+`bash src/Concatenate_PackMem_prot.sh -l [lipid name] -b [frame start] -e [frame stop]`\
 Here again, you can also use the `-p` option if you ran the analysis of the packing defects near/far from the protein.\
 This script will gather all the data file generated and put them into one file per type of defect (deep, shallow, all).\
 
