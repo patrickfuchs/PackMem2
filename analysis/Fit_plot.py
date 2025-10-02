@@ -1,39 +1,51 @@
-#!/cygdrive/c/Users/Windows/AppData/Local/Microsoft/WindowsApps/python3
+# M. Zygadlo 2025
 
 import argparse
 import pandas as pd
 import numpy as np
 import math
 import matplotlib.pyplot as plt
-from scipy.optimize import least_squares
 from matplotlib.backends.backend_pdf import PdfPages
 
-# Getting the arguments
-parser = argparse.ArgumentParser()
-parser.add_argument('-f', action = 'store', dest = 'prefix',
-                help = 'The start of the clean .txt file to analyse')
-parser.add_argument('-p', action = 'store', dest = 'precision',
-                help = 'The precision for writing packdef constants (nb of decimals) in the output. Default = 2', type=int, default=2)
-parser.add_argument('-lx', action = 'store', dest = 'limx',
-                help = 'The lowest defect area used for the fit (we recommand not to touch to this value). Default = 15', type=int, default=15)
-parser.add_argument('-ly', action = 'store', dest = 'limy',
-                help = 'The lowest probability used for the fit (we recommand not to touch to this value). Default = 1e-4', type=float, default=1e-4)
-parser.add_argument('-o', action = 'store', dest = 'output',
-                help = 'The name of the output .pdf file. Default = Res_membrane', default="Res_membrane")
-args = parser.parse_args()
+def get_arguments():
+    """
+    Get the arguments for the script and check that the inputfiles are valid.
 
-################################################################################
+    --------------------
+    OUTPUT
+    parser.parse_args
+    """
+    # Getting the arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-f', action = 'store', dest = 'prefix',
+                    help = 'The start of the clean .txt file to analyse')
+    parser.add_argument('-p', action = 'store', dest = 'precision',
+                    type=int, default=2,
+                    help = 'The precision for writing packdef constants (nb of decimals) in the output. Default = 2')
+    parser.add_argument('-lx', action = 'store', dest = 'limx',
+                    type=int, default=15,
+                    help = 'The lowest defect area used for the fit (we recommand not to touch to this value). Default = 15')
+    parser.add_argument('-ly', action = 'store', dest = 'limy',
+                    type=float, default=1e-4,
+                    help = 'The lowest probability used for the fit (we recommand not to touch to this value). Default = 1e-4')
+    parser.add_argument('-o', action = 'store', dest = 'output',
+                    default="Res_membrane",
+                    help = 'The name of the output .pdf file. Default = Res_membrane')
+    args = parser.parse_args()
+
+    return args
 
 def log(y_list):
-    """Calculate the logarithm of a list.
+    """
+    Calculate the logarithm of a list.
     
-    Parameters
-    ----------
+    --------------------
+    INPUT
     y_list : list
         The y values.
     
-    Returns
-    -------
+    --------------------
+    OIUTPUT
     list
         The y values that have been through the logarithm.
     """
@@ -45,14 +57,14 @@ def log(y_list):
             log_y.append(0)
     return log_y
 
-
 def fit_decay(x,y, LIMX, LIMY):
-    """Function does a linear fit.
+    """
+    Function does a linear fit.
     
     The linear fit is made on the probability of having a certain packing area.
     
-    Parameters
-    ----------
+    --------------------
+    INPUT
     x : numpy array
         Packing area.
     y : numpy array
@@ -61,8 +73,9 @@ def fit_decay(x,y, LIMX, LIMY):
         The lowest defect area used for the fit.
     LIMY : int
         The lowest probability used for the fit
-    Returns
-    -------
+    
+    --------------------
+    OUTPUT
     numpy array
         A linear fit of x and y.
     """
@@ -74,19 +87,19 @@ def fit_decay(x,y, LIMX, LIMY):
     FIT = np.polyfit(x, log(y), 1)
     return (FIT)
 
-
 def block_averaging(vect, nb_block):
-    """Divide the packing data into n blocks.
+    """
+    Divide the packing data into n blocks.
     
-    Parameters
-    ----------
+    --------------------
+    INPUT
     vect : pandas dataframe
         The size of the packing defect.
     nb_block : int
         The number of blocks we want to have.
     
-    Returns
-    -------
+    --------------------
+    OUTPUT
     list
         Avector of 3 decays.
     """
@@ -102,8 +115,9 @@ def block_averaging(vect, nb_block):
         decays.append(abs(1/FIT[0]))
     return decays
 
-
 if __name__=="__main__":
+    # Get arguments
+    args = get_arguments()
     # Open a pdf device
     # Create a single PDF file
     pdf = PdfPages(f'{args.output}.pdf')
