@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 def get_arguments():
     """
@@ -20,8 +21,8 @@ def get_arguments():
     parser.add_argument('-fm', action = 'store', dest = 'frames',
                         help = 'The number of frames in your simulation',
                         type = int)
-    parser.add_argument('-n', action='store', dest='prefix', 
-                        help='The type of lipid')
+    parser.add_argument('-l', action='store', dest='lipid_name', 
+                        help='The name of lipid(s). If multiple, seperate them with _')
     parser.add_argument('-prot', action='store_true', dest='prot', 
                         help='Put if you want to see the packing defects close/far of the protein')
     args = parser.parse_args()
@@ -32,19 +33,21 @@ def get_arguments():
 
 if __name__=="__main__":
     args = get_arguments()
+    path = sys.argv[0]
+    path = path.replace("gen_packmem_launch_prot.py", "")
 
     # Prepare how much frames are going to be analysed per core
     step = int(args.frames / args.cores)
     intervals = list(range(0, args.frames+1, step))
 
-    print("Please, copy paste these lines to launch PackMem:")
+    print("\nPlease, copy paste these lines to launch PackMem:\n")
 
     #If too few frames
     if args.frames < (args.cores*2):
         if args.prot:
-            print(f"nice -19 bash /home/maya/Documents/tools/New_PackMem/src/ScriptPackMem_prot.sh -f {args.traj} -s {args.topo} -n {args.prefix} -b 0 -e {args.frame} -p >& OUT_packmem0 &")
+            print(f"nice -19 bash {path}ScriptPackMem_prot.sh -f {args.traj} -s {args.topo} -n {args.lipid_name} -b 0 -e {args.frame} -p >& OUT_packmem0 &")
         else:
-            print(f"nice -19 bash /home/maya/Documents/tools/New_PackMem/src/ScriptPackMem_prot.sh -f {args.traj} -s {args.topo} -n {args.prefix} -b 0 -e {args.frame} >& OUT_packmem0 &")
+            print(f"nice -19 bash {path}ScriptPackMem_prot.sh -f {args.traj} -s {args.topo} -n {args.lipid_name} -b 0 -e {args.frame} >& OUT_packmem0 &")
 
 
     # Loop to create the prompt to launch PackMem on several cores
@@ -54,6 +57,6 @@ if __name__=="__main__":
         if i==(len(intervals)-2):
             stop = args.frames
         if args.prot:
-            print(f"nice -19 bash /home/maya/Documents/tools/New_PackMem/src/ScriptPackMem_prot.sh -f {args.traj} -s {args.topo} -n {args.prefix} -b {start} -e {stop} -p >& OUT_packmem{i} &")
+            print(f"nice -19 bash {path}ScriptPackMem_prot.sh -f {args.traj} -s {args.topo} -n {args.lipid_name} -b {start} -e {stop} -p >& OUT_packmem{i} &")
         else:
-            print(f"nice -19 bash /home/maya/Documents/tools/New_PackMem/src/ScriptPackMem_prot.sh -f {args.traj} -s {args.topo} -n {args.prefix} -b {start} -e {stop} >& OUT_packmem{i} &")
+            print(f"nice -19 bash {path}ScriptPackMem_prot.sh -f {args.traj} -s {args.topo} -n {args.lipid_name} -b {start} -e {stop} >& OUT_packmem{i} &")
