@@ -1,30 +1,43 @@
-import string
 import argparse
 
-# Getting the arguments
-parser = argparse.ArgumentParser()
-parser.add_argument('-f', action = 'store', dest = 'traj',
-                    help = 'The trajectory file (.xtc)')
-parser.add_argument('-s', action = 'store', dest = 'topo',
-                    help = 'The topology file (.gro)')
-parser.add_argument('-c', action = 'store', dest = 'cores',
-                    help = 'The number of cores you want the script to work on',
-                    default = 1, type = int)
-parser.add_argument('-fm', action = 'store', dest = 'frames',
-                    help = 'The number of frames in your simulation',
-                    type = int)
-parser.add_argument('-n', action='store', dest='prefix', 
-                    help='The type of lipid')
-parser.add_argument('-prot', action='store_true', dest='prot', 
-                    help='Put if you want to see the packing defects close/far of the protein')
-args = parser.parse_args()
+def get_arguments():
+    """
+    Get the arguments for the script and check that the inputfiles are valid.
+
+    --------------------
+    OUTPUT
+    parser.parse_args
+        Contains all the arguments for the script
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-f', action = 'store', dest = 'traj',
+                        help = 'The trajectory file (.xtc)')
+    parser.add_argument('-s', action = 'store', dest = 'topo',
+                        help = 'The topology file (.gro)')
+    parser.add_argument('-c', action = 'store', dest = 'cores',
+                        help = 'The number of cores you want the script to work on',
+                        default = 1, type = int)
+    parser.add_argument('-fm', action = 'store', dest = 'frames',
+                        help = 'The number of frames in your simulation',
+                        type = int)
+    parser.add_argument('-n', action='store', dest='prefix', 
+                        help='The type of lipid')
+    parser.add_argument('-prot', action='store_true', dest='prot', 
+                        help='Put if you want to see the packing defects close/far of the protein')
+    args = parser.parse_args()
+
+    return args
 
 ################################################################################
 
 if __name__=="__main__":
+    args = get_arguments()
+
     # Prepare how much frames are going to be analysed per core
     step = int(args.frames / args.cores)
     intervals = list(range(0, args.frames+1, step))
+
+    print("Please, copy paste these lines to launch PackMem:")
 
     #If too few frames
     if args.frames < (args.cores*2):
