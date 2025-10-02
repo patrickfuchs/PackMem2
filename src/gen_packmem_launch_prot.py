@@ -34,7 +34,7 @@ def get_arguments():
 if __name__=="__main__":
     args = get_arguments()
     path = sys.argv[0]
-    path = path.replace("gen_packmem_launch_prot.py", "")
+    path = path.replace("src/gen_packmem_launch_prot.py", "")
 
     # Prepare how much frames are going to be analysed per core
     step = int(args.frames / args.cores)
@@ -45,9 +45,9 @@ if __name__=="__main__":
     #If too few frames
     if args.frames < (args.cores*2):
         if args.prot:
-            print(f"nice -19 bash {path}ScriptPackMem_prot.sh -f {args.traj} -s {args.topo} -n {args.lipid_name} -b 0 -e {args.frame} -p >& OUT_packmem0 &")
+            print(f"nice -19 python {path}src/PackMem_prot.py -f {args.traj} -s {args.topo} -l {args.lipid_name} -r {path}data/vdw_radii_Charmm.txt -p {path}data/param_Charmm.txt -b 0 -e {args.frames} -prot -o {args.lipid_name} >& OUT_packmem0 &")
         else:
-            print(f"nice -19 bash {path}ScriptPackMem_prot.sh -f {args.traj} -s {args.topo} -n {args.lipid_name} -b 0 -e {args.frame} >& OUT_packmem0 &")
+            print(f"nice -19 python {path}src/PackMem_prot.py -f {args.traj} -s {args.topo} -l {args.lipid_name} -r {path}data/vdw_radii_Charmm.txt -p {path}data/param_Charmm.txt -b 0 -e {args.frames} -o {args.lipid_name} >& OUT_packmem0 &")
 
 
     # Loop to create the prompt to launch PackMem on several cores
@@ -57,6 +57,6 @@ if __name__=="__main__":
         if i==(len(intervals)-2):
             stop = args.frames
         if args.prot:
-            print(f"nice -19 bash {path}ScriptPackMem_prot.sh -f {args.traj} -s {args.topo} -n {args.lipid_name} -b {start} -e {stop} -p >& OUT_packmem{i} &")
+            print(f"nice -19 python {path}src/PackMem_prot.py -f {args.traj} -s {args.topo} -l {args.lipid_name} -r {path}data/vdw_radii_Charmm.txt -p {path}data/param_Charmm.txt -b {start} -e {stop} -prot -o {args.lipid_name} >& OUT_packmem0 &")
         else:
-            print(f"nice -19 bash {path}ScriptPackMem_prot.sh -f {args.traj} -s {args.topo} -n {args.lipid_name} -b {start} -e {stop} >& OUT_packmem{i} &")
+            print(f"nice -19 python {path}src/PackMem_prot.py -f {args.traj} -s {args.topo} -l {args.lipid_name} -r {path}data/vdw_radii_Charmm.txt -p {path}data/param_Charmm.txt -b {start} -e {stop} -o {args.lipid_name} >& OUT_packmem0 &")
