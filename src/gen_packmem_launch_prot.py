@@ -1,5 +1,6 @@
 import argparse
 import sys
+import subprocess
 
 def get_arguments():
     """
@@ -40,23 +41,41 @@ if __name__=="__main__":
     step = int(args.frames / args.cores)
     intervals = list(range(0, args.frames+1, step))
 
-    print("\nPlease, copy paste these lines to launch PackMem:\n")
+    cmd = [
+            "nice", "-19",
+            sys.executable,  # ou "python3" si tu préfères
+            f"{path}src/PackMem_prot.py",
+            "-f", args.traj,
+            "-s", args.topo,
+            "-l", args.lipid_name,
+            "-r", f"{path}data/vdw_radii_Charmm.txt",
+            "-p", f"{path}data/param_Charmm.txt",
+            "-o", args.lipid_name
+        ]
+    if args.prot:
+        cmd.append("-prot")
 
+    processes = []
+    out_file = open(f"OUT_packmem", "a")
     #If too few frames
-    if args.frames < (args.cores*2):
-        if args.prot:
-            print(f"nice -19 python {path}src/PackMem_prot.py -f {args.traj} -s {args.topo} -l {args.lipid_name} -r {path}data/vdw_radii_Charmm.txt -p {path}data/param_Charmm.txt -b 0 -e {args.frames} -prot -o {args.lipid_name} >& OUT_packmem0 &")
-        else:
-            print(f"nice -19 python {path}src/PackMem_prot.py -f {args.traj} -s {args.topo} -l {args.lipid_name} -r {path}data/vdw_radii_Charmm.txt -p {path}data/param_Charmm.txt -b 0 -e {args.frames} -o {args.lipid_name} >& OUT_packmem0 &")
+    if args.frames < (args.cores):
+        cmd += ["-b", "0", "-e", args.frames]
+        process = subprocess.Popen(cmd, stdout=out_file, stderr=subprocess.STDOUT)
+        processes.append(process)
+    else:
+        # Loop to launch PackMem on several cores
+        for i in range(len(intervals)-1):
+            start = intervals[i]
+            stop =  intervals[i+1]-1
+            if i==(len(intervals)-2):
+                stop = args.frames
+            # Add commands
+            cmd_i = cmd + ["-b", str(start), "-e", str(stop)]
+            # Lancement du processus en arrière-plan
+            process = subprocess.Popen(cmd_i, stdout=out_file, stderr=subprocess.STDOUT)
+            processes.append(process)
 
-
-    # Loop to create the prompt to launch PackMem on several cores
-    for i in range(len(intervals)-1):
-        start = intervals[i]
-        stop =  intervals[i+1]-1
-        if i==(len(intervals)-2):
-            stop = args.frames
-        if args.prot:
-            print(f"nice -19 python {path}src/PackMem_prot.py -f {args.traj} -s {args.topo} -l {args.lipid_name} -r {path}data/vdw_radii_Charmm.txt -p {path}data/param_Charmm.txt -b {start} -e {stop} -prot -o {args.lipid_name} >& OUT_packmem0 &")
-        else:
-            print(f"nice -19 python {path}src/PackMem_prot.py -f {args.traj} -s {args.topo} -l {args.lipid_name} -r {path}data/vdw_radii_Charmm.txt -p {path}data/param_Charmm.txt -b {start} -e {stop} -o {args.lipid_name} >& OUT_packmem0 &")
+    # Wait for the processes to finish
+    for p in processes:
+        p.wait()
+    out_file.close()
