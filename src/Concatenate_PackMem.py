@@ -50,6 +50,29 @@ def concat_files(prefix, suffix):
     
     return file_concat
 
+def concat_files_prot(prefix, suffix):
+    """
+    Concatenate .txt files from PackMem_prot.py for the protein
+
+    --------------------
+    INPUT
+    prefix: str
+        The name of the lipid usually but could just be the common name of the outputfiles
+    suffix: str
+        The end name of the .txt files
+    
+    --------------------
+    OUTPUT
+    pandas DataFrame
+        Contains the informations in the .txt files
+    """
+    file_concat = pd.read_csv(f"{prefix}0{suffix}", header=None)
+    for pdbnum in range(args.start+1, args.end+1):
+        file = pd.read_csv(f"{prefix}{pdbnum}{suffix}", header=None)
+        file_concat = pd.concat([file_concat, file], axis=0, ignore_index=True)
+    
+    return file_concat
+
 if __name__=="__main__":
     args = get_args()
 
@@ -62,9 +85,9 @@ if __name__=="__main__":
 
     if args.prot:
         if os.path.isfile(f"Prot_{args.prefix}0_Up_All.txt"):
-            Total_Up_Deep_prot = concat_files(f"Prot_{args.prefix}", "_Up_Deep.txt")
-            Total_Up_All_prot = concat_files(f"Prot_{args.prefix}", "_Up_All.txt")
-            Total_Up_Shallow_prot = concat_files(f"Prot_{args.prefix}", "_Up_Shallow.txt")
+            Total_Up_Deep_prot = concat_files_prot(f"Prot_{args.prefix}", "_Up_Deep.txt")
+            Total_Up_All_prot = concat_files_prot(f"Prot_{args.prefix}", "_Up_All.txt")
+            Total_Up_Shallow_prot = concat_files_prot(f"Prot_{args.prefix}", "_Up_Shallow.txt")
             # Save files
             Total_Up_Deep_prot.to_csv("Total_Up_Deep_prot.csv", header=False, index=False)
             Total_Up_All_prot.to_csv("Total_Up_All_prot.csv", header=False, index=False)
@@ -75,9 +98,9 @@ if __name__=="__main__":
                 os.remove(f"Prot_{args.prefix}{pdbnum}_Up_All.txt")
                 os.remove(f"Prot_{args.prefix}{pdbnum}_Up_Shallow.txt")
         elif os.path.isfile(f"Prot_{args.prefix}0_Lo_All.txt"):
-            Total_Lo_Deep_prot = concat_files(f"Prot_{args.prefix}", "_Lo_Deep.txt")
-            Total_Lo_All_prot = concat_files(f"Prot_{args.prefix}", "_Lo_All.txt")
-            Total_Lo_Shallow_prot = concat_files(f"Prot_{args.prefix}", "_Lo_Shallow.txt")
+            Total_Lo_Deep_prot = concat_files_prot(f"Prot_{args.prefix}", "_Lo_Deep.txt")
+            Total_Lo_All_prot = concat_files_prot(f"Prot_{args.prefix}", "_Lo_All.txt")
+            Total_Lo_Shallow_prot = concat_files_prot(f"Prot_{args.prefix}", "_Lo_Shallow.txt")
             # Save files
             Total_Lo_Deep_prot.to_csv("Total_Lo_Deep_prot.csv", header=False, index=False)
             Total_Lo_All_prot.to_csv("Total_Up_All_prot.csv", header=False, index=False)
