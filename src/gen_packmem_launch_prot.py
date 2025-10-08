@@ -93,3 +93,18 @@ if __name__=="__main__":
         cmd.append("-prot")
 
     process = subprocess.Popen(cmd)
+    process.wait()
+
+
+    # Then launch packing defect analysis
+    cmd = [
+            sys.executable,  # ou "python3" si tu préfères
+            f"{path}analysis/Fit_plot.py"
+        ]
+    if args.prot:
+        cmd.append("-prot")
+
+    print(cmd)
+    
+
+    process = subprocess.Popen(cmd)

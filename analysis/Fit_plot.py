@@ -18,8 +18,6 @@ def get_arguments():
     """
     # Getting the arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('-l', action = 'store', dest = 'lipid_name',
-                    help = 'The lipid name(s). If multiple, separate them with _')
     parser.add_argument('-prot', action = 'store_true', dest = 'prot',
                     help = 'If there is a protein')
     parser.add_argument('-p', action = 'store', dest = 'precision',
@@ -166,7 +164,7 @@ def plot_defect_fit(type, defect, packdef_data, packdef_constants):
     
     # print global results
     print("")
-    print(f"Results on {args.lipid_name} for {defect} {type} defects")
+    print(f"Results for {defect} {type} defects")
     
     # Compute PackDef distributions with block averaging method, and print results
     FITS_3blocks=block_averaging(packdef_data, 3)
@@ -250,8 +248,8 @@ if __name__=="__main__":
     for name in ["Total", "Total_Up", "Total_Lo"]:
         # Now loop over the three default types
         for defect in ["Deep","Shallow","All"]:
-            filename = f"{name}_{args.lipid_name}_{defect}_clean.txt"
-            def_area = pd.read_csv(filename, header=None, sep=r"\s+")[1]
+            filename = f"{name}_{defect}.csv"
+            def_area = pd.read_csv(filename, header=None)[1]
 
             # Plot the fit of the defects distribution
             packdef_constants = plot_defect_fit(name, defect, def_area, packdef_constants)
@@ -270,7 +268,7 @@ if __name__=="__main__":
             # Now loop over the three default types
             for defect in ["Deep","Shallow","All"]:
                 # Load PackMem data
-                filename = f"{name}_{args.lipid_name}_{defect}_prot.txt"
+                filename = f"{name}_{defect}_prot.csv"
                 if not os.path.isfile(filename):
                     continue
                 def_area_prot = pd.read_csv(filename, header=None).iloc[:,1:]
