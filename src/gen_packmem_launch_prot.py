@@ -59,7 +59,7 @@ if __name__=="__main__":
     out_file = open(f"OUT_packmem", "a")
     #If too few frames
     if args.frames < (args.cores):
-        cmd += ["-b", "0", "-e", args.frames]
+        cmd += ["-b", "0", "-e", str(args.frames)]
         process = subprocess.Popen(cmd, stdout=out_file, stderr=subprocess.STDOUT)
         processes.append(process)
     else:
@@ -79,3 +79,17 @@ if __name__=="__main__":
     for p in processes:
         p.wait()
     out_file.close()
+
+
+    # Once everything is finished, launch concatenation
+    cmd = [
+            sys.executable,  # ou "python3" si tu préfères
+            f"{path}src/Concatenate_PackMem.py",
+            "-l", args.lipid_name,
+            "-b", "0",
+            "-e", str(args.frames)
+        ]
+    if args.prot:
+        cmd.append("-prot")
+
+    process = subprocess.Popen(cmd)
