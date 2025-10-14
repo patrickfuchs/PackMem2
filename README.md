@@ -17,7 +17,7 @@ All of them are already put in the yaml file and the environment can be set up w
 
 ## How to run the code
 The code is simply launched with the command:\
-`python src/gen_packmem_launch_prot.py -f [file.xtc] -s [file.gro] -c [number of cores] -fm [number of frames] -l [lipid name]`\
+`python src/Launch_PackMem_prot.py -f [file.xtc] -s [file.gro] -c [number of cores] -fm [number of frames] -l [lipid name]`\
 Note that you can also use the `-prot` option if you also want to analysis the packing defects near/far from the protein.\
 
 This script launches the actual PackMem script, then the concatenation script and finaly, the analysis script.
