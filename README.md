@@ -8,43 +8,47 @@ This version presents a code written in python 3 and some new mechanisms such as
 These are the packages required to get this version of PackMem running :\
 * argparse
 * numpy
+* pandas
+* matplotlib
 * MDAnalysis\
+
 All of them are already put in the yaml file and the environment can be set up with:\
 `conda env create -f PackMem_env.yml`
 
 -------------------------------------------------------------------------------
 
 ## How to run the code
-In order to have the script running smoothly, you first need to launch the script `gen_packmem_launch_prot.py` :\
-`python src/gen_packmem_launch_prot.py -f [file.xtc] -s [file.gro] -c [number of cores] -fm [number of frames] -n [lipid name]`\
+The code is simply launched with the command:\
+`python src/Launch_PackMem_prot.py -f [file.xtc] -s [file.gro] -c [number of cores] -fm [number of frames] -l [lipid name]`\
 Note that you can also use the `-prot` option if you also want to analysis the packing defects near/far from the protein.\
 
-This script then gives you the command line(s) to copy/paste in the terminal to launch the actual analysis of the packing defects.\
-The command line(s) given should look like this :\
-`nice -19 bash src/ScriptPackMem_prot.sh -f [file.xtc] -s [file.gro] -n [lipid name] -b [frame start] -e [frame end] >& OUT_packmem0 &`\
-With each command line corresponding to a core and the number of frames divided into these number of cores.\
-Again, if you chose the `-prot` option ealier, then you will have the `-p` option written in the command line(s).\
-Just be careful to change the path of the `.sh` script if you want to launch it from elsewhere.\
+This script launches the actual PackMem script, then the concatenation script and finaly, the analysis script.
 
-This script `ScriptPackMem_prot.sh` launches the actual PackMem script `PackMem_prot.py` that will compute the packing defects, first for the deep defects, then the shallow ons and finaly all of them sequentially.\
+Of course, if you encounter problems along the way, each scripts are individually launchable with their respective commands:
+`python [path]/New_PackMem/src/PackMem_prot.py -f [file.xtc] -s [file.gro] -l [lipid name] -r [path]/New_PackMem/data/vdw_radii_Charmm.txt -p [path]/New_PackMem/data/param_Charmm.txt -b [frame start] -e [frame end] -o [lipid name]`\
+Here again, the `-prot` option is usable.\
+This script `PackMem_prot.py` will compute the packing defects, divided into 3 categories: deep, shallow and all packing defects.\
 
-If you parallelised this script by using multiple cores, you then need to do one more action, that is to run the `Concatenate_PackMem_prot.sh` script.\
-`bash src/Concatenate_PackMem_prot.sh -n [lipid name] -b [frame start] -e [frame stop]`\
-Here again, you can also use the `-p` option if you ran the analysis of the packing defects near / far from the protein.\
+`bash src/Concatenate_PackMem.py -b [frame start] -e [frame stop]`\
+Here again, you can also use the `-prot` option if you ran the analysis of the packing defects near/far from the protein.\
 This script will gather all the data file generated and put them into one file per type of defect (deep, shallow, all).\
-In the end, you should have 9 files :\
-* 3 for the Total defects - we mean by that the whole membrane defects - which are named `Total_[lipid name]_[type of defects]_clean.txt`
-* 3 for the Upper leaflet defects - which are named `Total_Up_[lipid name]_[type of defects]_clean.txt`
-* 3 for the Lower lealfet defects - which are named `Total_Lo_[lipid name]_[type of defects]_clean.txt`
 
-Once you have all the data files, you can run the plot-making script `Fit_plot.py` or its R equivalent `Script_fit_and_plot.R`.\
-`python analysis/Fit_plot.py -f Total_[lipid name]`\
-OR\
-`R --vanilla < Script_fit_and_plot.R`\
+`python analysis/Fit_plot.py -o [output name]`\
+Here again, you can also use the `-prot` option if you ran the analysis of the packing defects near/far from the protein.\
 
-If you studied also the packing defacts near/far from the protein, you should run `Script_fit_and_plot_prot.R`\
-`R --vanilla < Script_fit_and_plot_prot.R`\
-For the R scripts, be careful to change the variables inside the script.\
+## Results
+In the end, you should have at least 9 files that were used for the analysis :\
+* 3 for the Total defects - we mean by that the whole membrane defects - which are named `Total_[type of defects].csv`
+* 3 for the Upper leaflet defects - which are named `Total_Up_[type of defects].csv`
+* 3 for the Lower lealfet defects - which are named `Total_Lo_[type of defects]csv`\
+
+If you had the `-prot` option, you also have 3 or 6 files used for the analysis:
+* 3 or 6 for the defects that are in near and far from the protein - which are named `Total_[leaflet]_[type of defects]_prot.csv`\
+
+And the result file:\
+* `Res_membrane.pdf` that contains all the plots of the defects analysis
+
+
 
 -------------------------------------------------------------------------------
 
