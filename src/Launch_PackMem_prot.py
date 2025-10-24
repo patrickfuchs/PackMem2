@@ -35,7 +35,7 @@ def get_arguments():
 if __name__=="__main__":
     args = get_arguments()
     path = sys.argv[0]
-    path = path.replace("src/gen_packmem_launch_prot.py", "")
+    path = path.replace("src/Launch_PackMem_prot.py", "")
 
     # Prepare how much frames are going to be analysed per core
     step = int(args.frames / args.cores)
