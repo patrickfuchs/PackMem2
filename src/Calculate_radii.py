@@ -18,6 +18,48 @@ def get_args():
     args = parser.parse_args()
     return args
 
+def aliphatic(atom_name):
+    """
+    Checks if the atom if aliphatic or not
+
+    -------------------
+    INPUT
+    atom_name: str
+        The name of the atom
+    
+    -------------------
+    OUTPUT
+    str
+        The nature of the atom (a / n)
+    """
+    if len(atom_name) < 3:
+        return 'n'
+    else:
+        if atom_name[0] != 'H' and len(atom_name) > 3:
+            if atom_name[1] == "1" and (atom_name[3] == 'A' or atom_name[3] == 'B' or atom_name[3] == 'C'):
+                return 'n'
+            else:
+                return 'a'
+        elif atom_name[0] == 'H' and len(atom_name) == 3:
+            if atom_name[1] == 'N' or atom_name[1] == 'O':
+                return 'n'
+            else:
+                return 'a'
+        elif atom_name[0] == 'H' and len(atom_name) > 3:
+            if atom_name[1] == "1" and (atom_name[3] == 'A' or atom_name[3] == 'B' or atom_name[3] == 'C'):
+                return 'n'
+        elif atom_name[0] != 'H' and len(atom_name) == 3:
+            if atom_name[1] == "1" and int(atom_name[2]) > 0:
+                return 'n'
+            elif atom_name[1] == "C":
+                return 'n'
+            elif int(atom_name[1]) > 1 and atom_name[2] == "1":
+                return 'n'
+            elif atom_name == 'O22' or atom_name == 'O32':
+                return 'n'
+        return 'a'
+
+
 
 if __name__=="__main__":
     args = get_args()
@@ -42,7 +84,8 @@ if __name__=="__main__":
                 flag = False 
             if flag and len(line.strip()) != 0:
                 radii = ((math.pow(2,(1/6))*sigma[line.split()[1]])/2)*10
-                print(f"{line.split()[3]}  {line.split()[4]:4s} {radii:.2f} n")
+                aliph = aliphatic(line.split()[4])
+                print(f"{line.split()[3]}  {line.split()[4]:4s} {radii:.2f} {aliph}")
             if "; nr	type" in line:
                 flag = True
 
