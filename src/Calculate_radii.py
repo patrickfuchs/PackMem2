@@ -1,14 +1,27 @@
 import math
 import argparse
 
-parser = argparse.ArgumentParser()
-parser.add_argument('-mol', action = 'store', dest = 'fname1',
-                help = 'the .ipt file for the molecule')
-parser.add_argument('-ff', action = 'store', dest = 'fname2',
-                help = 'forcefield.itp')
-args = parser.parse_args()
+def get_args():
+    """
+    Get the arguments for the script and check that the inputfiles are valid.
+
+    --------------------
+    OUTPUT
+    parser.parse_args
+        Contains all the arguments for the script
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-mol', action = 'store', dest = 'fname1',
+                    help = 'the .ipt file for the molecule')
+    parser.add_argument('-ff', action = 'store', dest = 'fname2',
+                    help = 'forcefield.itp')
+    args = parser.parse_args()
+    return args
+
 
 if __name__=="__main__":
+    args = get_args()
+    
     sigma = {}
     flag = False
 
