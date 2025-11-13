@@ -264,7 +264,7 @@ if __name__ == '__main__':
         # Get the indexes that differs
         if len(ind_diff_Up) != 0:
             MatrixUp_Shallowbin[ind_diff_Up[:,0],ind_diff_Up[:,1]] = 0.
-        elif len(ind_diff_Lo) != 0:
+        if len(ind_diff_Lo) != 0:
             MatrixLo_Shallowbin[ind_diff_Lo[:,0],ind_diff_Lo[:,1]] = 0.
         # Packing defects determination
         MatrixUp_labels_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
