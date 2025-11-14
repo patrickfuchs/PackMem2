@@ -98,10 +98,11 @@ def concat_files_prot(prefix, suffix):
         if os.path.isfile(f"{prefix}{pdbnum}{suffix}"):
             if check_file(f"{prefix}{pdbnum}{suffix}"):
                 file = pd.read_csv(f"{prefix}{pdbnum}{suffix}", header=None)
+                file_concat = pd.concat([file_concat, file], axis=0, ignore_index=True)
         elif os.path.isfile(f"{prefix}{pdbnum}{other_suffix}"):
             if check_file(f"{prefix}{pdbnum}{other_suffix}"):
                 file = pd.read_csv(f"{prefix}{pdbnum}{other_suffix}", header=None)
-        file_concat = pd.concat([file_concat, file], axis=0, ignore_index=True)
+                file_concat = pd.concat([file_concat, file], axis=0, ignore_index=True)
 
     return file_concat
 
