@@ -169,10 +169,10 @@ def plot_defect_fit(type, defect, packdef_data, packdef_constants):
     # Compute PackDef distributions with block averaging method, and print results
     FITS_3blocks=block_averaging(packdef_data, 3)
     for i in range(3):
-        print(f"Using block {i+1}: {round(FITS_3blocks[i],args.precision)} Å2")
+        print(f"Using block {i+1}: {round(FITS_3blocks[i],args.precision)} Å\u00b2")
     inv_decay_block = sum(FITS_3blocks)/len(FITS_3blocks)
     error_inv_decay_block = np.std(FITS_3blocks)
-    print(f"Mean +/- sd on 3 blocks: {round(inv_decay_block,args.precision)} ± {round(error_inv_decay_block,args.precision)} Å2")
+    print(f"Mean +/- sd on 3 blocks: {round(inv_decay_block,args.precision)} ± {round(error_inv_decay_block,args.precision)} Å\u00b2")
 
     # store all the results in the data frame
     packdef_constants.loc["PackDef_cst_global", f"{defect}_{type}"] = global_inv_decay
