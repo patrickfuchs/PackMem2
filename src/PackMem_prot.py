@@ -100,8 +100,8 @@ if __name__ == '__main__':
     if args.indexFile == None:
         # Create lists of the residue number  for upper and lower leaflets
         L = LeafletFinder(lipids, f'name {glyc_mb}')
-        upper_leaflet = np.array(list(set(L.groups(0).resids)))
-        lower_leaflet = np.array(list(set(L.groups(1).resids)))
+        upper_leaflet = np.sort(np.array(list(set(L.groups(0).resids))))
+        lower_leaflet = np.sort(np.array(list(set(L.groups(1).resids))))
     else:
         upper_leaflet, lower_leaflet = p.read_ndx(args.indexFile)
 
@@ -262,8 +262,10 @@ if __name__ == '__main__':
         ind_diff_Up = np.array([row for row in ind_lab_All_Up if tuple(row) not in set_ind_Deep_Up])
         ind_diff_Lo = np.array([row for row in ind_lab_All_Lo if tuple(row) not in set_ind_Deep_Lo])
         # Get the indexes that differs
-        MatrixUp_Shallowbin[ind_diff_Up[:,0],ind_diff_Up[:,1]] = 0.
-        MatrixLo_Shallowbin[ind_diff_Lo[:,0],ind_diff_Lo[:,1]] = 0.
+        if len(ind_diff_Up) != 0:
+            MatrixUp_Shallowbin[ind_diff_Up[:,0],ind_diff_Up[:,1]] = 0.
+        if len(ind_diff_Lo) != 0:
+            MatrixLo_Shallowbin[ind_diff_Lo[:,0],ind_diff_Lo[:,1]] = 0.
         # Packing defects determination
         MatrixUp_labels_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)
         MatrixLo_labels_Shallow = m.initialize_matrix2D(len(arrayX), len(arrayY), 0)

@@ -27,6 +27,28 @@ def get_args():
 
     return args
 
+def check_file(filename):
+    """
+    Check if are is content in the file.
+
+    --------------------
+    INPUT
+    filename: str
+        The name the input file
+
+    --------------------
+    OUTPUT
+    Boolean
+        If the files has content
+    """
+    with open(filename, 'r') as file_in:
+        count = 0
+        for line in file_in:
+            count+=1
+            if count == 3:
+                return True
+        return False
+
 def concat_files(prefix, suffix):
     """
     Concatenate .txt files from PackMem_prot.py
@@ -45,9 +67,10 @@ def concat_files(prefix, suffix):
     """
     file_concat = pd.read_csv(f"{prefix}0{suffix}", sep=r'\s+', header=None, skiprows=[0,1])
     for pdbnum in range(args.start+1, args.end+1):
-        file = pd.read_csv(f"{prefix}{pdbnum}{suffix}", sep=r'\s+', header=None, skiprows=[0,1])
-        file_concat = pd.concat([file_concat, file], axis=0, ignore_index=True)
-    
+        if check_file(f"{prefix}{pdbnum}{suffix}"):
+            file = pd.read_csv(f"{prefix}{pdbnum}{suffix}", sep=r'\s+', header=None, skiprows=[0,1])
+            file_concat = pd.concat([file_concat, file], axis=0, ignore_index=True)
+
     return file_concat
 
 def concat_files_prot(prefix, suffix):
@@ -60,17 +83,26 @@ def concat_files_prot(prefix, suffix):
         The name of the lipid usually but could just be the common name of the outputfiles
     suffix: str
         The end name of the .txt files
-    
+
     --------------------
     OUTPUT
     pandas DataFrame
         Contains the informations in the .txt files
     """
     file_concat = pd.read_csv(f"{prefix}0{suffix}", header=None)
+    if suffix[:4] == "_Up_":
+        other_suffix = f"_Lo_{suffix[4:]}"
+    else:
+        other_suffix = f"_Up_{suffix[4:]}"
     for pdbnum in range(args.start+1, args.end+1):
-        file = pd.read_csv(f"{prefix}{pdbnum}{suffix}", header=None)
+        if os.path.isfile(f"{prefix}{pdbnum}{suffix}"):
+            if check_file(f"{prefix}{pdbnum}{suffix}"):
+                file = pd.read_csv(f"{prefix}{pdbnum}{suffix}", header=None)
+        elif os.path.isfile(f"{prefix}{pdbnum}{other_suffix}"):
+            if check_file(f"{prefix}{pdbnum}{other_suffix}"):
+                file = pd.read_csv(f"{prefix}{pdbnum}{other_suffix}", header=None)
         file_concat = pd.concat([file_concat, file], axis=0, ignore_index=True)
-    
+
     return file_concat
 
 if __name__=="__main__":
@@ -92,11 +124,6 @@ if __name__=="__main__":
             Total_Up_Deep_prot.to_csv("Total_Up_Deep_prot.csv", header=False, index=False)
             Total_Up_All_prot.to_csv("Total_Up_All_prot.csv", header=False, index=False)
             Total_Up_Shallow_prot.to_csv("Total_Up_Shallow_prot.csv", header=False, index=False)
-            # Remove the files
-            for pdbnum in range(args.start, args.end+1):
-                os.remove(f"Prot_{args.prefix}{pdbnum}_Up_Deep.txt")
-                os.remove(f"Prot_{args.prefix}{pdbnum}_Up_All.txt")
-                os.remove(f"Prot_{args.prefix}{pdbnum}_Up_Shallow.txt")
         elif os.path.isfile(f"Prot_{args.prefix}0_Lo_All.txt"):
             Total_Lo_Deep_prot = concat_files_prot(f"Prot_{args.prefix}", "_Lo_Deep.txt")
             Total_Lo_All_prot = concat_files_prot(f"Prot_{args.prefix}", "_Lo_All.txt")
@@ -105,11 +132,12 @@ if __name__=="__main__":
             Total_Lo_Deep_prot.to_csv("Total_Lo_Deep_prot.csv", header=False, index=False)
             Total_Lo_All_prot.to_csv("Total_Up_All_prot.csv", header=False, index=False)
             Total_Lo_Shallow_prot.to_csv("Total_Up_Shallow_prot.csv", header=False, index=False)
-            # Remove the files
-            for pdbnum in range(args.start, args.end+1):
-                os.remove(f"Prot_{args.prefix}{pdbnum}_Lo_Deep.txt")
-                os.remove(f"Prot_{args.prefix}{pdbnum}_Lo_All.txt")
-                os.remove(f"Prot_{args.prefix}{pdbnum}_Lo_Shallow.txt")
+        # Remove the files
+        files = os.listdir('.')
+        for file in files:
+            if file.startswith(f"Prot_{args.prefix}"):
+                file_path = os.path.join('.', file)
+                os.remove(file_path)
         
     # Concatenate the lealfets' results
     Total_Deep =  pd.concat([Total_Up_Deep, Total_Lo_Deep], axis=0, ignore_index=True)
