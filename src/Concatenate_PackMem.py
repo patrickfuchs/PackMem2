@@ -51,7 +51,6 @@ def check_file(filename):
 
 def start_file(prefix, suffix):
     for i in range(args.start, args.end+1):
-        print(f"{prefix}{i}{suffix}")
         if check_file(f"{prefix}{i}{suffix}"):
             filename = f"{prefix}{i}{suffix}"
             return filename, i
