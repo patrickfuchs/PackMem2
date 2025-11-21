@@ -49,6 +49,13 @@ def check_file(filename):
                 return True
         return False
 
+def start_file(prefix, suffix):
+    for i in range(args.start, args.end+1):
+        print(f"{prefix}{i}{suffix}")
+        if check_file(f"{prefix}{i}{suffix}"):
+            filename = f"{prefix}{i}{suffix}"
+            return filename, i
+
 def concat_files(prefix, suffix):
     """
     Concatenate .txt files from PackMem_prot.py
@@ -65,8 +72,10 @@ def concat_files(prefix, suffix):
     pandas DataFrame
         Contains the informations in the .txt files
     """
-    file_concat = pd.read_csv(f"{prefix}0{suffix}", sep=r'\s+', header=None, skiprows=[0,1])
-    for pdbnum in range(args.start+1, args.end+1):
+    filename, start = start_file(prefix, suffix)
+    file_concat = pd.read_csv(filename, sep=r'\s+', header=None, skiprows=[0,1])
+
+    for pdbnum in range(start+1, args.end+1):
         if check_file(f"{prefix}{pdbnum}{suffix}"):
             file = pd.read_csv(f"{prefix}{pdbnum}{suffix}", sep=r'\s+', header=None, skiprows=[0,1])
             file_concat = pd.concat([file_concat, file], axis=0, ignore_index=True)
@@ -89,12 +98,15 @@ def concat_files_prot(prefix, suffix):
     pandas DataFrame
         Contains the informations in the .txt files
     """
-    file_concat = pd.read_csv(f"{prefix}0{suffix}", header=None)
     if suffix[:4] == "_Up_":
         other_suffix = f"_Lo_{suffix[4:]}"
     else:
         other_suffix = f"_Up_{suffix[4:]}"
-    for pdbnum in range(args.start+1, args.end+1):
+    
+    filename, start = start_file(prefix, suffix)
+    file_concat = pd.read_csv(filename, header=None)
+    
+    for pdbnum in range(start+1, args.end+1):
         if os.path.isfile(f"{prefix}{pdbnum}{suffix}"):
             if check_file(f"{prefix}{pdbnum}{suffix}"):
                 file = pd.read_csv(f"{prefix}{pdbnum}{suffix}", header=None)
