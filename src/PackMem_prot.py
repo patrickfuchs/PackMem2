@@ -16,7 +16,8 @@ warnings.filterwarnings(
 )
 import numpy as np
 import MDAnalysis as mda
-from MDAnalysis.analysis.leaflet import LeafletFinder 
+from MDAnalysis.analysis.leaflet import LeafletFinder
+from scipy.spatial.distance import cdist
 
 from bin import arrays as a
 from bin import matrix as m
@@ -90,7 +91,7 @@ if __name__ == '__main__':
     # If multiple lipids
     lipid_names = args.lipid.replace('_', ' ')
     # select the lipids in system
-    lipids = u.select_atoms(f"resname {lipid_names} or protein")
+    lipids = u.select_atoms(f"resname {lipid_names}")
     res_names = list(set(lipids.resnames))
 
     ######### Extract UPPER/LOWER leaflet ##########
@@ -100,10 +101,13 @@ if __name__ == '__main__':
     if args.indexFile == None:
         # Create lists of the residue number  for upper and lower leaflets
         L = LeafletFinder(lipids, f'name {glyc_mb}')
-        upper_leaflet = np.sort(np.array(list(set(L.groups(0).resids))))
-        lower_leaflet = np.sort(np.array(list(set(L.groups(1).resids))))
+        upper_leaflet_ori = np.sort(np.array(list(set(L.groups(0).resids))))
+        lower_leaflet_ori = np.sort(np.array(list(set(L.groups(1).resids))))
+        #upper_leaflet = np.sort(np.array(list(set(L.groups(0).resids))))
+        #lower_leaflet = np.sort(np.array(list(set(L.groups(1).resids))))
     else:
-        upper_leaflet, lower_leaflet = p.read_ndx(args.indexFile)
+        upper_leaflet_ori, lower_leaflet_ori = p.read_ndx(args.indexFile)
+        #upper_leaflet, lower_leaflet = p.read_ndx(args.indexFile)
 
 
     ############################## Main loop ##################################
@@ -121,6 +125,32 @@ if __name__ == '__main__':
             print("The number of lipids in your membrane is very high (>9999)!")
             print("Please check that you only give to PackMem your membrane (+ protein)")
             sys.exit()
+        
+        if args.protein:
+            protein = u.select_atoms(f"protein")
+            zpos_prot = protein.positions[:,2]
+
+            # Get the zpos of the upper and lower leaflet
+            mean_zpos_lipids = np.mean(lipids.positions[:,2])
+            zpos_upper = lipids.positions[lipids.positions[:,2] > mean_zpos_lipids, 2]
+            zpos_lower = lipids.positions[lipids.positions[:,2] < mean_zpos_lipids, 2]
+            
+            # Compute the minimal distance between the protein and the upper / lower leaflet
+            dmin_up = np.min((cdist( zpos_upper.reshape(-1, 1), zpos_prot.reshape(-1, 1)))**2)
+            dmin_lo = np.min((cdist( zpos_lower.reshape(-1, 1), zpos_prot.reshape(-1, 1)))**2)
+            
+            resids_prot = np.sort(np.array(list(set(protein.resids))))
+            # If the protein is close enough to have an Hbond with the membrane
+            if dmin_up < 3.0:
+                upper_leaflet = np.concatenate([resids_prot, upper_leaflet_ori])
+                lower_leaflet = lower_leaflet_ori
+            elif dmin_lo < 3.0:
+                upper_leaflet = upper_leaflet_ori
+                lower_leaflet = np.concatenate([resids_prot, lower_leaflet_ori])
+            else:
+                upper_leaflet = upper_leaflet_ori
+                lower_leaflet = lower_leaflet_ori
+
 
         # Get all x, y and z
         x_atoms = system.positions[:,0].round(2)
