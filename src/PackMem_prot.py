@@ -103,11 +103,8 @@ if __name__ == '__main__':
         L = LeafletFinder(lipids, f'name {glyc_mb}')
         upper_leaflet_ori = np.sort(np.array(list(set(L.groups(0).resids))))
         lower_leaflet_ori = np.sort(np.array(list(set(L.groups(1).resids))))
-        #upper_leaflet = np.sort(np.array(list(set(L.groups(0).resids))))
-        #lower_leaflet = np.sort(np.array(list(set(L.groups(1).resids))))
     else:
         upper_leaflet_ori, lower_leaflet_ori = p.read_ndx(args.indexFile)
-        #upper_leaflet, lower_leaflet = p.read_ndx(args.indexFile)
 
 
     ############################## Main loop ##################################
