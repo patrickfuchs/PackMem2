@@ -72,37 +72,35 @@ if __name__=="__main__":
     # Get the value of sigma from the forcefield .itp
     with open(args.ff, "r") as file_ff:
         for line in file_ff:
-            if args.martini:
-                if "; cross terms" in line:
-                    flag = False 
-                if flag and len(line.strip()) != 0:
+            if line.startswith(';'):
+                continue
+            if line.startswith('['):
+                flag = False 
+            if flag and len(line.strip()) != 0:
+                if args.martini:
                     # sigma = (C12/C6)^(1/6)
                     C12 = float(line.split()[4])
                     C6 = float(line.split()[3])
                     if C6 >= 0.00001 or C6 <= -0.00001:
                         sigma[line.split()[0]] = (C12 / C6)**(1/6)
                     else:
-                        print(C6)
                         sigma[line.split()[0]] = 0.0
-                if "; self terms" in line:
-                    flag = True
-            else:
-                if "[ nonbond_params ]" in line:
-                    flag = False 
-                if flag and len(line.strip()) != 0:
-                    sigma[line.split()[0]] = float(line.split()[5])       
-                if "; name	at.num" in line:
-                    flag = True
+                else:
+                    sigma[line.split()[0]] = float(line.split()[5])  
+            if (args.martini and "[ nonbond_params ]" in line) or (not args.martini and "[ atomtypes ]" in line):
+                flag = True
 
     # Calculate the radii and prints the radii of each atom type
     with open(args.mol, "r") as file_mol:
         for line in file_mol:
-            if "[ bonds ]" in line:
+            if line.startswith(';'):
+                    continue
+            if line.startswith('['):
                 flag = False 
             if flag and len(line.strip()) != 0:
                 radii = ((math.pow(2,(1/6))*sigma[line.split()[1]])/2)*10
-                aliph = aliphatic(line.split()[4])
+                aliph = "n"
                 print(f"{line.split()[3]}  {line.split()[4]:4s} {radii:.2f} {aliph}")
-            if (args.martini and "[ atoms ]" in line) or (not args.martini and "; nr	type" in line):
+            if "[ atoms ]" in line:
                 flag = True
 
