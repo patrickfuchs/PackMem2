@@ -1,46 +1,919 @@
 ALA A
-ASN N
+ARG   BB   2.64 n
+ARG   SC1  2.64 n
+ARG   SC2  2.64 n
+ARG   SCP  0.00 n
+ASN   BB   2.64 n
+ASN   SC1  2.64 n
+ASN   SCP  0.00 n
+ASN   SCN  0.00 n
 ASP D
 CYS C
-GLN Q
+GLN   BB   2.64 n
+GLN   SC1  2.64 n
+GLN   SCP  0.00 n
+GLN   SCN  0.00 n
 GLU E
 GLY G
 HIS H
-ILE I
-MET M
-PRO P
-SER S
-THR T
-TRP W
-TYR Y
+ILE   BB   2.64 n
+ILE   SC1  2.64 n
+LEU   BB   2.64 n
+LEU   SC1  2.64 n
 LYS   BB   2.64 n
 LYS   SC1  2.64 n
 LYS   SC2  2.64 n
-LEU   BB   2.64 n
-LEU   SC1  2.64 n
-VAL   BB   2.64 n
-VAL   SC1  2.64 n
+LYS   SCP  0.00 n
+MET   BB   2.64 n
+MET   SC1  2.64 n
 PHE   BB   2.64 n
 PHE   SC1  2.41 n
 PHE   SC2  2.41 n
 PHE   SC3  2.41 n
-ARG   BB   2.64 n
-ARG   SC1  2.64 n
-ARG   SC2  2.64 n
-DOPC  NC3  3.479 n
-DOPC  PO4  3.479 n
+PRO P
+SER S
+THR T
+TRP   BB   2.64 n
+TRP   SC1  2.41 n
+TRP   SC2  2.41 n
+TRP   SC3  2.41 n
+TRP   SC4  2.41 n
+TYR Y
+VAL   BB   2.64 n
+VAL   SC1  2.64 n
+DAPC  NC3  3.479 n # Martini2/2P 2.64
+DAPC  PO4  3.479 n # Martini2/2P 2.64
+DAPC  GL1  2.638 n
+DAPC  GL2  2.638 n
+DAPC  D1A  2.638 a
+DAPC  D2A  2.638 a
+DAPC  D3A  2.638 a
+DAPC  D4A  2.638 a
+DAPC  C5A  2.638 a # Martini2P 2.64 ; Martini3 C4A
+DAPC  D1B  2.638 a
+DAPC  D2B  2.638 a
+DAPC  D3B  2.638 a
+DAPC  D4B  2.638 a
+DAPC  C5B  2.638 a # Martini2P 2.64 ; Martini3 C4B
+DAPE  NH3  2.64 n
+DAPE  PO4  2.64 n
+DAPE  GL1  2.64 n
+DAPE  GL2  2.64 n
+DAPE  D1A  2.64 a
+DAPE  D2A  2.64 a
+DAPE  D3A  2.64 a
+DAPE  D4A  2.64 a
+DAPE  C5A  3.48 a # Martini2P 2.64 ; Martini3 C4A
+DAPE  D1B  2.64 a
+DAPE  D2B  2.64 a
+DAPE  D3B  2.64 a
+DAPE  D4B  2.64 a
+DAPE  C5B  3.48 a # Martini2P 2.64 ; Martini3 C4B
+DAPS  CNO  2.64 n
+DAPS  PO4  2.64 n
+DAPS  GL1  2.64 n
+DAPS  GL2  2.64 n
+DAPS  D1A  2.64 a
+DAPS  D2A  2.64 a
+DAPS  D3A  2.64 a
+DAPS  D4A  2.64 a
+DAPS  C5A  3.48 a # Martini2P 2.64 ; Martini3 C4A
+DAPS  D1B  2.64 a
+DAPS  D2B  2.64 a
+DAPS  D3B  2.64 a
+DAPS  D4B  2.64 a
+DAPS  C5B  3.48 a # Martini2P 2.64 ; Martini3 C4B
+DLPC  NC3  3.479 n # Martini2/2P 2.64
+DLPC  PO4  3.479 n # Martini2/2P 2.64
+DLPC  GL1  2.638 n
+DLPC  GL2  2.638 n
+DLPC  C1A  2.638 a # Martini2 3.48
+DLPC  C2A  2.638 a # Martini2 3.48
+DLPC  C3A  2.638 a # Martini2 3.48
+DLPC  C1B  2.638 a # Martini2 3.48
+DLPC  C2B  2.638 a # Martini2 3.48
+DLPC  C3B  2.638 a # Martini2 3.48
+DOPC  NC3  3.479 n # Martini2/2P 2.64
+DOPC  PO4  3.479 n # Martini2/2P 2.64
 DOPC  GL1  2.638 n
 DOPC  GL2  2.638 n
-DOPC  C1A  2.638 a
-DOPC  C2A  2.638 a
-DOPC  D3A  2.638 a
-DOPC  C4A  2.638 a
-DOPC  C5A  2.638 a
-DOPC  C1B  2.638 a
-DOPC  C2B  2.638 a
-DOPC  D3B  2.638 a
-DOPC  C4B  2.638 a
-DOPC  C5B  2.638 a
+DOPC  C1A  2.638 a # Martini2 3.48
+DOPC  D2A  2.638 a
+DOPC  C3A  2.638 a # Martini2 3.48
+DOPC  C4A  2.638 a # Martini2 3.48
+DOPC  C1B  2.638 a # Martini2 3.48
+DOPC  D2B  2.638 a
+DOPC  C3B  2.638 a # Martini2 3.48
+DOPC  C4B  2.638 a # Martini2 3.48
+DOPE  NH3  3.479 n # Martini2/2P 2.64
+DOPE  PO4  3.479 n # Martini2/2P 2.64
+DOPE  GL1  2.638 n
+DOPE  GL2  2.638 n
+DOPE  C1A  2.638 a # Martini2 3.48
+DOPE  D2A  2.638 a
+DOPE  C3A  2.638 a # Martini2 3.48
+DOPE  C4A  2.638 a # Martini2 3.48
+DOPE  C1B  2.638 a # Martini2 3.48
+DOPE  D2B  2.638 a
+DOPE  C3B  2.638 a # Martini2 3.48
+DOPE  C4B  2.638 a # Martini2 3.48
+DOPS  CNO  3.479 n # Martini2/2P 2.64
+DOPS  PO4  3.479 n # Martini2/2P 2.64
+DOPS  GL1  2.638 n
+DOPS  GL2  2.638 n
+DOPS  C1A  2.638 a # Martini2 3.48
+DOPS  D2A  2.638 a
+DOPS  C3A  2.638 a # Martini2 3.48
+DOPS  C4A  2.638 a # Martini2 3.48
+DOPS  C1B  2.638 a # Martini2 3.48
+DOPS  D2B  2.638 a
+DOPS  C3B  2.638 a # Martini2 3.48
+DOPS  C4B  2.638 a # Martini2 3.48
+DPPC  NC3  3.479 n # Martini2/2P 2.64
+DPPC  PO4  3.479 n # Martini2/2P 2.64
+DPPC  GL1  2.638 n
+DPPC  GL2  2.638 n
+DPPC  C1A  2.638 a # Martini2 3.48
+DPPC  C2A  2.638 a # Martini2 3.48
+DPPC  C3A  2.638 a # Martini2 3.48
+DPPC  C4A  2.638 a # Martini2 3.48
+DPPC  C1B  2.638 a # Martini2 3.48
+DPPC  C2B  2.638 a # Martini2 3.48
+DPPC  C3B  2.638 a # Martini2 3.48
+DPPC  C4B  2.638 a # Martini2 3.48
+DPPE  NH3  3.4796 n # Martini2/2P 2.64
+DPPE  PO4  3.4796 n # Martini2/2P 2.64
+DPPE  GL1  2.638 n
+DPPE  GL2  2.638 n
+DPPE  C1A  2.638 a # Martini2 3.48
+DPPE  C2A  2.638 a # Martini2 3.48
+DPPE  C3A  2.638 a # Martini2 3.48
+DPPE  C4A  2.638 a # Martini2 3.48
+DPPE  C1B  2.638 a # Martini2 3.48
+DPPE  C2B  2.638 a # Martini2 3.48
+DPPE  C3B  2.638 a # Martini2 3.48
+DPPE  C4B  2.638 a # Martini2 3.48
+DUPE  NH3  2.64 n
+DUPE  PO4  2.64 n
+DUPE  GL1  2.64 n
+DUPE  GL2  2.64 n
+DUPE  D1A  2.64 a
+DUPE  D2A  2.64 a
+DUPE  D3A  2.64 a
+DUPE  D4A  2.64 a
+DUPE  D5A  2.64 a
+DUPE  D1B  2.64 a
+DUPE  D2B  2.64 a
+DUPE  D3B  2.64 a
+DUPE  D4B  2.64 a
+DUPE  D5B  2.64 a
+DUPS  CNO  2.64 n
+DUPS  PO4  2.64 n
+DUPS  GL1  2.64 n
+DUPS  GL2  2.64 n
+DUPS  D1A  2.64 a
+DUPS  D2A  2.64 a
+DUPS  D3A  2.64 a
+DUPS  D4A  2.64 a
+DUPS  D5A  2.64 a
+DUPS  D1B  2.64 a
+DUPS  D2B  2.64 a
+DUPS  D3B  2.64 a
+DUPS  D4B  2.64 a
+DUPS  D5B  2.64 a
+PADG  GL1  2.64 n
+PADG  GL2  2.64 n
+PADG  D1A  2.64 a
+PADG  D2A  2.64 a
+PADG  D3A  2.64 a
+PADG  D4A  2.64 a
+PADG  C5A  3.48 a # Martini2P 2.64
+PADG  C1B  3.48 a # Martini2P 2.64
+PADG  C2B  3.48 a # Martini2P 2.64
+PADG  C3B  3.48 a # Martini2P 2.64
+PADG  C4B  3.48 a # Martini2P 2.64
+PAPA  PO4  2.64 n
+PAPA  GL1  2.64 n
+PAPA  GL2  2.64 n
+PAPA  D1A  2.64 a
+PAPA  D2A  2.64 a
+PAPA  D3A  2.64 a
+PAPA  D4A  2.64 a
+PAPA  C5A  3.48 a # Martini2P 2.64 ; Martini3 C4A
+PAPA  C1B  3.48 a # Martini2P 2.64
+PAPA  C2B  3.48 a # Martini2P 2.64
+PAPA  C3B  3.48 a # Martini2P 2.64
+PAPA  C4B  3.48 a # Martini2P 2.64
+PAPC  NC3  3.479 n # Martini2/2P 2.64
+PAPC  PO4  3.479 n # Martini2/2P 2.64
+PAPC  GL1  2.638 n
+PAPC  GL2  2.638 n
+PAPC  D1A  2.638 a
+PAPC  D2A  2.638 a
+PAPC  D3A  2.638 a
+PAPC  D4A  2.638 a
+PAPC  C5A  2.638 a # Martini3 C4A
+PAPC  C1B  2.638 a
+PAPC  C2B  2.638 a
+PAPC  C3B  2.638 a
+PAPC  C4B  2.638 a
+PAPE  NH3  2.64 n
+PAPE  PO4  2.64 n
+PAPE  GL1  2.64 n
+PAPE  GL2  2.64 n
+PAPE  D1A  2.64 a
+PAPE  D2A  2.64 a
+PAPE  D3A  2.64 a
+PAPE  D4A  2.64 a
+PAPE  C5A  3.48 a # Martini2P 2.64 ; Martini3 C4A
+PAPE  C1B  3.48 a # Martini2P 2.64
+PAPE  C2B  3.48 a # Martini2P 2.64
+PAPE  C3B  3.48 a # Martini2P 2.64
+PAPE  C4B  3.48 a # Martini2P 2.64
+PAPI  C1   2.64 n
+PAPI  C2   2.64 n
+PAPI  C3   2.64 n
+PAPI  PO4  2.64 n
+PAPI  GL1  2.64 n
+PAPI  GL2  2.64 n
+PAPI  D1A  2.64 a
+PAPI  D2A  2.64 a
+PAPI  D3A  2.64 a
+PAPI  D4A  2.64 a
+PAPI  C5A  3.48 a # Martini2P 2.64
+PAPI  C1B  3.48 a # Martini2P 2.64
+PAPI  C2B  3.48 a # Martini2P 2.64
+PAPI  C3B  3.48 a # Martini2P 2.64
+PAPI  C4B  3.48 a # Martini2P 2.64
+PAPS  CNO  2.64 n
+PAPS  PO4  2.64 n
+PAPS  GL1  2.64 n
+PAPS  GL2  2.64 n
+PAPS  D1A  2.64 a
+PAPS  D2A  2.64 a
+PAPS  D3A  2.64 a
+PAPS  D4A  2.64 a
+PAPS  C5A  3.48 a # Martini2P 2.64 ; Martini3 C4A
+PAPS  C1B  3.48 a # Martini2P 2.64
+PAPS  C2B  3.48 a # Martini2P 2.64
+PAPS  C3B  3.48 a # Martini2P 2.64
+PAPS  C4B  3.48 a # Martini2P 2.64
+PEPC  NC3  2.64 n
+PEPC  PO4  2.64 n
+PEPC  GL1  2.64 n
+PEPC  GL2  2.64 n
+PEPC  C1A  3.48 a # Martini2P 2.64
+PEPC  C2A  3.48 a # Martini2P 2.64
+PEPC  D3A  2.64 a
+PEPC  D4A  2.64 a
+PEPC  C5A  3.48 a # Martini2P 2.64 ; Martini3 C4A
+PEPC  C1B  3.48 a # Martini2P 2.64
+PEPC  C2B  3.48 a # Martini2P 2.64
+PEPC  C3B  3.48 a # Martini2P 2.64
+PEPC  C4B  3.48 a # Martini2P 2.64
+PIDG  GL1  2.64 n
+PIDG  GL2  2.64 n
+PIDG  C1A  3.48 a # Martini2P 2.64
+PIDG  D2A  2.64 a
+PIDG  D3A  2.64 a
+PIDG  C4A  3.48 a # Martini2P 2.64
+PIDG  C1B  3.48 a # Martini2P 2.64
+PIDG  C2B  3.48 a # Martini2P 2.64
+PIDG  C3B  3.48 a # Martini2P 2.64
+PIDG  C4B  3.48 a # Martini2P 2.64
+PIPA  PO4  2.64 n
+PIPA  GL1  2.64 n
+PIPA  GL2  2.64 n
+PIPA  C1A  3.48 a # Martini2P 2.64
+PIPA  D2A  2.64 a
+PIPA  D3A  2.64 a
+PIPA  C4A  3.48 a # Martini2P 2.64
+PIPA  C1B  3.48 a # Martini2P 2.64
+PIPA  C2B  3.48 a # Martini2P 2.64
+PIPA  C3B  3.48 a # Martini2P 2.64
+PIPA  C4B  3.48 a # Martini2P 2.64
+PIPC  NC3  2.64 n
+PIPC  PO4  2.64 n
+PIPC  GL1  2.64 n
+PIPC  GL2  2.64 n
+PIPC  C1A  3.48 a # Martini2P 2.64
+PIPC  D2A  2.64 a
+PIPC  D3A  2.64 a
+PIPC  C4A  3.48 a # Martini2P 2.64
+PIPC  C1B  3.48 a # Martini2P 2.64
+PIPC  C2B  3.48 a # Martini2P 2.64
+PIPC  C3B  3.48 a # Martini2P 2.64
+PIPC  C4B  3.48 a # Martini2P 2.64
+PIPE  NH3  2.64 n
+PIPE  PO4  2.64 n
+PIPE  GL1  2.64 n
+PIPE  GL2  2.64 n
+PIPE  C1A  3.48 a # Martini2P 2.64
+PIPE  D2A  2.64 a
+PIPE  D3A  2.64 a
+PIPE  C4A  3.48 a # Martini2P 2.64
+PIPE  C1B  3.48 a # Martini2P 2.64
+PIPE  C2B  3.48 a # Martini2P 2.64
+PIPE  C3B  3.48 a # Martini2P 2.64
+PIPE  C4B  3.48 a # Martini2P 2.64
+PIPI  C1   2.64 n
+PIPI  C2   2.64 n
+PIPI  C3   2.64 n
+PIPI  PO4  2.64 n
+PIPI  GL1  2.64 n
+PIPI  GL2  2.64 n
+PIPI  C1A  3.48 a # Martini2P 2.64
+PIPI  D2A  2.64 a
+PIPI  D3A  2.64 a
+PIPI  C4A  3.48 a # Martini2P 2.64
+PIPI  C1B  3.48 a # Martini2P 2.64
+PIPI  C2B  3.48 a # Martini2P 2.64
+PIPI  C3B  3.48 a # Martini2P 2.64
+PIPI  C4B  3.48 a # Martini2P 2.64
+PIPS  CNO  2.64 n
+PIPS  PO4  2.64 n
+PIPS  GL1  2.64 n
+PIPS  GL2  2.64 n
+PIPS  C1A  3.48 a # Martini2P 2.64
+PIPS  D2A  2.64 a
+PIPS  D3A  2.64 a
+PIPS  C4A  3.48 a # Martini2P 2.64
+PIPS  C1B  3.48 a # Martini2P 2.64
+PIPS  C2B  3.48 a # Martini2P 2.64
+PIPS  C3B  3.48 a # Martini2P 2.64
+PIPS  C4B  3.48 a # Martini2P 2.64
+PODG  GL1  2.64 n
+PODG  GL2  2.64 n
+PODG  C1A  3.48 a # Martini2P 2.64
+PODG  D2A  2.64 a
+PODG  C3A  3.48 a
+PODG  C4A  3.48 a # Martini2P 2.64
+PODG  C1B  3.48 a # Martini2P 2.64
+PODG  C2B  3.48 a # Martini2P 2.64
+PODG  C3B  3.48 a # Martini2P 2.64
+PODG  C4B  3.48 a # Martini2P 2.64
+POPA  PO4  2.64 n
+POPA  GL1  2.64 n
+POPA  GL2  2.64 n
+POPA  C1A  3.48 a # Martini2P 2.64
+POPA  D2A  2.64 a
+POPA  C3A  3.48 a
+POPA  C4A  3.48 a # Martini2P 2.64
+POPA  C1B  3.48 a # Martini2P 2.64
+POPA  C2B  3.48 a # Martini2P 2.64
+POPA  C3B  3.48 a # Martini2P 2.64
+POPA  C4B  3.48 a # Martini2P 2.64
+POPC  NC3  3.479 n # Martini2/2P 2.64
+POPC  PO4  3.479 n # Martini2/2P 2.64
+POPC  GL1  2.638 n
+POPC  GL2  2.638 n
+POPC  C1A  2.638 a # Martini2 3.48
+POPC  D2A  2.638 a
+POPC  C3A  2.638 a # Martini2 3.48
+POPC  C4A  2.638 a # Martini2 3.48
+POPC  C1B  2.638 a # Martini2 3.48
+POPC  C2B  2.638 a # Martini2 3.48
+POPC  C3B  2.638 a # Martini2 3.48
+POPC  C4B  2.638 a # Martini2 3.48
+POPE  NH3  3.479 n # Martini2/2P 2.64
+POPE  PO4  3.479 n # Martini2/2P 2.64
+POPE  GL1  2.638 n
+POPE  GL2  2.638 n
+POPE  C1A  2.638 a # Martini2 3.48
+POPE  D2A  2.638 a
+POPE  C3A  2.638 a # Martini2 3.48
+POPE  C4A  2.638 a # Martini2 3.48
+POPE  C1B  2.638 a # Martini2 3.48
+POPE  C2B  2.638 a # Martini2 3.48
+POPE  C3B  2.638 a # Martini2 3.48
+POPE  C4B  2.638 a # Martini2 3.48
+POPI  C1   2.64 n
+POPI  C2   2.64 n
+POPI  C3   2.64 n
+POPI  PO4  2.64 n
+POPI  GL1  2.64 n
+POPI  GL2  2.64 n
+POPI  C1A  3.48 a # Martini2P 2.64
+POPI  D2A  2.64 a
+POPI  C3A  3.48 a # Martini2P 2.64
+POPI  C4A  3.48 a # Martini2P 2.64
+POPI  C1B  3.48 a # Martini2P 2.64
+POPI  C2B  3.48 a # Martini2P 2.64
+POPI  C3B  3.48 a # Martini2P 2.64
+POPI  C4B  3.48 a # Martini2P 2.64
+POPS  CNO  3.479 n # Martini2/2P 2.64
+POPS  PO4  3.479 n # Martini2/2P 2.64
+POPS  GL1  2.638 n
+POPS  GL2  2.638 n
+POPS  C1A  2.638 a # Martini2 3.48
+POPS  D2A  2.638 a
+POPS  C3A  2.638 a # Martini2 3.48
+POPS  C4A  2.638 a # Martini2 3.48
+POPS  C1B  2.638 a # Martini2 3.48
+POPS  C2B  2.638 a # Martini2 3.48
+POPS  C3B  2.638 a # Martini2 3.48
+POPS  C4B  2.638 a # Martini2 3.48
+POP1  C1   2.64 n
+POP1  C2   2.64 n
+POP1  C3   2.64 n
+POP1  PO4  2.64 n
+POP1  P1   2.64 n
+POP1  GL1  2.64 n
+POP1  GL2  2.64 n
+POP1  C1A  3.48 a # Martini2P 2.64
+POP1  D2A  2.64 a
+POP1  C3A  3.48 a # Martini2P 2.64
+POP1  C4A  3.48 a # Martini2P 2.64
+POP1  C1B  3.48 a # Martini2P 2.64
+POP1  C2B  3.48 a # Martini2P 2.64
+POP1  C3B  3.48 a # Martini2P 2.64
+POP1  C4B  3.48 a # Martini2P 2.64
+POP2  C1   2.64 n
+POP2  C2   2.64 n
+POP2  C3   2.64 n
+POP2  PO4  2.64 n
+POP2  P1   2.64 n
+POP2  P2   2.64 n
+POP2  GL1  2.64 n
+POP2  GL2  2.64 n
+POP2  C1A  3.48 a # Martini2P 2.64
+POP2  D2A  2.64 a
+POP2  C3A  3.48 a # Martini2P 2.64
+POP2  C4A  3.48 a # Martini2P 2.64
+POP2  C1B  3.48 a # Martini2P 2.64
+POP2  C2B  3.48 a # Martini2P 2.64
+POP2  C3B  3.48 a # Martini2P 2.64
+POP2  C4B  3.48 a # Martini2P 2.64
+POP3  C1   2.64 n
+POP3  C2   2.64 n
+POP3  C3   2.64 n
+POP3  PO4  2.64 n
+POP3  P1   2.64 n
+POP3  P2   2.64 n
+POP3  P3   2.64 n
+POP3  GL1  2.64 n
+POP3  GL2  2.64 n
+POP3  C1A  3.48 a # Martini2P 2.64
+POP3  D2A  2.64 a
+POP3  C3A  3.48 a # Martini2P 2.64
+POP3  C4A  3.48 a # Martini2P 2.64
+POP3  C1B  3.48 a # Martini2P 2.64
+POP3  C2B  3.48 a # Martini2P 2.64
+POP3  C3B  3.48 a # Martini2P 2.64
+POP3  C4B  3.48 a # Martini2P 2.64
+PQPE  NH3  2.64 n
+PQPE  PO4  2.64 n
+PQPE  GL1  2.64 n
+PQPE  GL2  2.64 n
+PQPE  C1A  3.48 a # Martini2P 2.64
+PQPE  D2A  2.64 a
+PQPE  D3A  2.64 a
+PQPE  D4A  2.64 a
+PQPE  C5A  3.48 a # Martini2P 2.64 ; Martini3 C4A
+PQPE  C1B  3.48 a # Martini2P 2.64
+PQPE  C2B  3.48 a # Martini2P 2.64
+PQPE  C3B  3.48 a # Martini2P 2.64
+PQPE  C4B  3.48 a # Martini2P 2.64
+PQPS  CNO  2.64 n
+PQPS  PO4  2.64 n
+PQPS  GL1  2.64 n
+PQPS  GL2  2.64 n
+PQPS  C1A  3.48 a # Martini2P 2.64
+PQPS  D2A  2.64 a
+PQPS  D3A  2.64 a
+PQPS  D4A  2.64 a
+PQPS  C5A  3.48 a # Martini2P 2.64 ; Martini3 C4A
+PQPS  C1B  3.48 a # Martini2P 2.64
+PQPS  C2B  3.48 a # Martini2P 2.64
+PQPS  C3B  3.48 a # Martini2P 2.64
+PQPS  C4B  3.48 a # Martini2P 2.64
+PUDG  GL1  2.64 n
+PUDG  GL2  2.64 n
+PUDG  D1A  2.64 a
+PUDG  D2A  2.64 a
+PUDG  D3A  2.64 a
+PUDG  D4A  2.64 a
+PUDG  D5A  2.64 a
+PUDG  C1B  3.48 a # Martini2P 2.64
+PUDG  C2B  3.48 a # Martini2P 2.64
+PUDG  C3B  3.48 a # Martini2P 2.64
+PUDG  C4B  3.48 a # Martini2P 2.64
+PUPA  PO4  2.64 n
+PUPA  GL1  2.64 n
+PUPA  GL2  2.64 n
+PUPA  D1A  2.64 a
+PUPA  D2A  2.64 a
+PUPA  D3A  2.64 a
+PUPA  D4A  2.64 a
+PUPA  D5A  2.64 a
+PUPA  C1B  3.48 a # Martini2P 2.64
+PUPA  C2B  3.48 a # Martini2P 2.64
+PUPA  C3B  3.48 a # Martini2P 2.64
+PUPA  C4B  3.48 a # Martini2P 2.64
+PUPC  NC3  2.64 n
+PUPC  PO4  2.64 n
+PUPC  GL1  2.64 n
+PUPC  GL2  2.64 n
+PUPC  D1A  2.64 a
+PUPC  D2A  2.64 a
+PUPC  D3A  2.64 a
+PUPC  D4A  2.64 a
+PUPC  D5A  2.64 a
+PUPC  C1B  3.48 a # Martini2P 2.64
+PUPC  C2B  3.48 a # Martini2P 2.64
+PUPC  C3B  3.48 a # Martini2P 2.64
+PUPC  C4B  3.48 a # Martini2P 2.64
+PUPE  NH3  2.64 n
+PUPE  PO4  2.64 n
+PUPE  GL1  2.64 n
+PUPE  GL2  2.64 n
+PUPE  D1A  2.64 a
+PUPE  D2A  2.64 a
+PUPE  D3A  2.64 a
+PUPE  D4A  2.64 a
+PUPE  D5A  2.64 a
+PUPE  C1B  3.48 a # Martini2P 2.64
+PUPE  C2B  3.48 a # Martini2P 2.64
+PUPE  C3B  3.48 a # Martini2P 2.64
+PUPE  C4B  3.48 a # Martini2P 2.64
+PUPI  C1   2.64 n
+PUPI  C2   2.64 n
+PUPI  C3   2.64 n
+PUPI  PO4  2.64 n
+PUPI  GL1  2.64 n
+PUPI  GL2  2.64 n
+PUPI  D1A  2.64 a
+PUPI  D2A  2.64 a
+PUPI  D3A  2.64 a
+PUPI  D4A  2.64 a
+PUPI  D5A  2.64 a
+PUPI  C1B  3.48 a # Martini2P 2.64
+PUPI  C2B  3.48 a # Martini2P 2.64
+PUPI  C3B  3.48 a # Martini2P 2.64
+PUPI  C4B  3.48 a # Martini2P 2.64
+PUPS  CNO  2.64 n
+PUPS  PO4  2.64 n
+PUPS  GL1  2.64 n
+PUPS  GL2  2.64 n
+PUPS  D1A  2.64 a
+PUPS  D2A  2.64 a
+PUPS  D3A  2.64 a
+PUPS  D4A  2.64 a
+PUPS  D5A  2.64 a
+PUPS  C1B  3.48 a # Martini2P 2.64
+PUPS  C2B  3.48 a # Martini2P 2.64
+PUPS  C3B  3.48 a # Martini2P 2.64
+PUPS  C4B  3.48 a # Martini2P 2.64
+BNSM  NC3  2.64 n
+BNSM  PO4  2.64 n
+BNSM  AM1  2.64 n
+BNSM  AM2  2.64 a
+BNSM  T1A  2.64 a
+BNSM  C2A  3.48 a # Martini2P 2.64
+BNSM  C3A  3.48 a # Martini2P 2.64
+BNSM  C4A  3.48 a # Martini2P 2.64
+BNSM  C1B  3.48 a # Martini2P 2.64
+BNSM  C2B  3.48 a # Martini2P 2.64
+BNSM  C3B  3.48 a # Martini2P 2.64
+BNSM  D4B  2.64 a
+BNSM  C5B  3.48 a # Martini2P 2.64
+BNSM  C6B  3.48 a # Martini2P 2.64
+DBSM  NC3  2.64 n
+DBSM  PO4  2.64 n
+DBSM  AM1  2.64 n
+DBSM  AM2  2.64 a
+DBSM  T1A  2.64 a
+DBSM  C2A  3.48 a # Martini2P 2.64
+DBSM  C3A  3.48 a # Martini2P 2.64
+DBSM  C4A  3.48 a # Martini2P 2.64
+DBSM  C1B  3.48 a # Martini2P 2.64
+DBSM  C2B  3.48 a # Martini2P 2.64
+DBSM  C3B  3.48 a # Martini2P 2.64
+DBSM  C4B  3.48 a # Martini2P 2.64
+DBSM  C5B  3.48 a # Martini2P 2.64
+DPCE  AM1  2.64 n
+DPCE  AM2  2.64 a
+DPCE  T1A  2.64 a
+DPCE  C2A  3.48 a # Martini2P 2.64
+DPCE  C3A  3.48 a # Martini2P 2.64
+DPCE  C1B  3.48 a # Martini2P 2.64
+DPCE  C2B  3.48 a # Martini2P 2.64
+DPCE  C3B  3.48 a # Martini2P 2.64
+DPCE  C4B  3.48 a # Martini2P 2.64
+DPG1  GM1  2.41 n
+DPG1  GM2  2.41 n
+DPG1  GM3  2.41 n
+DPG1  GM4  2.41 n
+DPG1  GM5  2.41 n
+DPG1  GM6  2.64 n
+DPG1  GM7  2.64 n
+DPG1  GM8  2.41 n
+DPG1  GM9  2.41 n
+DPG1  GM10 2.41 n
+DPG1  GM11 2.41 n
+DPG1  GM12 2.64 n
+DPG1  GM13 2.64 n
+DPG1  GM14 2.64 n
+DPG1  GM15 2.64 n
+DPG1  GM16 2.64 n
+DPG1  GM17 2.64 n
+DPG1  AM1  2.64 n
+DPG1  AM2  2.64 a
+DPG1  T1A  2.64 a
+DPG1  C2A  3.48 a # Martini2P 2.64
+DPG1  C3A  3.48 a # Martini2P 2.64
+DPG1  C1B  3.48 a # Martini2P 2.64
+DPG1  C2B  3.48 a # Martini2P 2.64
+DPG1  C3B  3.48 a # Martini2P 2.64
+DPG1  C4B  3.48 a # Martini2P 2.64
+DPG3  GM1  2.41 n
+DPG3  GM2  2.41 n
+DPG3  GM3  2.41 n
+DPG3  GM4  2.41 n
+DPG3  GM5  2.41 n
+DPG3  GM6  2.41 n
+DPG3  GM13 2.64 n
+DPG3  GM14 2.64 n
+DPG3  GM15 2.64 n
+DPG3  GM16 2.64 n
+DPG3  GM17 2.64 n
+DPG3  AM1  2.64 n
+DPG3  AM2  2.64 a
+DPG3  T1A  2.64 a
+DPG3  C2A  3.48 a # Martini2P 2.64
+DPG3  C3A  3.48 a # Martini2P 2.64
+DPG3  C1B  3.48 a # Martini2P 2.64
+DPG3  C2B  3.48 a # Martini2P 2.64
+DPG3  C3B  3.48 a # Martini2P 2.64
+DPG3  C4B  3.48 a # Martini2P 2.64
+DPSM  NC3  2.64 n
+DPSM  PO4  2.64 n
+DPSM  AM1  2.64 n
+DPSM  AM2  2.64 a
+DPSM  T1A  2.64 a
+DPSM  C2A  3.48 a # Martini2P 2.64
+DPSM  C3A  3.48 a # Martini2P 2.64
+DPSM  C1B  3.48 a # Martini2P 2.64
+DPSM  C2B  3.48 a # Martini2P 2.64
+DPSM  C3B  3.48 a # Martini2P 2.64
+DPSM  C4B  3.48 a # Martini2P 2.64
+DXCE  AM1  2.64 n
+DXCE  AM2  2.64 a
+DXCE  T1A  2.64 a
+DXCE  C2A  3.48 a # Martini2P 2.64
+DXCE  C3A  3.48 a # Martini2P 2.64
+DXCE  C4A  3.48 a # Martini2P 2.64
+DXCE  C5A  3.48 a # Martini2P 2.64
+DXCE  C1B  3.48 a # Martini2P 2.64
+DXCE  C2B  3.48 a # Martini2P 2.64
+DXCE  C3B  3.48 a # Martini2P 2.64
+DXCE  C4B  3.48 a # Martini2P 2.64
+DXCE  C5B  3.48 a # Martini2P 2.64
+DXCE  C6B  3.48 a # Martini2P 2.64
+DXG1  GM1  2.41 n
+DXG1  GM2  2.41 n
+DXG1  GM3  2.41 n
+DXG1  GM4  2.41 n
+DXG1  GM5  2.41 n
+DXG1  GM6  2.64 n
+DXG1  GM7  2.64 n
+DXG1  GM8  2.41 n
+DXG1  GM9  2.41 n
+DXG1  GM10 2.41 n
+DXG1  GM11 2.41 n
+DXG1  GM12 2.64 n
+DXG1  GM13 2.64 n
+DXG1  GM14 2.64 n
+DXG1  GM15 2.64 n
+DXG1  GM16 2.64 n
+DXG1  GM17 2.64 n
+DXG1  AM1  2.64 n
+DXG1  AM2  2.64 a
+DXG1  T1A  2.64 a
+DXG1  C2A  3.48 a # Martini2P 2.64
+DXG1  C3A  3.48 a # Martini2P 2.64
+DXG1  C4A  3.48 a # Martini2P 2.64
+DXG1  C5A  3.48 a # Martini2P 2.64
+DXG1  C1B  3.48 a # Martini2P 2.64
+DXG1  C2B  3.48 a # Martini2P 2.64
+DXG1  C3B  3.48 a # Martini2P 2.64
+DXG1  C4B  3.48 a # Martini2P 2.64
+DXG1  C5B  3.48 a # Martini2P 2.64
+DXG1  C6B  3.48 a # Martini2P 2.64
+DXG3  GM1  2.41 n
+DXG3  GM2  2.41 n
+DXG3  GM3  2.41 n
+DXG3  GM4  2.41 n
+DXG3  GM5  2.41 n
+DXG3  GM6  2.41 n
+DXG3  GM13 2.64 n
+DXG3  GM14 2.64 n
+DXG3  GM15 2.64 n
+DXG3  GM16 2.64 n
+DXG3  GM17 2.64 n
+DXG3  AM1  2.64 n
+DXG3  AM2  2.64 a
+DXG3  T1A  2.64 a
+DXG3  C2A  3.48 a # Martini2P 2.64
+DXG3  C3A  3.48 a # Martini2P 2.64
+DXG3  C4A  3.48 a # Martini2P 2.64
+DXG3  C5A  3.48 a # Martini2P 2.64
+DXG3  C1B  3.48 a # Martini2P 2.64
+DXG3  C2B  3.48 a # Martini2P 2.64
+DXG3  C3B  3.48 a # Martini2P 2.64
+DXG3  C4B  3.48 a # Martini2P 2.64
+DXG3  C5B  3.48 a # Martini2P 2.64
+DXG3  C6B  3.48 a # Martini2P 2.64
+DXSM  NC3  2.64 n
+DXSM  PO4  2.64 n
+DXSM  AM1  2.64 n
+DXSM  AM2  2.64 a
+DXSM  T1A  2.64 a
+DXSM  C2A  3.48 a # Martini2P 2.64
+DXSM  C3A  3.48 a # Martini2P 2.64
+DXSM  C4A  3.48 a # Martini2P 2.64
+DXSM  C5A  3.48 a # Martini2P 2.64
+DXSM  C1B  3.48 a # Martini2P 2.64
+DXSM  C2B  3.48 a # Martini2P 2.64
+DXSM  C3B  3.48 a # Martini2P 2.64
+DXSM  C4B  3.48 a # Martini2P 2.64
+DXSM  C5B  3.48 a # Martini2P 2.64
+DXSM  C6B  3.48 a # Martini2P 2.64
+PGSM  NC3  2.64 n
+PGSM  PO4  2.64 n
+PGSM  AM1  2.64 n
+PGSM  AM2  2.64 a
+PGSM  T1A  2.64 a
+PGSM  C2A  3.48 a # Martini2P 2.64
+PGSM  C3A  3.48 a # Martini2P 2.64
+PGSM  C1B  3.48 a # Martini2P 2.64
+PGSM  C2B  3.48 a # Martini2P 2.64
+PGSM  D3B  2.64 a
+PGSM  C4B  3.48 a # Martini2P 2.64
+PGSM  C5B  3.48 a # Martini2P 2.64
+PNCE  AM1  2.64 n
+PNCE  AM2  2.64 a
+PNCE  T1A  2.64 a
+PNCE  C2A  3.48 a # Martini2P 2.64
+PNCE  C3A  3.48 a # Martini2P 2.64
+PNCE  C1B  3.48 a # Martini2P 2.64
+PNCE  C2B  3.48 a # Martini2P 2.64
+PNCE  C3B  3.48 a # Martini2P 2.64
+PNCE  D4B  2.64 a
+PNCE  C5B  3.48 a # Martini2P 2.64
+PNCE  C6B  3.48 a # Martini2P 2.64
+PNG1  GM1  2.41 n
+PNG1  GM2  2.41 n
+PNG1  GM3  2.41 n
+PNG1  GM4  2.41 n
+PNG1  GM5  2.41 n
+PNG1  GM6  2.64 n
+PNG1  GM7  2.64 n
+PNG1  GM8  2.41 n
+PNG1  GM9  2.41 n
+PNG1  GM10 2.41 n
+PNG1  GM11 2.41 n
+PNG1  GM12 2.64 n
+PNG1  GM13 2.64 n
+PNG1  GM14 2.64 n
+PNG1  GM15 2.64 n
+PNG1  GM16 2.64 n
+PNG1  GM17 2.64 n
+PNG1  AM1  2.64 n
+PNG1  AM2  2.64 a
+PNG1  T1A  2.64 a
+PNG1  C2A  3.48 a # Martini2P 2.64
+PNG1  C3A  3.48 a # Martini2P 2.64
+PNG1  C1B  3.48 a # Martini2P 2.64
+PNG1  C2B  3.48 a # Martini2P 2.64
+PNG1  C3B  3.48 a # Martini2P 2.64
+PNG1  D4B  2.64 a
+PNG1  C5B  3.48 a # Martini2P 2.64
+PNG1  C6B  3.48 a # Martini2P 2.64
+PNG3  GM1  2.41 n
+PNG3  GM2  2.41 n
+PNG3  GM3  2.41 n
+PNG3  GM4  2.41 n
+PNG3  GM5  2.41 n
+PNG3  GM6  2.41 n
+PNG3  GM13 2.64 n
+PNG3  GM14 2.64 n
+PNG3  GM15 2.64 n
+PNG3  GM16 2.64 n
+PNG3  GM17 2.64 n
+PNG3  AM1  2.64 n
+PNG3  AM2  2.64 a
+PNG3  T1A  2.64 a
+PNG3  C2A  3.48 a # Martini2P 2.64
+PNG3  C3A  3.48 a # Martini2P 2.64
+PNG3  C1B  3.48 a # Martini2P 2.64
+PNG3  C2B  3.48 a # Martini2P 2.64
+PNG3  C3B  3.48 a # Martini2P 2.64
+PNG3  D4B  2.64 a
+PNG3  C5B  3.48 a # Martini2P 2.64
+PNG3  C6B  3.48 a # Martini2P 2.64
+POSM  NC3  2.64 n
+POSM  PO4  2.64 n
+POSM  AM1  2.64 n
+POSM  AM2  2.64 a
+POSM  T1A  2.64 a
+POSM  C2A  3.48 a # Martini2P 2.64
+POSM  C3A  3.48 a # Martini2P 2.64
+POSM  C1B  3.48 a # Martini2P 2.64
+POSM  D2B  2.64 a
+POSM  C3B  3.48 a # Martini2P 2.64
+POSM  C4B  3.48 a # Martini2P 2.64
+XNCE  AM1  2.64 n
+XNCE  AM2  2.64 a
+XNCE  T1A  2.64 a
+XNCE  C2A  3.48 a # Martini2P 2.64
+XNCE  C3A  3.48 a # Martini2P 2.64
+XNCE  C4A  3.48 a # Martini2P 2.64
+XNCE  C5A  3.48 a # Martini2P 2.64
+XNCE  C1B  3.48 a # Martini2P 2.64
+XNCE  C2B  3.48 a # Martini2P 2.64
+XNCE  C3B  3.48 a # Martini2P 2.64
+XNCE  D4B  2.64 a
+XNCE  C5B  3.48 a # Martini2P 2.64
+XNCE  C6B  3.48 a # Martini2P 2.64
+XNG1  GM1  2.41 n
+XNG1  GM2  2.41 n
+XNG1  GM3  2.41 n
+XNG1  GM4  2.41 n
+XNG1  GM5  2.41 n
+XNG1  GM6  2.64 n
+XNG1  GM7  2.64 n
+XNG1  GM8  2.41 n
+XNG1  GM9  2.41 n
+XNG1  GM10 2.41 n
+XNG1  GM11 2.41 n
+XNG1  GM12 2.64 n
+XNG1  GM13 2.64 n
+XNG1  GM14 2.64 n
+XNG1  GM15 2.64 n
+XNG1  GM16 2.64 n
+XNG1  GM17 2.64 n
+XNG1  AM1  2.64 n
+XNG1  AM2  2.64 a
+XNG1  T1A  2.64 a
+XNG1  C2A  3.48 a # Martini2P 2.64
+XNG1  C3A  3.48 a # Martini2P 2.64
+XNG1  C4A  3.48 a # Martini2P 2.64
+XNG1  C5A  3.48 a # Martini2P 2.64
+XNG1  C1B  3.48 a # Martini2P 2.64
+XNG1  C2B  3.48 a # Martini2P 2.64
+XNG1  C3B  3.48 a # Martini2P 2.64
+XNG1  D4B  2.64 a
+XNG1  C5B  3.48 a # Martini2P 2.64
+XNG1  C6B  3.48 a # Martini2P 2.64
+XNG3  GM1  2.41 n
+XNG3  GM2  2.41 n
+XNG3  GM3  2.41 n
+XNG3  GM4  2.41 n
+XNG3  GM5  2.41 n
+XNG3  GM6  2.41 n
+XNG3  GM13 2.64 n
+XNG3  GM14 2.64 n
+XNG3  GM15 2.64 n
+XNG3  GM16 2.64 n
+XNG3  GM17 2.64 n
+XNG3  AM1  2.64 n
+XNG3  AM2  2.64 a
+XNG3  T1A  2.64 a
+XNG3  C2A  3.48 a # Martini2P 2.64
+XNG3  C3A  3.48 a # Martini2P 2.64
+XNG3  C4A  3.48 a # Martini2P 2.64
+XNG3  C5A  3.48 a # Martini2P 2.64
+XNG3  C1B  3.48 a # Martini2P 2.64
+XNG3  C2B  3.48 a # Martini2P 2.64
+XNG3  C3B  3.48 a # Martini2P 2.64
+XNG3  D4B  2.64 a
+XNG3  C5B  3.48 a # Martini2P 2.64
+XNG3  C6B  3.48 a # Martini2P 2.64
+XNSM  NC3  2.64 n
+XNSM  PO4  2.64 n
+XNSM  AM1  2.64 n
+XNSM  AM2  2.64 a
+XNSM  T1A  2.64 a
+XNSM  C2A  3.48 a # Martini2P 2.64
+XNSM  C3A  3.48 a # Martini2P 2.64
+XNSM  C4A  3.48 a # Martini2P 2.64
+XNSM  C5A  3.48 a # Martini2P 2.64
+XNSM  C1B  3.48 a # Martini2P 2.64
+XNSM  C2B  3.48 a # Martini2P 2.64
+XNSM  C3B  3.48 a # Martini2P 2.64
+XNSM  D4B  2.64 a
+XNSM  C5B  3.48 a # Martini2P 2.64
+XNSM  C6B  3.48 a # Martini2P 2.64
+CHOL  ROH  2.413 n
+CHOL  R1   2.413 a # Martini2 3.48
+CHOL  R2   2.413 a
+CHOL  R3   2.413 a # Martini2 3.48
+CHOL  R4   2.413 a # Martini2 3.48
+CHOL  R5   2.413 a # Martini2 3.48
+CHOL  C1   2.413 a # Martini2 3.48
+CHOL  C2   2.638 a # Martini2 3.48
+
 DOG  HEA  2.638 n
 DOG  GL1  2.638 n
 DOG  GL2  2.638 n
@@ -54,67 +927,7 @@ DOG  C2B  2.638 a
 DOG  D3B  2.638 a
 DOG  C4B  2.638 a
 DOG  C5B  2.638 a
-DOE  NH3  3.479 n
-DOE  PO4  3.479 n
-DOE  GL1  2.638 n
-DOE  GL2  2.638 n
-DOE  C1A  2.638 a
-DOE  C2A  2.638 a
-DOE  D3A  2.638 a
-DOE  C4A  2.638 a
-DOE  C5A  2.638 a
-DOE  C1B  2.638 a
-DOE  C2B  2.638 a
-DOE  D3B  2.638 a
-DOE  C4B  2.638 a
-DOE  C5B  2.638 a
-DLP  NC3  3.479 n
-DLP  PO4  3.479 n 
-DLP  GL1  2.638 n
-DLP  GL2  2.638 n
-DLP  C1A  2.638 a
-DLP  C2A  2.638 a
-DLP  C3A  2.638 a
-DLP  C1B  2.638 a
-DLP  C2B  2.638 a
-DLP  C3B  2.638 a
-DPP  NC3  3.479 n
-DPP  PO4  3.479 n 
-DPP  GL1  2.638 n
-DPP  GL2  2.638 n
-DPP  C1A  2.638 a
-DPP  C2A  2.638 a
-DPP  C3A  2.638 a
-DPP  C4A  2.638 a
-DPP  C1B  2.638 a
-DPP  C2B  2.638 a
-DPP  C3B  2.638 a
-DPP  C4B  2.638 a
-DPE  NH3  3.479 n
-DPE  PO4  3.479 n 
-DPE  GL1  2.638 n
-DPE  GL2  2.638 n
-DPE  C1A  2.638 a
-DPE  C2A  2.638 a
-DPE  C3A  2.638 a
-DPE  C4A  2.638 a
-DPE  C1B  2.638 a
-DPE  C2B  2.638 a
-DPE  C3B  2.638 a
-DPE  C4B  2.638 a
-POP  NC3  3.479 n
-POP  PO4  3.479 n
-POP  GL1  2.638 n
-POP  GL2  2.638 n
-POP  C1A  2.638 a
-POP  C2A  2.638 a
-POP  C3A  2.638 a
-POP  C4A  2.638 a
-POP  C1B  2.638 a
-POP  C2B  2.638 a
-POP  D3B  2.638 a
-POP  C4B  2.638 a
-POP  C5B  2.638 a
+
 POG  HEA  2.638 n
 POG  GL1  2.638 n
 POG  GL2  2.638 n
@@ -127,81 +940,7 @@ POG  C2B  2.638 a
 POG  D3B  2.638 a
 POG  C4B  2.638 a
 POG  C5B  2.638 a
-PAP  NC3  3.479 n
-PAP  PO4  3.479 n
-PAP  GL1  2.638 n
-PAP  GL2  2.638 n
-PAP  C1A  2.638 a
-PAP  C2A  2.638 a
-PAP  C3A  2.638 a
-PAP  C4A  2.638 a
-PAP  D1B  2.638 a
-PAP  D2B  2.638 a
-PAP  D3B  2.638 a
-PAP  D4B  2.638 a
-PAP  C5B  2.638 a
-POE  NH3  3.479 n
-POE  PO4  3.479 n
-POE  GL1  2.638 n
-POE  GL2  2.638 n
-POE  C1A  2.638 a
-POE  C2A  2.638 a
-POE  C3A  2.638 a
-POE  C4A  2.638 a
-POE  C1B  2.638 a
-POE  C2B  2.638 a
-POE  D3B  2.638 a
-POE  C4B  2.638 a
-POE  C5B  2.638 a
-POS  CNO  3.479 n
-POS  PO4  3.479 n
-POS  GL1  2.638 n
-POS  GL2  2.638 n
-POS  C1A  2.638 a
-POS  C2A  2.638 a
-POS  C3A  2.638 a
-POS  C4A  2.638 a
-POS  C1B  2.638 a
-POS  C2B  2.638 a
-POS  D3B  2.638 a
-POS  C4B  2.638 a
-POS  C5B  2.638 a
-SAP  NC3  3.479 n
-SAP  PO4  3.479 n
-SAP  GL1  2.638 n
-SAP  GL2  2.638 n
-SAP  C1A  2.638 a
-SAP  C2A  2.638 a
-SAP  C3A  2.638 a
-SAP  C4A  2.638 a
-SAP  C5A  2.638 a
-SAP  D1B  2.638 a
-SAP  D2B  2.638 a
-SAP  D3B  2.638 a
-SAP  D4B  2.638 a
-SAP  C5B  2.638 a
-CHO  ROH  2.413 n
-CHO  R1   2.413 a
-CHO  R2   2.413 a
-CHO  R3   2.413 a
-CHO  R4   2.413 a
-CHO  R5   2.413 a
-CHO  C1   2.413 a
-CHO  C2   2.638 a
-DAP  NC3  3.479 n
-DAP  PO4  3.479 n
-DAP  GL1  2.638 n
-DAP  GL2  2.638 n
-DAP  D1A  2.638 a
-DAP  D2A  2.638 a
-DAP  D3A  2.638 a
-DAP  D4A  2.638 a
-DAP  C5A  2.638 a
-DAP  D1B  2.638 a
-DAP  D2B  2.638 a
-DAP  D3B  2.638 a
-DAP  D4B  2.638 a
-DAP  C5B  2.638 a
+
 PI4  C1   3.479 n
 PI4  C2   3.479 n
 PI4  C3   3.479 n
