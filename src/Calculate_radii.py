@@ -20,6 +20,8 @@ def get_args():
                     help = 'The name of the output .txt file')
     parser.add_argument('-martini', action = 'store_true', dest = 'martini',
                     help = 'If you want to compute the radii with the MARTINI forcefield')
+    parser.add_argument('-martini3', action = 'store_true', dest = 'martini3',
+                    help = 'If you specificaly have the MARTINI3 force field')
     args = parser.parse_args()
     return args
 
@@ -81,19 +83,22 @@ if __name__=="__main__":
             if line.startswith('['):
                 flag_ff = False 
             if flag_ff and len(line.strip()) != 0:
-                if args.martini and line.split()[0] == line.split()[1]:
-                    # sigma = (C12/C6)^(1/6)
-                    C12 = float(line.split()[4])
-                    C6 = float(line.split()[3])
-                    if C6 >= 0.00001 or C6 <= -0.00001:
-                        sigma[line.split()[0]] = (C12 / C6)**(1/6)
+                if (args.martini or args.martini3) and line.split()[0] == line.split()[1]:
+                    if args.martini3:
+                        sigma[line.split()[0]] = float(line.split()[3])
                     else:
-                        sigma[line.split()[0]] = 0.0
-                elif not args.martini:
+                        # sigma = (C12/C6)^(1/6)
+                        C12 = float(line.split()[4])
+                        C6 = float(line.split()[3])
+                        if C6 >= 0.00001 or C6 <= -0.00001:
+                            sigma[line.split()[0]] = (C12 / C6)**(1/6)
+                        else:
+                            sigma[line.split()[0]] = 0.0
+                elif not args.martini and not args.martini3:
                     sigma[line.split()[0]] = float(line.split()[5])  
-            if (args.martini and "[ nonbond_params ]" in line) or (not args.martini and "[ atomtypes ]" in line):
+            if ((args.martini or args.martini3)  and "[ nonbond_params ]" in line) or ((not args.martini and not args.martini3) and "[ atomtypes ]" in line):
                 flag_ff = True
-
+    print(sigma)
     # Calculate the radii and prints the radii of each atom type
     with open(args.mol, "r") as file_mol, open(f"{args.output}.txt", "w") as file_out:
         for line in file_mol:
