@@ -25,47 +25,39 @@ def get_args():
     args = parser.parse_args()
     return args
 
-def aliphatic(atom_name):
+def get_aliphatic(res_name, res_name_prev, atom_name, flag):
     """
-    Checks if the atom if aliphatic or not
+    Check if the atom or bead is aliphatic or not
 
-    -------------------
+    --------------------
     INPUT
+    res_name: str
+        The name of the residue
+    res_name_prev: str
+        The name of the residue on the line before
     atom_name: str
-        The name of the atom
+        The name of the atom or bead
+    flag: bool
+        If the central atom of glycerol or equivalent already passed
     
-    -------------------
+    --------------------
     OUTPUT
-    str
-        The nature of the atom (a / n)
+    str, bool
+        The aliphatic corresponding letter ['n' for neutral or 'a' for apolar]
+        The new value of the flag
     """
-    if len(atom_name) < 3:
-        return 'n'
-    else:
-        if atom_name[0] != 'H' and len(atom_name) > 3:
-            if atom_name[1] == "1" and (atom_name[3] == 'A' or atom_name[3] == 'B' or atom_name[3] == 'C'):
-                return 'n'
-            else:
-                return 'a'
-        elif atom_name[0] == 'H' and len(atom_name) == 3:
-            if atom_name[1] == 'N' or atom_name[1] == 'O':
-                return 'n'
-            else:
-                return 'a'
-        elif atom_name[0] == 'H' and len(atom_name) > 3:
-            if atom_name[1] == "1" and (atom_name[3] == 'A' or atom_name[3] == 'B' or atom_name[3] == 'C'):
-                return 'n'
-        elif atom_name[0] != 'H' and len(atom_name) == 3:
-            if atom_name[1] == "1" and int(atom_name[2]) > 0:
-                return 'n'
-            elif atom_name[1] == "C":
-                return 'n'
-            elif int(atom_name[1]) > 1 and atom_name[2] == "1":
-                return 'n'
-            elif atom_name == 'O22' or atom_name == 'O32':
-                return 'n'
-        return 'a'
+    # Check if we changed residue
+    if res_name != res_name_prev:
+        flag = False
 
+    # Check if we passed the central atom of glycerol or equivalent already passed
+    if ((args.martini or args.martini3) and (atom_name == 'GL2' or atom_name == 'AM1' or atom_name == 'R1')) or ((not args.martini and not args.martini3) and atom_name == 'C2'):
+        flag = True
+        return 'n', flag
+    elif flag:
+        return 'a', flag
+    else:
+        return 'n', flag
 
 
 if __name__=="__main__":
@@ -74,6 +66,8 @@ if __name__=="__main__":
     sigma = {}
     flag_ff = False
     flag_mol = False
+    flag_aliph = False
+    res_name_prev = ""
 
     # Get the value of sigma from the forcefield .itp
     with open(args.ff, "r") as file_ff:
@@ -98,7 +92,7 @@ if __name__=="__main__":
                     sigma[line.split()[0]] = float(line.split()[5])  
             if ((args.martini or args.martini3)  and "[ nonbond_params ]" in line) or ((not args.martini and not args.martini3) and "[ atomtypes ]" in line):
                 flag_ff = True
-    print(sigma)
+
     # Calculate the radii and prints the radii of each atom type
     with open(args.mol, "r") as file_mol, open(f"{args.output}.txt", "w") as file_out:
         for line in file_mol:
@@ -108,8 +102,11 @@ if __name__=="__main__":
                 flag_mol = False 
             if flag_mol and len(line.strip()) != 0:
                 radii = ((math.pow(2,(1/6))*sigma[line.split()[1]])/2)*10
-                aliph = "n"
-                file_out.write(f"{line.split()[3]}  {line.split()[4]:4s} {radii:.2f} {aliph}\n")
+                res_name = line.split()[3]
+                atom_name = line.split()[4]
+                aliph, flag_aliph = get_aliphatic(res_name, res_name_prev, atom_name, flag_aliph)
+                res_name_prev = res_name
+                file_out.write(f"{res_name}  {atom_name:4s} {radii:.2f} {aliph}\n")
             if "[ atoms ]" in line or "[atoms]" in line:
                 flag_mol = True
 
