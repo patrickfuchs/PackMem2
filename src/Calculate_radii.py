@@ -15,6 +15,9 @@ def get_args():
                     help = 'the .ipt file for the molecule')
     parser.add_argument('-ff', action = 'store', dest = 'ff',
                     help = 'forcefield.itp')
+    parser.add_argument('-o', action = 'store', dest = 'output',
+                    default = 'vdw_out',
+                    help = 'The name of the output .txt file')
     parser.add_argument('-martini', action = 'store_true', dest = 'martini',
                     help = 'If you want to compute the radii with the MARTINI forcefield')
     args = parser.parse_args()
@@ -67,7 +70,8 @@ if __name__=="__main__":
     args = get_args()
     
     sigma = {}
-    flag = False
+    flag_ff = False
+    flag_mol = False
 
     # Get the value of sigma from the forcefield .itp
     with open(args.ff, "r") as file_ff:
@@ -75,9 +79,9 @@ if __name__=="__main__":
             if line.startswith(';'):
                 continue
             if line.startswith('['):
-                flag = False 
-            if flag and len(line.strip()) != 0:
-                if args.martini:
+                flag_ff = False 
+            if flag_ff and len(line.strip()) != 0:
+                if args.martini and line.split()[0] == line.split()[1]:
                     # sigma = (C12/C6)^(1/6)
                     C12 = float(line.split()[4])
                     C6 = float(line.split()[3])
@@ -85,22 +89,22 @@ if __name__=="__main__":
                         sigma[line.split()[0]] = (C12 / C6)**(1/6)
                     else:
                         sigma[line.split()[0]] = 0.0
-                else:
+                elif not args.martini:
                     sigma[line.split()[0]] = float(line.split()[5])  
             if (args.martini and "[ nonbond_params ]" in line) or (not args.martini and "[ atomtypes ]" in line):
-                flag = True
+                flag_ff = True
 
     # Calculate the radii and prints the radii of each atom type
-    with open(args.mol, "r") as file_mol:
+    with open(args.mol, "r") as file_mol, open(f"{args.output}.txt", "w") as file_out:
         for line in file_mol:
             if line.startswith(';'):
                     continue
             if line.startswith('['):
-                flag = False 
-            if flag and len(line.strip()) != 0:
+                flag_mol = False 
+            if flag_mol and len(line.strip()) != 0:
                 radii = ((math.pow(2,(1/6))*sigma[line.split()[1]])/2)*10
                 aliph = "n"
-                print(f"{line.split()[3]}  {line.split()[4]:4s} {radii:.2f} {aliph}")
-            if "[ atoms ]" in line:
-                flag = True
+                file_out.write(f"{line.split()[3]}  {line.split()[4]:4s} {radii:.2f} {aliph}\n")
+            if "[ atoms ]" in line or "[atoms]" in line:
+                flag_mol = True
 
