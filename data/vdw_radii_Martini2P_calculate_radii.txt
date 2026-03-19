@@ -12,7 +12,6 @@ DAPC  D2B  2.64 n
 DAPC  D3B  2.64 n
 DAPC  D4B  2.64 n
 DAPC  C5B  2.64 n
-
 DBPC  NC3  2.64 n
 DBPC  PO4  2.64 n
 DBPC  GL1  2.64 n
