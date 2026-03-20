@@ -106,7 +106,7 @@ if __name__=="__main__":
                 atom_name = line.split()[4]
                 aliph, flag_aliph = get_aliphatic(res_name, res_name_prev, atom_name, flag_aliph)
                 res_name_prev = res_name
-                file_out.write(f"{res_name}  {atom_name:4s} {radii:.2f} {aliph}\n")
+                file_out.write(f"{res_name:<6s}{atom_name:4s} {radii:.3f} {aliph}\n")
             if "[ atoms ]" in line or "[atoms]" in line:
                 flag_mol = True
 
