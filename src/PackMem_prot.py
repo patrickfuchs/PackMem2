@@ -147,6 +147,9 @@ if __name__ == '__main__':
             else:
                 upper_leaflet = upper_leaflet_ori
                 lower_leaflet = lower_leaflet_ori
+        else:
+            upper_leaflet = upper_leaflet_ori
+            lower_leaflet = lower_leaflet_ori
 
 
         # Get all x, y and z
