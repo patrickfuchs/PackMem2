@@ -20,7 +20,7 @@ All of them are already put in the yaml file and the environment can be set up w
 ## How to run the code
 The code is simply launched with the command:\
 `python src/Launch_PackMem_prot.py -f [file.xtc] -s [file.gro] -c [number of cores] -fm [number of frames] -l [lipid name]`\
-You can also choose the parameter files (depending on your simulation) between martini and Charmm (knowing that Charmm is the default one).\
+You can also choose the parameter files (depending on your simulation) between martini and Charmm (knowing that Charmm is the default one) with the `-p` ans `-r` options.\
 Note that you can also use the `-prot` option if you also want to analysis the packing defects near/far from the protein.\
 
 This script launches the actual PackMem script, then the concatenation script and finaly, the analysis script.
@@ -30,7 +30,7 @@ Of course, if you encounter problems along the way, each scripts are individuall
 Here again, the `-prot` option is usable.\
 This script `PackMem_prot.py` will compute the packing defects, divided into 3 categories: deep, shallow and all packing defects.\
 
-`python src/Concatenate_PackMem.py -b [frame start] -e [frame stop]`\
+`python src/Concatenate_PackMem.py -l [lipid name] -b [frame start] -e [frame stop]`\
 Here again, you can also use the `-prot` option if you ran the analysis of the packing defects near/far from the protein.\
 This script will gather all the data file generated and put them into one file per type of defect (deep, shallow, all).\
 
