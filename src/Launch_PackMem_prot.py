@@ -56,7 +56,6 @@ if __name__=="__main__":
             "-l", args.lipid_name,
             "-r", f"{path}data/{args.radii}",
             "-p", f"{path}data/{args.param}",
-            "-e", args.frames,
             "-o", args.lipid_name
         ]
     if args.prot:
