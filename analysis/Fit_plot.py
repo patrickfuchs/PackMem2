@@ -348,8 +348,8 @@ if __name__=="__main__":
             
             # Plot the final decays + errors computed with block averaging
             # (for each packdef) on a barplot
-            plot_defect_constants(f'{name}_close', packdef_constants, errors)
-            plot_defect_constants(f'{name}_far', packdef_constants, errors)
+            plot_defect_constants(f'{name}_close', packdef_constants, errors.loc[[f'Deep_{name}_close', f'Shallow_{name}_close', f'All_{name}_close'], 'PackDef_cst_all_blocks'])
+            plot_defect_constants(f'{name}_far', packdef_constants, errors.loc[[f'Deep_{name}_far', f'Shallow_{name}_far', f'All_{name}_far'], 'PackDef_cst_all_blocks'])
         
             
 
