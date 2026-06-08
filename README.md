@@ -20,6 +20,7 @@ All of them are already put in the yaml file and the environment can be set up w
 ## How to run the code
 The code is simply launched with the command:\
 `python src/Launch_PackMem_prot.py -f [file.xtc] -s [file.gro] -c [number of cores] -fm [number of frames] -l [lipid name]`\
+You can also choose the parameter files (depending on your simulation) between martini and Charmm (knowing that Charmm is the default one) with the `-p` ans `-r` options.\
 Note that you can also use the `-prot` option if you also want to analysis the packing defects near/far from the protein.\
 
 This script launches the actual PackMem script, then the concatenation script and finaly, the analysis script.
@@ -29,7 +30,7 @@ Of course, if you encounter problems along the way, each scripts are individuall
 Here again, the `-prot` option is usable.\
 This script `PackMem_prot.py` will compute the packing defects, divided into 3 categories: deep, shallow and all packing defects.\
 
-`bash src/Concatenate_PackMem.py -b [frame start] -e [frame stop]`\
+`python src/Concatenate_PackMem.py -l [lipid name] -b [frame start] -e [frame stop]`\
 Here again, you can also use the `-prot` option if you ran the analysis of the packing defects near/far from the protein.\
 This script will gather all the data file generated and put them into one file per type of defect (deep, shallow, all).\
 
@@ -53,15 +54,15 @@ And the result file:\
 -------------------------------------------------------------------------------
 
 ## Possible problems
-If your lipid isn't present in the parameter files (data/param_Charmm.txt or vdw_radii_Charmm.txt), then you can add it on your own using the same convention.\
-In param_Charmm.txt :\
-* LIPID NAME_first atom three letter code (two frist letter and last one of the lipid name). Example : DMPC_N DMC
-* LIPID NAME glycerol. Example : DMPC C2
+If your lipid isn't present in the parameter files (in the data folder), then you can add it on your own using the same convention.\
+In param_Charmm.txt or param_Martini.txt:\
+* LIPID NAME glycerol / central atom. Example : DMPC C2
 
-In the vdw_radii_Charmm.txt:\
+In the vdw_radii_Charmm.txt or vdw_radii_Martini*.txt:\
 * LIPID NAME atom name  vdw radii n/a
 You do this for every atoms in the lipid. If you don't know the van der Waals radii of each atoms, the script `Calculate_radii.py`is made to compute it for you for each atom.\
 `python Calculate_radii.py -mol [file.itp of the lipid/molecule] -ff [forcefield.itp]`\
+Note that you can use the `-martini` or `-martini3` option to precise how to compute the radii.\
 
 -------------------------------------------------------------------------------
 

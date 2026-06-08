@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import math
 import matplotlib.pyplot as plt
+import seaborn as sns
 from matplotlib.backends.backend_pdf import PdfPages
 
 def get_arguments():
@@ -63,7 +64,7 @@ def fit_decay(x,y, LIMX, LIMY):
     Function does a linear fit.
     
     The linear fit is made on the probability of having a certain packing area.
-    
+
     --------------------
     INPUT
     x : numpy array
@@ -170,7 +171,9 @@ def plot_defect_fit(type, defect, packdef_data, packdef_constants):
     FITS_3blocks=block_averaging(packdef_data, 3)
     for i in range(3):
         print(f"Using block {i+1}: {round(FITS_3blocks[i],args.precision)} Å\u00b2")
+    # Compute the mean of the 3 blocks averages
     inv_decay_block = sum(FITS_3blocks)/len(FITS_3blocks)
+    # Compute the standard deviation of the 3 values
     error_inv_decay_block = np.std(FITS_3blocks)
     print(f"Mean +/- sd on 3 blocks: {round(inv_decay_block,args.precision)} ± {round(error_inv_decay_block,args.precision)} Å\u00b2")
 
@@ -200,9 +203,52 @@ def plot_defect_constants_blocks(type, packdef_constants, errors):
     # Plot and save the second figure (bar plot for just one row)
     packdef_constants[[f"Deep_{type}", f"Shallow_{type}", f"All_{type}"]][:5].T.plot.bar(color=["darkred", "firebrick", "indianred", "lightcoral", "rosybrown"], yerr=errors, capsize=3, rot=0)
     plt.ylabel("Defect size constant ${A^2}$")
+    plt.ylim(0, int(max(packdef_constants[[f"Deep_{type}", f"Shallow_{type}", f"All_{type}"]][:5].max()))+2)
     plt.title("Packing defect constants")
     pdf.savefig()  # Save the current figure to the PDF
     plt.close()
+
+def get_outliers(dtf_packdef_values, type):
+    """
+    Get the outliers in a dataframe
+
+    --------------------
+    INPUT
+    dtf_packdef_values: pandas DataFrame
+        Contains the informations on the packing defects (mean, data, error)
+    type: string
+        the type to analyse: Total/Total_Up/Total_Lo
+
+    --------------------
+    OUTPUT
+    pandas DataFrame
+        Contains the x and y values of the outliers
+    """
+    # Prepare empty dtf
+    outliers = pd.DataFrame(columns = ['outliers', 'x_index'],)
+    list_outliers = []
+    list_index = []
+
+    for defect in ['Deep', 'Shallow', 'All']:
+        # Compute the maximum and minimum values for the standard deviation
+        mean_top = dtf_packdef_values.loc['PackDef_cst_all_blocks', f'{defect}_{type}'] + dtf_packdef_values.loc['error_all_blocks', f'{defect}_{type}']
+        mean_bot = dtf_packdef_values.loc['PackDef_cst_all_blocks', f'{defect}_{type}'] - dtf_packdef_values.loc['error_all_blocks', f'{defect}_{type}']
+
+        sub_dtf = dtf_packdef_values.loc[['PackDef_cst_block1', 'PackDef_cst_block2', 'PackDef_cst_block3'], f'{defect}_{type}']
+        list_outliers += list(sub_dtf[(sub_dtf < mean_bot) | (sub_dtf > mean_top)])
+
+        if defect == 'Deep':
+            list_index+= [0] * len(sub_dtf[(sub_dtf < mean_bot) | (sub_dtf > mean_top)])
+        elif defect == 'Shallow':
+            list_index += [1] * len(sub_dtf[(sub_dtf < mean_bot) | (sub_dtf > mean_top)])
+        else:
+            list_index+= [2] * len(sub_dtf[(sub_dtf < mean_bot) | (sub_dtf > mean_top)])
+
+    # Complete the final dtf
+    outliers['outliers'] = np.array(list_outliers)
+    outliers['x_index'] = np.array(list_index)
+
+    return outliers
 
 def plot_defect_constants(type, packdef_constants, errors):
     """
@@ -217,17 +263,31 @@ def plot_defect_constants(type, packdef_constants, errors):
     errors: pandas Series
         Contains the errors of each defect
     """
-    cst_packing = pd.DataFrame(packdef_constants.loc["PackDef_cst_all_blocks", [f"Deep_{type}", f"Shallow_{type}", f"All_{type}"]])
-    df_reset = cst_packing.reset_index()
-    
-    br = df_reset.plot.bar(x='index', y='PackDef_cst_all_blocks', color=["firebrick", "forestgreen", "royalblue"], rot=0, yerr=errors, capsize=3, legend=False)
-    for p in br.patches:
-        br.annotate(f'{p.get_height()/max(packdef_constants.loc["PackDef_cst_all_blocks"])*100:.1f}%', (p.get_x() + p.get_width() / 2, p.get_height()),
-                    ha='center', va='top', xytext=(0, 10), textcoords='offset points')
-        br.annotate(f'{p.get_height():.1f} $A^2$', (p.get_x() + p.get_width() / 2, p.get_height()),
-                    ha='center', va='top', xytext=(0, -10), textcoords='offset points')
-    plt.ylabel("Defect size constant ${A^2}$")
-    plt.title("Packing defect constants computed by block averaging")
+    cst_packing = pd.DataFrame(packdef_constants[[f"Deep_{type}", f"Shallow_{type}", f"All_{type}"]])
+
+    # Create the figure
+    fig, ax = plt.subplots()
+
+    # Get the variables needed for the graph
+    x_index = cst_packing.columns
+    packdef_values = cst_packing.loc['PackDef_cst_all_blocks']
+    colour = ["firebrick", "forestgreen", "royalblue"]
+    outliers = get_outliers(cst_packing, type)
+    text_pos = [0.0, 1.01, 2.01]
+
+    ax.bar(x_index, packdef_values, color = colour, width = 0.5, yerr = errors, capsize=3)
+    plt.scatter(x= outliers['x_index'], y=outliers['outliers'], s=15, c='black', alpha=0.5)
+    # Add the text for the packing constant and the percentage
+    for i, defect in enumerate(['Deep', 'Shallow', 'All']):
+        ax.text(text_pos[i], 0.25, f'{packdef_values.loc[f"{defect}_{type}"]/max(packdef_values)*100:.1f}%',
+            verticalalignment='bottom', horizontalalignment='center',
+            fontsize=12)
+        ax.text(text_pos[i], 1.4, f'{packdef_values.loc[f"{defect}_{type}"]:.1f} $A^2$',
+            verticalalignment='bottom', horizontalalignment='center',
+            fontsize=12)
+    ax.set_ylabel("Defect size constant ${A^2}$")
+    ax.set_ylim(0, int(max(packdef_values))+2)
+    ax.set_title("Packing defect constants computed by block averaging")
     pdf.savefig()  # Save the current figure to the PDF
     plt.close()
 
@@ -261,7 +321,7 @@ if __name__=="__main__":
         
         # Plot the final decays + errors computed with block averaging
         # (for each packdef) on a barplot
-        plot_defect_constants(name, packdef_constants, errors)
+        plot_defect_constants(name, packdef_constants, errors.loc[[f'Deep_{name}', f'Shallow_{name}', f'All_{name}'], 'PackDef_cst_all_blocks'])
     
     if args.prot:
         for name in ["Total_Up", "Total_Lo"]:
@@ -288,8 +348,8 @@ if __name__=="__main__":
             
             # Plot the final decays + errors computed with block averaging
             # (for each packdef) on a barplot
-            plot_defect_constants(f'{name}_close', packdef_constants, errors)
-            plot_defect_constants(f'{name}_far', packdef_constants, errors)
+            plot_defect_constants(f'{name}_close', packdef_constants, errors.loc[[f'Deep_{name}_close', f'Shallow_{name}_close', f'All_{name}_close'], 'PackDef_cst_all_blocks'])
+            plot_defect_constants(f'{name}_far', packdef_constants, errors.loc[[f'Deep_{name}_far', f'Shallow_{name}_far', f'All_{name}_far'], 'PackDef_cst_all_blocks'])
         
             
 

@@ -24,6 +24,12 @@ def get_arguments():
                         type = int)
     parser.add_argument('-l', action='store', dest='lipid_name', 
                         help='The name of lipid(s). If multiple, seperate them with _')
+    parser.add_argument('-p', action = 'store', dest = 'param',
+                        help = 'The parameter file to be used. \nThe options are: param_Charmm.txt (default), param_Martini.txt',
+                        default = "param_Charmm.txt")
+    parser.add_argument('-r', action = 'store', dest = 'radii',
+                        help = 'The radii file to be used.\nThe options are: vdw_radii_Charmm.txt (default), vdw_radii_Martini2.txt, vdw_radii_Martini2P.txt and vdw_radii_Martini3.txt',
+                        default = "vdw_radii_Charmm.txt")
     parser.add_argument('-prot', action='store_true', dest='prot', 
                         help='Put if you want to see the packing defects close/far of the protein')
     args = parser.parse_args()
@@ -48,8 +54,8 @@ if __name__=="__main__":
             "-f", args.traj,
             "-s", args.topo,
             "-l", args.lipid_name,
-            "-r", f"{path}data/vdw_radii_Charmm.txt",
-            "-p", f"{path}data/param_Charmm.txt",
+            "-r", f"{path}data/{args.radii}",
+            "-p", f"{path}data/{args.param}",
             "-o", args.lipid_name
         ]
     if args.prot:
