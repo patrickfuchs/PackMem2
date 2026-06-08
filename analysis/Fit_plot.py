@@ -64,7 +64,7 @@ def fit_decay(x,y, LIMX, LIMY):
     Function does a linear fit.
     
     The linear fit is made on the probability of having a certain packing area.
-    6767676767676767676767 
+
     --------------------
     INPUT
     x : numpy array
@@ -230,11 +230,11 @@ def get_outliers(dtf_packdef_values, type):
     list_index = []
 
     for defect in ['Deep', 'Shallow', 'All']:
-        # Compute the maximum and minimum values ofr the standard error
+        # Compute the maximum and minimum values for the standard deviation
         mean_top = dtf_packdef_values.loc['PackDef_cst_all_blocks', f'{defect}_{type}'] + dtf_packdef_values.loc['error_all_blocks', f'{defect}_{type}']
         mean_bot = dtf_packdef_values.loc['PackDef_cst_all_blocks', f'{defect}_{type}'] - dtf_packdef_values.loc['error_all_blocks', f'{defect}_{type}']
 
-        sub_dtf = dtf_packdef_values.loc[['PackDef_cst_block1', 'PackDef_cst_block3', 'PackDef_cst_block3'], f'{defect}_{type}']
+        sub_dtf = dtf_packdef_values.loc[['PackDef_cst_block1', 'PackDef_cst_block2', 'PackDef_cst_block3'], f'{defect}_{type}']
         list_outliers += list(sub_dtf[(sub_dtf < mean_bot) | (sub_dtf > mean_top)])
 
         if defect == 'Deep':
@@ -265,7 +265,7 @@ def plot_defect_constants(type, packdef_constants, errors):
     """
     cst_packing = pd.DataFrame(packdef_constants[[f"Deep_{type}", f"Shallow_{type}", f"All_{type}"]])
 
-    # Create th efigure
+    # Create the figure
     fig, ax = plt.subplots()
 
     # Get the variables needed for the graph
