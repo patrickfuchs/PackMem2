@@ -12,7 +12,7 @@ These are the packages required to get this version of PackMem running :\
 * matplotlib
 * MDAnalysis\
 
-All of them are already put in the yaml file and the environment can be set up with:\
+All of them are already put in the .yml file and the environment can be set up with:\
 `conda env create -f PackMem_env.yml`
 
 -------------------------------------------------------------------------------
