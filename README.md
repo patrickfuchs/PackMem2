@@ -1,6 +1,7 @@
-# New_PackMem
-This repository contains the script for the new version of PackMem.\
-This version presents a code written in python 3 and some new mechanisms such as the use of MDAnalysis package to work directly with the trajectory file or the possibility to see the defects around a protein inserted into the membrane.
+# PackMem2
+[PackMem](https://packmem.ipmc.cnrs.fr/) ([link to the github repo](https://github.com/rogautier/packmem)) is a computational tool that compute the distributions of packing defects in lipid bilayers from molecular dynamics trajectories. The present repository contains the scripts for the new version of PackMem called **PackMem2**.
+
+PackMem2 was written in python 3 and completely refactorized compared to the original PackMem (notably with the use of Numpy arrays, MDAnalysis module, multiprocessing), which hevily improved the performance. It contains also some new features, notably computing packing defects around a protein inserted into the membrane.
 
 -------------------------------------------------------------------------------
 
