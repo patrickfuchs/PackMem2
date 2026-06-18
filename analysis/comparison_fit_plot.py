@@ -1,4 +1,7 @@
+# M. Zygadlo 2025
+
 import argparse
+import os
 import pandas as pd
 import numpy as np
 import math
@@ -6,34 +9,49 @@ import matplotlib.pyplot as plt
 from scipy.optimize import least_squares
 from matplotlib.backends.backend_pdf import PdfPages
 
-# Getting the arguments
-parser = argparse.ArgumentParser()
-parser.add_argument('-f', action = 'store', dest = 'filename',
-                help = 'The first clean .txt file to analyse')
-parser.add_argument('-f2', action = 'store', dest = 'filename2',
-                help = 'The second clean .txt file to analyse')
-parser.add_argument('-p', action = 'store', dest = 'precision',
-                help = 'The precision for writing packdef cosntants (nb of decimals) in the output. Default = 2', type=int, default=2)
-parser.add_argument('-lx', action = 'store', dest = 'limx',
-                help = 'The lowest defect area used for the fit (we recommand not to touch to this value). Default = 15', type=int, default=15)
-parser.add_argument('-ly', action = 'store', dest = 'limy',
-                help = 'The lowest probability used for the fit (we recommand not to touch to this value). Default = 1e-4', type=float, default=1e-4)
-parser.add_argument('-o', action = 'store', dest = 'output',
-                help = 'The name of the output .pdf file. Default = Res_membrane', default="Res_membrane")
-args = parser.parse_args()
+def get_arguments():
+    """
+    Get the arguments for the script and check that the inputfiles are valid.
 
-################################################################################
+    --------------------
+    OUTPUT
+    parser.parse_args
+    """
+    # Getting the arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-f1', action = 'store', dest = 'path1',
+                    help = 'The path towards the first PackMem results')
+    parser.add_argument('-f2', action = 'store', dest = 'path2',
+                    help = 'The path towards the second PackMem results')
+    parser.add_argument('-prot', action = 'store_true', dest = 'prot',
+                    help = 'If there is a protein')
+    parser.add_argument('-p', action = 'store', dest = 'precision',
+                    type=int, default=2,
+                    help = 'The precision for writing packdef constants (nb of decimals) in the output. Default = 2')
+    parser.add_argument('-lx', action = 'store', dest = 'limx',
+                    type=int, default=15,
+                    help = 'The lowest defect area used for the fit (we recommand not to touch to this value). Default = 15')
+    parser.add_argument('-ly', action = 'store', dest = 'limy',
+                    type=float, default=1e-4,
+                    help = 'The lowest probability used for the fit (we recommand not to touch to this value). Default = 1e-4')
+    parser.add_argument('-o', action = 'store', dest = 'output',
+                    default="Res_membrane",
+                    help = 'The name of the output .pdf file. Default = Res_membrane')
+    args = parser.parse_args()
+
+    return args
 
 def log(y_list):
-    """Calculate the logarithm of a list.
+    """
+    Calculate the logarithm of a list.
     
-    Parameters
-    ----------
+    --------------------
+    INPUT
     y_list : list
         The y values.
     
-    Returns
-    -------
+    --------------------
+    OIUTPUT
     list
         The y values that have been through the logarithm.
     """
@@ -45,14 +63,14 @@ def log(y_list):
             log_y.append(0)
     return log_y
 
-
 def fit_decay(x,y, LIMX, LIMY):
-    """Function does a linear fit.
+    """
+    Function does a linear fit.
     
     The linear fit is made on the probability of having a certain packing area.
-    
-    Parameters
-    ----------
+
+    --------------------
+    INPUT
     x : numpy array
         Packing area.
     y : numpy array
@@ -61,8 +79,9 @@ def fit_decay(x,y, LIMX, LIMY):
         The lowest defect area used for the fit.
     LIMY : int
         The lowest probability used for the fit
-    Returns
-    -------
+    
+    --------------------
+    OUTPUT
     numpy array
         A linear fit of x and y.
     """
@@ -74,19 +93,19 @@ def fit_decay(x,y, LIMX, LIMY):
     FIT = np.polyfit(x, log(y), 1)
     return (FIT)
 
-
 def block_averaging(vect, nb_block):
-    """Divide the packing data into n blocks.
+    """
+    Divide the packing data into n blocks.
     
-    Parameters
-    ----------
+    --------------------
+    INPUT
     vect : pandas dataframe
         The size of the packing defect.
     nb_block : int
         The number of blocks we want to have.
     
-    Returns
-    -------
+    --------------------
+    OUTPUT
     list
         Avector of 3 decays.
     """
@@ -102,128 +121,220 @@ def block_averaging(vect, nb_block):
         decays.append(abs(1/FIT[0]))
     return decays
 
+def compute_defect_fit(type, defect, packdef_data, packdef_constants):
+    """
+    Compute the fit of the defects distribution.
+
+    --------------------
+    INPUT
+    type: string
+        The type to analyse: Total/Total_Up/Total_Lo
+    defect: string
+        The type  of  defect: Deep/Shallow/All
+    packdef_data: pandas DataFrame
+        Contains the sizes of the defects
+    packdef_constants: pandas DataFrame
+        Will contains the statistics of the defects found in this function
+    
+    --------------------
+    OUTPUT
+    pandas DataFrame
+        Contains the statistics of the defects found in this function
+    """  
+    # Compute PackDef distributions (on the whole set)
+    H = plt.hist(packdef_data, bins=np.arange(0.5,max(packdef_data)+0.5))
+    # Length of the defects
+    x = np.arange(0, max(packdef_data)-1)
+    # nb of observations of a certain defect length
+    y = H[0]/sum(H[0])
+    FIT = fit_decay(x,y, args.limx, args.limy)
+    fit_function = np.poly1d(FIT)
+
+    global_inv_decay = abs(1/FIT[0])
+    
+    # Compute PackDef distributions with block averaging method, and print results
+    FITS_3blocks=block_averaging(packdef_data, 3)
+    # Compute the mean of the 3 blocks averages
+    inv_decay_block = sum(FITS_3blocks)/len(FITS_3blocks)
+    # Compute the standard deviation of the 3 values
+    error_inv_decay_block = np.std(FITS_3blocks)
+
+    # store all the results in the data frame
+    packdef_constants.loc["PackDef_cst_global", f"{defect}_{type}"] = global_inv_decay
+    packdef_constants.loc["PackDef_cst_block1", f"{defect}_{type}"] = FITS_3blocks[0]
+    packdef_constants.loc["PackDef_cst_block2", f"{defect}_{type}"] = FITS_3blocks[1]
+    packdef_constants.loc["PackDef_cst_block3", f"{defect}_{type}"] = FITS_3blocks[2]
+    packdef_constants.loc["PackDef_cst_all_blocks", f"{defect}_{type}"] = inv_decay_block
+    packdef_constants.loc["error_all_blocks", f"{defect}_{type}"] = error_inv_decay_block
+    
+    return packdef_constants
+
+def get_outliers(dtf_packdef_values, type):
+    """
+    Get the outliers in a dataframe
+
+    --------------------
+    INPUT
+    dtf_packdef_values: pandas DataFrame
+        Contains the informations on the packing defects (mean, data, error)
+    type: string
+        the type to analyse: Total/Total_Up/Total_Lo
+
+    --------------------
+    OUTPUT
+    pandas DataFrame
+        Contains the x and y values of the outliers
+    """
+    # Prepare empty dtf
+    outliers = pd.DataFrame(columns = ['outliers', 'x_index'],)
+    list_outliers = []
+    list_index = []
+
+    for defect in ['Deep', 'Shallow', 'All']:
+        # Compute the maximum and minimum values for the standard deviation
+        mean_top = dtf_packdef_values.loc['PackDef_cst_all_blocks', f'{defect}_{type}'] + dtf_packdef_values.loc['error_all_blocks', f'{defect}_{type}']
+        mean_bot = dtf_packdef_values.loc['PackDef_cst_all_blocks', f'{defect}_{type}'] - dtf_packdef_values.loc['error_all_blocks', f'{defect}_{type}']
+
+        sub_dtf = dtf_packdef_values.loc[['PackDef_cst_block1', 'PackDef_cst_block2', 'PackDef_cst_block3'], f'{defect}_{type}']
+        list_outliers += list(sub_dtf[(sub_dtf < mean_bot) | (sub_dtf > mean_top)])
+
+        if defect == 'Deep':
+            list_index+= [0] * len(sub_dtf[(sub_dtf < mean_bot) | (sub_dtf > mean_top)])
+        elif defect == 'Shallow':
+            list_index += [1] * len(sub_dtf[(sub_dtf < mean_bot) | (sub_dtf > mean_top)])
+        else:
+            list_index+= [2] * len(sub_dtf[(sub_dtf < mean_bot) | (sub_dtf > mean_top)])
+
+    # Complete the final dtf
+    outliers['outliers'] = np.array(list_outliers)
+    outliers['x_index'] = np.array(list_index)
+
+    return outliers
+
+def plot_comp_defect_constants(type, packdef_constants1, packdef_constants2, errors1, errors2):
+    """
+    Plot the defects constants for each defect.
+
+    --------------------
+    INPUT
+    type: string
+        the type to analyse: Total/Total_Up/Total_Lo
+    packdef_constants: pandas DataFrame
+        Will contains the statistics of the defects found in this function
+    errors: pandas Series
+        Contains the errors of each defect
+    """
+    # Create the dataframe needed for the graph
+    # A mix of the first and the second dtf ordered by defect type
+    cst_packing1 = pd.DataFrame(packdef_constants1[[f"Deep_{type}", f"Shallow_{type}", f"All_{type}"]])
+    cst_packing2 = pd.DataFrame(packdef_constants2[[f"Deep_{type}", f"Shallow_{type}", f"All_{type}"]])
+    cst_packing1.columns = [f"Deep\n{args.path1}", f"Shallow\n{args.path1}", f"All\n{args.path1}"]
+    cst_packing2.columns = [f"Deep\n{args.path2}", f"Shallow\n{args.path2}", f"All\n{args.path2}"]
+    cst_packing_comp = pd.concat([cst_packing1, cst_packing2], axis = 1).sort_index(axis=1).iloc[:, [2, 3, 4, 5, 0, 1]]
+
+    errors1.index = [f"Deep\n{args.path1}", f"Shallow\n{args.path1}", f"All\n{args.path1}"]
+    errors2.index = [f"Deep\n{args.path2}", f"Shallow\n{args.path2}", f"All\n{args.path2}"]
+    errors_comp = pd.concat([errors1, errors2]).sort_index().iloc[[2, 3, 4, 5, 0, 1]]
+
+    # Create the figure
+    fig, ax = plt.subplots()
+
+    # Get the variables needed for the graph
+    x_index = cst_packing_comp.columns
+    packdef_values = cst_packing_comp.loc["PackDef_cst_all_blocks"]
+    colour = ["firebrick", "lightcoral", "forestgreen", "darkseagreen", "royalblue", "lightsteelblue"]
+    #outliers = get_outliers(cst_packing, type)
+    text_pos = [0.0, 1.01, 2.01, 3.01, 4.01, 5.01]
+
+    ax.bar(x_index, packdef_values, color = colour, width = 0.5, yerr = errors_comp, capsize=3)
+    #plt.scatter(x= outliers['x_index'], y=outliers['outliers'], s=15, c='black', alpha=0.5)
+    # Add the text for the packing constant and the percentage
+    for i, defect in enumerate([f'Deep\n{args.path1}', f'Deep\n{args.path2}', f'Shallow\n{args.path1}', f'Shallow\n{args.path2}', f'All\n{args.path1}', f'All\n{args.path2}']):
+        ax.text(text_pos[i], 0.25, f'{packdef_values.loc[f"{defect}"]/max(packdef_values)*100:.1f}%',
+            verticalalignment='bottom', horizontalalignment='center',
+            fontsize=12)
+        ax.text(text_pos[i], 1.4, f'{packdef_values.loc[f"{defect}"]:.1f} $A^2$',
+            verticalalignment='bottom', horizontalalignment='center',
+            fontsize=12)
+    ax.set_ylabel("Defect size constant ${A^2}$")
+    ax.set_ylim(0, int(max(packdef_values))+2)
+    ax.set_title(f"Packing defect constants computed by block averaging\n{type}")
+    pdf.savefig()  # Save the current figure to the PDF
+    plt.close()
 
 if __name__=="__main__":
+    # Get arguments
+    args = get_arguments()
     # Open a pdf device
     # Create a single PDF file
     pdf = PdfPages(f'{args.output}.pdf')
+
+    columns_dtf =  ['Deep_Total', 'Shallow_Total', 'All_Total', 'Deep_Total_Up', 'Shallow_Total_Up', 'All_Total_Up', 'Deep_Total_Lo', 'Shallow_Total_Lo', 'All_Total_Lo']
+    index_dtf = ["PackDef_cst_global", "PackDef_cst_block1", "PackDef_cst_block2", "PackDef_cst_block3","PackDef_cst_all_blocks","error_all_blocks"]
+    if args.prot:
+        columns_dtf += ['Deep_Total_Up_close', 'Shallow_Total_Up_close', 'All_Total_Up_close', 'Deep_Total_Up_far', 'Shallow_Total_Up_far', 'All_Total_Up_far', 'Deep_Total_Lo_close', 'Shallow_Total_Lo_close', 'All_Total_Lo_close', 'Deep_Total_Lo_far', 'Shallow_Total_Lo_far', 'All_Total_Lo_far']
     # Initialize a data frame to store packdef constants + errors
-    packdef_constants1 = pd.DataFrame(columns = ['all'], 
-                       index = ["PackDef_cst_global", "PackDef_cst_block1", "PackDef_cst_block2", 
-                                "PackDef_cst_block3","PackDef_cst_all_blocks","error_all_blocks"])
-    packdef_constants2 = pd.DataFrame(columns = ['all'], 
-                       index = ["PackDef_cst_global", "PackDef_cst_block1", "PackDef_cst_block2", 
-                                "PackDef_cst_block3","PackDef_cst_all_blocks","error_all_blocks"])
-    
-    # load PackMem data
-    filename1 = args.filename
-    packdef_data1 = pd.read_csv(filename1, header=None, delim_whitespace=True)[1]
-    filename2 = args.filename2
-    packdef_data2 = pd.read_csv(filename2, header=None, delim_whitespace=True)[1]
-    
-    # Compute PackDef distributions (on the whole set)
-    H = plt.hist(packdef_data1, bins=np.arange(0.5,max(packdef_data1)+0.5))
-    # Length of the defects
-    x1 = np.arange(0, max(packdef_data1)-1)
-    # nb of observations of a certain defect length
-    y1 = H[0]/sum(H[0])
-    FIT1 = fit_decay(x1,y1, args.limx, args.limy)
-    fit_function1 = np.poly1d(FIT1)
+    packdef_constants1 = pd.DataFrame(columns = columns_dtf, index = index_dtf)
+    packdef_constants2 = pd.DataFrame(columns = columns_dtf, index = index_dtf)
 
-    # Compute PackDef distributions (on the whole set)
-    H = plt.hist(packdef_data2, bins=np.arange(0.5,max(packdef_data2)+0.5))
-    # Length of the defects
-    x2 = np.arange(0, max(packdef_data2)-1)
-    # nb of observations of a certain defect length
-    y2 = H[0]/sum(H[0])
-    FIT2 = fit_decay(x2,y2, args.limx, args.limy)
-    fit_function2 = np.poly1d(FIT2)
+    for name in ["Total", "Total_Up", "Total_Lo"]:
+        # Now loop over the three default types
+        for defect in ["Deep","Shallow","All"]:
+            filename1 = f"{args.path1}/{name}_{defect}.csv"
+            def_area1 = pd.read_csv(filename1, header=None)[1]
+            filename2 = f"{args.path2}/{name}_{defect}.csv"
+            def_area2 = pd.read_csv(filename2, header=None)[1]
 
-    ### Plot for defect fit
-    plt.clf()
-    plt.scatter(x1, log(y1), marker='o', facecolor="none", edgecolor="orange")
-    plt.xlim(-2, 102)
-    plt.ylim(-10, -3.5)
-    plt.yticks([math.log(1e-4), math.log(1e-3), math.log(1e-2)], labels=[str(1e-4), str(1e-3), str(1e-2)])
-    plt.ylabel("Probability")
-    plt.xlabel("Defect area ${A^2}$")
-    plt.title("all")
-    plt.axvline(args.limx, color='gray', linestyle='--')
-    plt.axhline(math.log(args.limy), color='gray', linestyle='-')
-    plt.plot(x1, fit_function1(x1), color='orange', label='Fit')
-    plt.scatter(x2, log(y2), marker='o', facecolor="none", edgecolor="seagreen")
-    plt.plot(x2, fit_function2(x2), color='seagreen', label='Fit')
-    pdf.savefig()  # Save the current figure to the PDF
-    plt.close()
+            # Plot the fit of the defects distribution
+            packdef_constants1 = compute_defect_fit(name, defect, def_area1, packdef_constants1)
+            packdef_constants2 = compute_defect_fit(name, defect, def_area2, packdef_constants2)
 
-    global_inv_decay1 = abs(1/FIT1[0])
-    global_inv_decay2 = abs(1/FIT2[0])
-    
-    # print global results
-    print("")
-    print(f"Results for all defects")
-    print(f"Total number of defects = {len(packdef_data1)}")
-    print(f"Using all data: {round(global_inv_decay1, args.precision)} A^2")
-    
-    # Compute PackDef distributions with block averaging method, and print results
-    FITS_3blocks1=block_averaging(packdef_data1, 3)
-    for i in range(3):
-        print(f"Using block {i+1}: {round(FITS_3blocks1[i],args.precision)} A^2")
-    inv_decay_block1 = sum(FITS_3blocks1)/len(FITS_3blocks1)
-    error_inv_decay_block1 = np.std(FITS_3blocks1)
-    print(f"Mean +/- sd on 3 blocks: {round(inv_decay_block1,args.precision)} +/- {round(error_inv_decay_block1,args.precision)} A^2")
+        # Plot the final decays + errors computed with block averaging
+        # (for each packdef) on a barplot
+        errors1=packdef_constants1.T.error_all_blocks.to_frame('PackDef_cst_all_blocks')
+        errors2=packdef_constants2.T.error_all_blocks.to_frame('PackDef_cst_all_blocks')
+        plot_comp_defect_constants(name, packdef_constants1, packdef_constants2, 
+                                   errors1.loc[[f'Deep_{name}', f'Shallow_{name}', f'All_{name}'], 'PackDef_cst_all_blocks'], 
+                                   errors2.loc[[f'Deep_{name}', f'Shallow_{name}', f'All_{name}'], 'PackDef_cst_all_blocks'])
 
-    FITS_3blocks2=block_averaging(packdef_data2, 3)
-    for i in range(3):
-        print(f"Using block {i+1}: {round(FITS_3blocks2[i],args.precision)} A^2")
-    inv_decay_block2 = sum(FITS_3blocks2)/len(FITS_3blocks2)
-    error_inv_decay_block2 = np.std(FITS_3blocks2)
-    print(f"Mean +/- sd on 3 blocks: {round(inv_decay_block2,args.precision)} +/- {round(error_inv_decay_block2,args.precision)} A^2")
+    if args.prot:
+        for name in ["Total_Up", "Total_Lo"]:
+            # Now loop over the three default types
+            for defect in ["Deep","Shallow","All"]:
+                # Load PackMem data
+                filename1 = f"{args.path1}/{name}_{defect}_prot.csv"
+                filename2 = f"{args.path2}/{name}_{defect}_prot.csv"
+                if not os.path.isfile(filename1):
+                    continue
+                elif not os.path.isfile(filename2):
+                    continue
+                def_area_prot1 = pd.read_csv(filename1, header=None).iloc[:,1:]
+                def_area_prot_close1 = def_area_prot1[def_area_prot1[1] == "close"][2]
+                def_area_prot_far1 = def_area_prot1[def_area_prot1[1] == "far"][2]
+                def_area_prot2 = pd.read_csv(filename2, header=None).iloc[:,1:]
+                def_area_prot_close2 = def_area_prot2[def_area_prot2[1] == "close"][2]
+                def_area_prot_far2 = def_area_prot2[def_area_prot2[1] == "far"][2]
+                
+                # Plot the fit of the defects distribution
+                packdef_constants1 = compute_defect_fit(f'{name}_close', defect, def_area_prot_close1, packdef_constants1)
+                packdef_constants1 = compute_defect_fit(f'{name}_far', defect, def_area_prot_far1, packdef_constants1)
+                packdef_constants2 = compute_defect_fit(f'{name}_close', defect, def_area_prot_close2, packdef_constants2)
+                packdef_constants2 = compute_defect_fit(f'{name}_far', defect, def_area_prot_far2, packdef_constants2)
+            if packdef_constants1[[f'Deep_{name}_close', f'Shallow_{name}_close', f'All_{name}_close', f'Deep_{name}_far', f'Shallow_{name}_far', f'All_{name}_far']].isna().all().all():
+                continue
+            elif packdef_constants2[[f'Deep_{name}_close', f'Shallow_{name}_close', f'All_{name}_close', f'Deep_{name}_far', f'Shallow_{name}_far', f'All_{name}_far']].isna().all().all():
+                continue
+            
+            # Plot the final decays + errors computed with block averaging
+            # (for each packdef) on a barplot
+            errors1=packdef_constants1.T.error_all_blocks.to_frame('PackDef_cst_all_blocks')
+            errors2=packdef_constants2.T.error_all_blocks.to_frame('PackDef_cst_all_blocks')
+            plot_comp_defect_constants(f'{name}_close', packdef_constants1, packdef_constants2, 
+                                       errors1.loc[[f'Deep_{name}_close', f'Shallow_{name}_close', f'All_{name}_close'], 'PackDef_cst_all_blocks'],
+                                       errors2.loc[[f'Deep_{name}_close', f'Shallow_{name}_close', f'All_{name}_close'], 'PackDef_cst_all_blocks'])
+            plot_comp_defect_constants(f'{name}_far', packdef_constants1, packdef_constants2, 
+                                       errors1.loc[[f'Deep_{name}_far', f'Shallow_{name}_far', f'All_{name}_far'], 'PackDef_cst_all_blocks'],
+                                       errors2.loc[[f'Deep_{name}_far', f'Shallow_{name}_far', f'All_{name}_far'], 'PackDef_cst_all_blocks'])
 
-    # store all the results in the data frame
-    packdef_constants1["all"]["PackDef_cst_global"] = global_inv_decay1
-    packdef_constants1["all"]["PackDef_cst_block1"] = FITS_3blocks1[0]
-    packdef_constants1["all"]["PackDef_cst_block2"] = FITS_3blocks1[1]
-    packdef_constants1["all"]["PackDef_cst_block3"] = FITS_3blocks1[2]
-    packdef_constants1["all"]["PackDef_cst_all_blocks"] = inv_decay_block1
-    packdef_constants1["all"]["error_all_blocks"] = error_inv_decay_block1
-
-    packdef_constants2["all"]["PackDef_cst_global"] = global_inv_decay2
-    packdef_constants2["all"]["PackDef_cst_block1"] = FITS_3blocks2[0]
-    packdef_constants2["all"]["PackDef_cst_block2"] = FITS_3blocks2[1]
-    packdef_constants2["all"]["PackDef_cst_block3"] = FITS_3blocks2[2]
-    packdef_constants2["all"]["PackDef_cst_all_blocks"] = inv_decay_block2
-    packdef_constants2["all"]["error_all_blocks"] = error_inv_decay_block2
-
-    errors1=packdef_constants1.T.error_all_blocks.to_frame('PackDef_cst_all_blocks')
-    errors2=packdef_constants2.T.error_all_blocks.to_frame('PackDef_cst_all_blocks')
-    
-    
-    ####
-    # FINAL PLOT
-    # Now we plot the final decays + errors computed with block averaging
-    # (for each packdef) on a barplot
-    cst_packing1 = pd.DataFrame(packdef_constants1.loc["PackDef_cst_all_blocks"])
-    df_reset1 = cst_packing1.reset_index()
-    cst_packing2 = pd.DataFrame(packdef_constants2.loc["PackDef_cst_all_blocks"])
-    df_reset2 = cst_packing2.reset_index()
-    
-    br1 = df_reset1.plot.bar(x='index', y='PackDef_cst_all_blocks', color=["orange", "seagreen"], rot=0, yerr=errors1, capsize=3, legend=False)
-    br2 = df_reset2.plot.bar(x='index', y='PackDef_cst_all_blocks', color=["orange", "seagreen"], rot=0, yerr=errors2, capsize=3, legend=False)
-    for p in br1.patches:
-        br1.annotate(f'{p.get_height()/max(packdef_constants1.loc["PackDef_cst_all_blocks"])*100:.1f}%', (p.get_x() + p.get_width() / 2, p.get_height()),
-                    ha='center', va='top', xytext=(0, 10), textcoords='offset points')
-        br1.annotate(f'{p.get_height():.1f} $A^2$', (p.get_x() + p.get_width() / 2, p.get_height()),
-                    ha='center', va='top', xytext=(0, -10), textcoords='offset points')
-    for p in br2.patches:
-        br2.annotate(f'{p.get_height()/max(packdef_constants2.loc["PackDef_cst_all_blocks"])*100:.1f}%', (p.get_x() + p.get_width() / 2, p.get_height()),
-                    ha='center', va='top', xytext=(0, 10), textcoords='offset points')
-        br2.annotate(f'{p.get_height():.1f} $A^2$', (p.get_x() + p.get_width() / 2, p.get_height()),
-                    ha='center', va='top', xytext=(0, -10), textcoords='offset points')
-    plt.ylabel("Defect size constant ${A^2}$")
-    plt.title("Packing defect constants computed by block averaging")
-    pdf.savefig()  # Save the current figure to the PDF
-    plt.close()
-    
     # Close the PDF file
     pdf.close()
