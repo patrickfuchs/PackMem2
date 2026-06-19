@@ -1,0 +1,13 @@
+[project]
+name = "packmem2"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "argparse>=1.4.0",
+    "matplotlib>=3.9.4",
+    "mdanalysis>=2.7.0",
+    "numpy>=1.26.4",
+    "pandas>=2.3.3",
+]
