@@ -42,7 +42,7 @@ def main():
     """
     args = get_arguments()
     path = sys.argv[0]
-    path = path.replace("src/Launch_PackMem_prot.py", "")
+    path = path.replace("src/launch_PackMem_prot.py", "")
 
     # Prepare how much frames are going to be analysed per core
     step = int(args.frames / args.cores)
@@ -51,7 +51,7 @@ def main():
     cmd = [
             "nice", "-19",
             sys.executable,  # ou "python3" si tu préfères
-            f"{path}src/PackMem_prot.py",
+            f"{path}src/packMem_prot.py",
             "-f", args.traj,
             "-s", args.topo,
             "-l", args.lipid_name,
@@ -91,7 +91,7 @@ def main():
     # Once everything is finished, launch concatenation
     cmd = [
             sys.executable,  # ou "python3" si tu préfères
-            f"{path}src/Concatenate_PackMem.py",
+            f"{path}src/concatenate_PackMem.py",
             "-l", args.lipid_name,
             "-b", "0",
             "-e", str(args.frames)
@@ -105,7 +105,7 @@ def main():
     # Then launch packing defect analysis
     cmd = [
             sys.executable,  # ou "python3" si tu préfères
-            f"{path}analysis/Fit_plot.py"
+            f"{path}analysis/fit_plot.py"
         ]
     if args.prot:
         cmd.append("-prot")
