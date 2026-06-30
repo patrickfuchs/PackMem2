@@ -28,8 +28,7 @@ from bin import param as p
 from bin import protein as prot
 
 ##########################################################################################
-##### main
-if __name__ == '__main__':
+def main():
     """
     Python
     Script to compute Packing defect in flat bilayers
@@ -443,3 +442,6 @@ if __name__ == '__main__':
         print(f"-- Ran for {ran_time} minute(s) --")
     else:
         print(f"-- Ran for {round((ran_time / 60), 2)} hour(s) --")
+
+if __name__ == '__main__':
+    main()

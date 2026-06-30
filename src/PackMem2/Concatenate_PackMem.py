@@ -117,7 +117,10 @@ def concat_files_prot(prefix, suffix):
 
     return file_concat
 
-if __name__=="__main__":
+def main():
+    """
+    Launch the concatenation of the PackMem2 produced files
+    """
     args = get_args()
 
     Total_Up_Deep = concat_files(args.prefix, "_Up_Deep_result.txt")
@@ -176,3 +179,6 @@ if __name__=="__main__":
         os.remove(f"{args.prefix}{pdbnum}_Lo_All_result.txt")
         os.remove(f"{args.prefix}{pdbnum}_Up_Shallow_result.txt")
         os.remove(f"{args.prefix}{pdbnum}_Lo_Shallow_result.txt")
+
+if __name__=="__main__":
+    main()

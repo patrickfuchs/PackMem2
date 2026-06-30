@@ -36,9 +36,10 @@ def get_arguments():
 
     return args
 
-################################################################################
-
-if __name__=="__main__":
+def main():
+    """
+    Launch the different python scripts for PackMem2
+    """
     args = get_arguments()
     path = sys.argv[0]
     path = path.replace("src/Launch_PackMem_prot.py", "")
@@ -101,7 +102,6 @@ if __name__=="__main__":
     process = subprocess.Popen(cmd)
     process.wait()
 
-
     # Then launch packing defect analysis
     cmd = [
             sys.executable,  # ou "python3" si tu préfères
@@ -109,8 +109,8 @@ if __name__=="__main__":
         ]
     if args.prot:
         cmd.append("-prot")
-
-    print(cmd)
     
-
     process = subprocess.Popen(cmd)
+
+if __name__=="__main__":
+    main()
