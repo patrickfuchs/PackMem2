@@ -5,7 +5,7 @@
 
 import numpy as np
 
-from bin import matrix as m
+from core import matrix as m
 
 def find_protein(mat, defect, protein, arrayX, arrayY, zmean):
     """
