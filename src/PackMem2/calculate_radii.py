@@ -59,8 +59,10 @@ def get_aliphatic(res_name, res_name_prev, atom_name, flag):
     else:
         return 'n', flag
 
-
-if __name__=="__main__":
+def main():
+    """
+    Calcultate the radii of given molecules
+    """
     args = get_args()
     
     sigma = {}
@@ -110,3 +112,5 @@ if __name__=="__main__":
             if "[ atoms ]" in line or "[atoms]" in line:
                 flag_mol = True
 
+if __name__=="__main__":
+    main()
