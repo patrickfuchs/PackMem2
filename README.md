@@ -35,7 +35,7 @@ This script `packmem2.py` will compute the packing defects, divided into 3 categ
 Here again, you can also use the `-prot` option if you ran the analysis of the packing defects near/far from the protein.\
 This script will gather all the data file generated and put them into one file per type of defect (deep, shallow, all).\
 
-`python [path]/PackMem2/analysis/fit_plot.py -o [output name]`\
+`python [path]/PackMem2/src/PackMem2/analysis.py -o [output name]`\
 Here again, you can also use the `-prot` option if you ran the analysis of the packing defects near/far from the protein.\
 
 ## Results

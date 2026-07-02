@@ -6,7 +6,6 @@ import pandas as pd
 import numpy as np
 import math
 import matplotlib.pyplot as plt
-import seaborn as sns
 from matplotlib.backends.backend_pdf import PdfPages
 
 def get_arguments():
@@ -291,7 +290,10 @@ def plot_defect_constants(type, packdef_constants, errors):
     pdf.savefig()  # Save the current figure to the PDF
     plt.close()
 
-if __name__=="__main__":
+def main():
+    """
+    Analyse the defect size computed by PackMem2
+    """
     # Get arguments
     args = get_arguments()
     # Open a pdf device
@@ -350,8 +352,9 @@ if __name__=="__main__":
             # (for each packdef) on a barplot
             plot_defect_constants(f'{name}_close', packdef_constants, errors.loc[[f'Deep_{name}_close', f'Shallow_{name}_close', f'All_{name}_close'], 'PackDef_cst_all_blocks'])
             plot_defect_constants(f'{name}_far', packdef_constants, errors.loc[[f'Deep_{name}_far', f'Shallow_{name}_far', f'All_{name}_far'], 'PackDef_cst_all_blocks'])
-        
-            
 
     # Close the PDF file
     pdf.close()
+
+if __name__=="__main__":
+    main()
