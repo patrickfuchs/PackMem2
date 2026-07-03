@@ -20,22 +20,22 @@ All of them are already put in the .yml file and the environment can be set up w
 
 ## How to run the code
 The code is simply launched with the command:\
-`python [path]/PackMem2/src/PackMem2/launch_packmem2.py -f [file.xtc] -s [file.gro] -c [number of cores] -fm [number of frames] -l [lipid name]`\
+`python [path]/PackMem2/src/packmem2/launch_packmem2.py -f [file.xtc] -s [file.gro] -c [number of cores] -fm [number of frames] -l [lipid name]`\
 You can also choose the parameter files (depending on your simulation) between martini and Charmm (knowing that Charmm is the default one) with the `-p` ans `-r` options.\
 Note that you can also use the `-prot` option if you also want to analysis the packing defects near/far from the protein.\
 
 This script launches the actual PackMem script, then the concatenation script and finaly, the analysis script.
 
 Of course, if you encounter problems along the way, each scripts are individually launchable with their respective commands:
-`python [path]/PackMem2/src/PackMem2/packmem2.py -f [file.xtc] -s [file.gro] -l [lipid name] -r [path]/PackMem2/data/vdw_radii_Charmm.txt -p [path]/PackMem2/data/param_Charmm.txt -b [frame start] -e [frame end] -o [lipid name]`\
+`python [path]/PackMem2/src/packmem2/packmem2.py -f [file.xtc] -s [file.gro] -l [lipid name] -r [path]/PackMem2/data/vdw_radii_Charmm.txt -p [path]/PackMem2/data/param_Charmm.txt -b [frame start] -e [frame end] -o [lipid name]`\
 Here again, the `-prot` option is usable.\
 This script `packmem2.py` will compute the packing defects, divided into 3 categories: deep, shallow and all packing defects.\
 
-`python [path]/PackMem2/src/PackMem2/concatenate.py -l [lipid name] -b [frame start] -e [frame stop]`\
+`python [path]/PackMem2/src/packmem2/concatenate.py -l [lipid name] -b [frame start] -e [frame stop]`\
 Here again, you can also use the `-prot` option if you ran the analysis of the packing defects near/far from the protein.\
 This script will gather all the data file generated and put them into one file per type of defect (deep, shallow, all).\
 
-`python [path]/PackMem2/src/PackMem2/analysis.py -o [output name]`\
+`python [path]/PackMem2/src/packmem2/analysis.py -o [output name]`\
 Here again, you can also use the `-prot` option if you ran the analysis of the packing defects near/far from the protein.\
 
 ## Results
@@ -61,8 +61,8 @@ In param_Charmm.txt or param_Martini.txt:\
 
 In the vdw_radii_Charmm.txt or vdw_radii_Martini*.txt:\
 * LIPID NAME atom name  vdw radii n/a
-You do this for every atoms in the lipid. If you don't know the van der Waals radii of each atoms, the script `Calculate_radii.py`is made to compute it for you for each atom.\
-`python [path]/PackMem2/src/PackMem2/calculate_radii.py -mol [file.itp of the lipid/molecule] -ff [forcefield.itp]`\
+You do this for every atoms in the lipid. If you don't know the van der Waals radii of each atoms, the script `calculate_radii.py`is made to compute it for you for each atom.\
+`python [path]/PackMem2/src/packmem2/calculate_radii.py -mol [file.itp of the lipid/molecule] -ff [forcefield.itp]`\
 Note that you can use the `-martini` or `-martini3` option to precise how to compute the radii.\
 
 -------------------------------------------------------------------------------

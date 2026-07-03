@@ -50,7 +50,7 @@ def main():
 
     cmd = [
             "nice", "-19",
-            sys.executable,  # ou "python3" si tu préfères
+            sys.executable,
             f"{path}packmem2.py",
             "-f", args.traj,
             "-s", args.topo,
@@ -78,7 +78,7 @@ def main():
                 stop = args.frames
             # Add commands
             cmd_i = cmd + ["-b", str(start), "-e", str(stop)]
-            # Lancement du processus en arrière-plan
+            # Launch in background
             process = subprocess.Popen(cmd_i, stdout=out_file, stderr=subprocess.STDOUT)
             processes.append(process)
 
@@ -90,7 +90,7 @@ def main():
 
     # Once everything is finished, launch concatenation
     cmd = [
-            sys.executable,  # ou "python3" si tu préfères
+            sys.executable,
             f"{path}concatenate.py",
             "-l", args.lipid_name,
             "-b", "0",
@@ -104,7 +104,7 @@ def main():
 
     # Then launch packing defect analysis
     cmd = [
-            sys.executable,  # ou "python3" si tu préfères
+            sys.executable,
             f"{path}analysis.py"
         ]
     if args.prot:
