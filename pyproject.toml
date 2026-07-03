@@ -27,6 +27,10 @@ dev = [
     "ruff>=0.15.20",
 ]
 
+[build-system]
+requires = ["uv_build>=0.9.22,<0.12.0"]
+build-backend = "uv_build"
+
 [project.scripts]
 # Big launch
 launch_packmem2 = "packmem2.launch_packmem2:main"
