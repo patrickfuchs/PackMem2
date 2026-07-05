@@ -13,16 +13,20 @@ def get_arguments():
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', action = 'store', dest = 'traj',
+                        required=True,
                         help = 'The trajectory file (.xtc)')
     parser.add_argument('-s', action = 'store', dest = 'topo',
+                        required=True,
                         help = 'The topology file (.gro)')
     parser.add_argument('-c', action = 'store', dest = 'cores',
                         help = 'The number of cores you want the script to work on',
                         default = 1, type = int)
     parser.add_argument('-fm', action = 'store', dest = 'frames',
+                        required=True,
                         help = 'The number of frames in your simulation',
                         type = int)
-    parser.add_argument('-l', action='store', dest='lipid_name', 
+    parser.add_argument('-l', action='store', dest='lipid_name',
+                        required=True,
                         help='The name of lipid(s). If multiple, seperate them with _')
     parser.add_argument('-p', action = 'store', dest = 'param',
                         help = 'The parameter file to be used. \nThe options are: param_Charmm.txt (default), param_Martini.txt',
