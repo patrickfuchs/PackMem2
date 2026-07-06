@@ -14,13 +14,15 @@ def get_args():
         Contains all the arguments for the script
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('-l', action='store', dest='prefix', 
+    parser.add_argument('-l', action='store', dest='prefix',
+                        required=True,
                         help='The prefix of PackMem output file names.')
     parser.add_argument('-b', action = 'store', dest = 'start', type=int,
+                        required=True,
                         help = 'The first frame.')
-    parser.add_argument('-e', action = 'store', dest = 'end',
-                        help = 'The number of frames.',
-                        type = int)
+    parser.add_argument('-e', action = 'store', dest = 'end', type = int,
+                        required=True,
+                        help = 'The number of frames.')
     parser.add_argument('-prot', action='store_true', dest='prot', 
                         help='Put if you want to also concatenante Protein files.')
     args = parser.parse_args()
