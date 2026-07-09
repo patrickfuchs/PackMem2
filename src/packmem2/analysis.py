@@ -72,7 +72,7 @@ def fit_decay(x,y, LIMX, LIMY):
         probability of having a certain packing area.
     LIMX : int
         The lowest defect area used for the fit.
-    LIMY : int
+    LIMY : float
         The lowest probability used for the fit
     
     --------------------
@@ -88,7 +88,7 @@ def fit_decay(x,y, LIMX, LIMY):
     FIT = np.polyfit(x, log(y), 1)
     return (FIT)
 
-def block_averaging(vect, nb_block):
+def block_averaging(vect, nb_block, limx, limy):
     """
     Divide the packing data into n blocks.
     
@@ -98,6 +98,10 @@ def block_averaging(vect, nb_block):
         The size of the packing defect.
     nb_block : int
         The number of blocks we want to have.
+    limx : int
+        The lowest defect area used for the fit.
+    limy : float
+        The lowest probability used for the fit.
     
     --------------------
     OUTPUT
@@ -112,11 +116,11 @@ def block_averaging(vect, nb_block):
         x = H[1]+0.5
         x = x[:len(x)-1]
         y = H[0]/sum(H[0])
-        FIT = fit_decay(x, y, args.limx, args.limy)
+        FIT = fit_decay(x, y, limx, limy)
         decays.append(abs(1/FIT[0]))
     return decays
 
-def plot_defect_fit(type, defect, packdef_data, packdef_constants):
+def plot_defect_fit(type, defect, packdef_data, packdef_constants, limx, limy, precision, pdf):
     """
     Compute and plot the fit of the defects distribution.
 
@@ -130,6 +134,12 @@ def plot_defect_fit(type, defect, packdef_data, packdef_constants):
         Contains the sizes of the defects
     packdef_constants: pandas DataFrame
         Will contains the statistics of the defects found in this function
+    limx : int
+        The lowest defect area used for the fit
+    limy : float
+        The lowest probability used for the fit
+    precision : int
+        The precision for writing packdef constants
     
     --------------------
     OUTPUT
@@ -142,7 +152,7 @@ def plot_defect_fit(type, defect, packdef_data, packdef_constants):
     x = np.arange(0, max(packdef_data)-1)
     # nb of observations of a certain defect length
     y = H[0]/sum(H[0])
-    FIT = fit_decay(x,y, args.limx, args.limy)
+    FIT = fit_decay(x,y, limx, limy)
     fit_function = np.poly1d(FIT)
 
     ### Plot for defect fit
@@ -154,8 +164,8 @@ def plot_defect_fit(type, defect, packdef_data, packdef_constants):
     plt.ylabel("Probability")
     plt.xlabel("Defect area ${A^2}$")
     plt.title(f"{defect} {type}")
-    plt.axvline(args.limx, color='gray', linestyle='--')
-    plt.axhline(math.log(args.limy), color='gray', linestyle='-')
+    plt.axvline(limx, color='gray', linestyle='--')
+    plt.axhline(math.log(limy), color='gray', linestyle='-')
     plt.plot(x, fit_function(x), color='red', label='Fit')
     pdf.savefig()  # Save the current figure to the PDF
     plt.close()
@@ -167,14 +177,14 @@ def plot_defect_fit(type, defect, packdef_data, packdef_constants):
     print(f"Results for {defect} {type} defects")
     
     # Compute PackDef distributions with block averaging method, and print results
-    FITS_3blocks=block_averaging(packdef_data, 3)
+    FITS_3blocks=block_averaging(packdef_data, 3, limx, limy)
     for i in range(3):
-        print(f"Using block {i+1}: {round(FITS_3blocks[i],args.precision)} Å\u00b2")
+        print(f"Using block {i+1}: {round(FITS_3blocks[i], precision)} Å\u00b2")
     # Compute the mean of the 3 blocks averages
     inv_decay_block = sum(FITS_3blocks)/len(FITS_3blocks)
     # Compute the standard deviation of the 3 values
     error_inv_decay_block = np.std(FITS_3blocks)
-    print(f"Mean +/- sd on 3 blocks: {round(inv_decay_block,args.precision)} ± {round(error_inv_decay_block,args.precision)} Å\u00b2")
+    print(f"Mean +/- sd on 3 blocks: {round(inv_decay_block, precision)} ± {round(error_inv_decay_block, precision)} Å\u00b2")
 
     # store all the results in the data frame
     packdef_constants.loc["PackDef_cst_global", f"{defect}_{type}"] = global_inv_decay
@@ -186,7 +196,7 @@ def plot_defect_fit(type, defect, packdef_data, packdef_constants):
     
     return packdef_constants
 
-def plot_defect_constants_blocks(type, packdef_constants, errors):
+def plot_defect_constants_blocks(type, packdef_constants, errors, pdf):
     """
     Plot the defect constants of all block and their average.
 
@@ -249,7 +259,7 @@ def get_outliers(dtf_packdef_values, type):
 
     return outliers
 
-def plot_defect_constants(type, packdef_constants, errors):
+def plot_defect_constants(type, packdef_constants, errors, pdf):
     """
     Plot the defects constants for each defect.
 
@@ -314,16 +324,16 @@ def main():
             def_area = pd.read_csv(filename, header=None)[1]
 
             # Plot the fit of the defects distribution
-            packdef_constants = plot_defect_fit(name, defect, def_area, packdef_constants)
+            packdef_constants = plot_defect_fit(name, defect, def_area, packdef_constants, args.limx, args.limy, args.precision, pdf)
     
         # Plot all packdef constants on a single barplot
         # Allows to estimate the relative convergence of the simulation
         errors=packdef_constants.T.error_all_blocks.to_frame('PackDef_cst_all_blocks')
-        plot_defect_constants_blocks(name, packdef_constants, errors)
+        plot_defect_constants_blocks(name, packdef_constants, errors, pdf)
         
         # Plot the final decays + errors computed with block averaging
         # (for each packdef) on a barplot
-        plot_defect_constants(name, packdef_constants, errors.loc[[f'Deep_{name}', f'Shallow_{name}', f'All_{name}'], 'PackDef_cst_all_blocks'])
+        plot_defect_constants(name, packdef_constants, errors.loc[[f'Deep_{name}', f'Shallow_{name}', f'All_{name}'], 'PackDef_cst_all_blocks'], pdf)
     
     if args.prot:
         for name in ["Total_Up", "Total_Lo"]:
@@ -338,20 +348,20 @@ def main():
                 def_area_prot_far = def_area_prot[def_area_prot[1] == "far"][2]
                 
                 # Plot the fit of the defects distribution
-                packdef_constants = plot_defect_fit(f'{name}_close', defect, def_area_prot_close, packdef_constants)
-                packdef_constants = plot_defect_fit(f'{name}_far', defect, def_area_prot_far, packdef_constants)
+                packdef_constants = plot_defect_fit(f'{name}_close', defect, def_area_prot_close, packdef_constants, pdf)
+                packdef_constants = plot_defect_fit(f'{name}_far', defect, def_area_prot_far, packdef_constants, pdf)
             if packdef_constants[[f'Deep_{name}_close', f'Shallow_{name}_close', f'All_{name}_close', f'Deep_{name}_far', f'Shallow_{name}_far', f'All_{name}_far']].isna().all().all():
                 continue
             # Plot all packdef constants on a single barplot
             # Allows to estimate the relative convergence of the simulation
             errors=packdef_constants.T.error_all_blocks.to_frame('PackDef_cst_all_blocks')
-            plot_defect_constants_blocks(f'{name}_close', packdef_constants, errors)
-            plot_defect_constants_blocks(f'{name}_far', packdef_constants, errors)
+            plot_defect_constants_blocks(f'{name}_close', packdef_constants, errors, pdf)
+            plot_defect_constants_blocks(f'{name}_far', packdef_constants, errors, pdf)
             
             # Plot the final decays + errors computed with block averaging
             # (for each packdef) on a barplot
-            plot_defect_constants(f'{name}_close', packdef_constants, errors.loc[[f'Deep_{name}_close', f'Shallow_{name}_close', f'All_{name}_close'], 'PackDef_cst_all_blocks'])
-            plot_defect_constants(f'{name}_far', packdef_constants, errors.loc[[f'Deep_{name}_far', f'Shallow_{name}_far', f'All_{name}_far'], 'PackDef_cst_all_blocks'])
+            plot_defect_constants(f'{name}_close', packdef_constants, errors.loc[[f'Deep_{name}_close', f'Shallow_{name}_close', f'All_{name}_close'], 'PackDef_cst_all_blocks'], pdf)
+            plot_defect_constants(f'{name}_far', packdef_constants, errors.loc[[f'Deep_{name}_far', f'Shallow_{name}_far', f'All_{name}_far'], 'PackDef_cst_all_blocks'], pdf)
 
     # Close the PDF file
     pdf.close()
