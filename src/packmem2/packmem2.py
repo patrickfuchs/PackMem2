@@ -19,13 +19,13 @@ import MDAnalysis as mda
 from MDAnalysis.analysis.leaflet import LeafletFinder
 from scipy.spatial.distance import cdist
 
-from core import arrays as a
-from core import matrix as m
-from core import pdb as pdb
-from core import connected_component as cc
-from core import dict as d
-from core import param as p
-from core import protein as prot
+from packmem2.core import arrays as a
+from packmem2.core import matrix as m
+from packmem2.core import pdb as pdb
+from packmem2.core import connected_component as cc
+from packmem2.core import dict as d
+from packmem2.core import param as p
+from packmem2.core import protein as prot
 
 ##########################################################################################
 def main():

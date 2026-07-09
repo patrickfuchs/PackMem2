@@ -5,7 +5,7 @@
 
 import numpy as np
 
-from core import matrix as m
+from packmem2.core import matrix as m
 
 def get_glyc_lipids(lipid_list, RESNAME_GLYC):
     """
