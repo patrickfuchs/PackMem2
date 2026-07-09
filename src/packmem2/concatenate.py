@@ -14,11 +14,14 @@ def get_args():
         Contains all the arguments for the script
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('-l', action='store', dest='prefix', 
+    parser.add_argument('-l', action='store', dest='prefix',
+                        required=True,
                         help='The prefix of PackMem output file names.')
     parser.add_argument('-b', action = 'store', dest = 'start', type=int,
+                        required=True,
                         help = 'The first frame.')
     parser.add_argument('-e', action = 'store', dest = 'end',
+                        required=True,
                         help = 'The number of frames.',
                         type = int)
     parser.add_argument('-prot', action='store_true', dest='prot', 
@@ -29,7 +32,7 @@ def get_args():
 
 def check_file(filename):
     """
-    Check if are is content in the file.
+    Check if there is content in the file.
 
     --------------------
     INPUT
@@ -49,13 +52,34 @@ def check_file(filename):
                 return True
         return False
 
-def start_file(prefix, suffix):
-    for i in range(args.start, args.end+1):
+def start_file(prefix, suffix, start, end):
+    """
+    Find the first file to read
+
+    --------------------
+    INPUT
+    prefix: string
+        The begining of the file to be read
+    suffix: string
+        The ending of the file to be read
+    start: int
+        The minimum frame number in the filenames
+    end: int
+        The maximum frame number in the filenames
+    
+    --------------------
+    OUTPUT
+    string
+        The first filename to be read
+    int
+        The frame number of the first filename to be read
+    """
+    for i in range(start, end+1):
         if check_file(f"{prefix}{i}{suffix}"):
             filename = f"{prefix}{i}{suffix}"
             return filename, i
 
-def concat_files(prefix, suffix):
+def concat_files(prefix, suffix, start, end):
     """
     Concatenate .txt files from PackMem_prot.py
 
@@ -65,23 +89,27 @@ def concat_files(prefix, suffix):
         The name of the lipid usually but could just be the common name of the outputfiles
     suffix: str
         The end name of the .txt files
+    start: int
+        The minimum frame number in the filenames
+    end: int
+        The maximum frame number in the filenames
     
     --------------------
     OUTPUT
     pandas DataFrame
         Contains the informations in the .txt files
     """
-    filename, start = start_file(prefix, suffix)
+    filename, start = start_file(prefix, suffix, start, end)
     file_concat = pd.read_csv(filename, sep=r'\s+', header=None, skiprows=[0,1])
 
-    for pdbnum in range(start+1, args.end+1):
+    for pdbnum in range(start+1, end+1):
         if check_file(f"{prefix}{pdbnum}{suffix}"):
             file = pd.read_csv(f"{prefix}{pdbnum}{suffix}", sep=r'\s+', header=None, skiprows=[0,1])
             file_concat = pd.concat([file_concat, file], axis=0, ignore_index=True)
 
     return file_concat
 
-def concat_files_prot(prefix, suffix):
+def concat_files_prot(prefix, suffix, start, end):
     """
     Concatenate .txt files from PackMem_prot.py for the protein
 
@@ -91,6 +119,10 @@ def concat_files_prot(prefix, suffix):
         The name of the lipid usually but could just be the common name of the outputfiles
     suffix: str
         The end name of the .txt files
+    start: int
+        The minimum frame number in the filenames
+    end: int
+        The maximum frame number in the filenames
 
     --------------------
     OUTPUT
@@ -102,10 +134,10 @@ def concat_files_prot(prefix, suffix):
     else:
         other_suffix = f"_Up_{suffix[4:]}"
     
-    filename, start = start_file(prefix, suffix)
+    filename, start = start_file(prefix, suffix, start, end)
     file_concat = pd.read_csv(filename, header=None)
     
-    for pdbnum in range(start+1, args.end+1):
+    for pdbnum in range(start+1, end+1):
         if os.path.isfile(f"{prefix}{pdbnum}{suffix}"):
             if check_file(f"{prefix}{pdbnum}{suffix}"):
                 file = pd.read_csv(f"{prefix}{pdbnum}{suffix}", header=None)
@@ -123,26 +155,26 @@ def main():
     """
     args = get_args()
 
-    Total_Up_Deep = concat_files(args.prefix, "_Up_Deep_result.txt")
-    Total_Lo_Deep = concat_files(args.prefix, "_Lo_Deep_result.txt")
-    Total_Up_All = concat_files(args.prefix, "_Up_All_result.txt")
-    Total_Lo_All = concat_files(args.prefix, "_Lo_All_result.txt")
-    Total_Up_Shallow = concat_files(args.prefix, "_Up_Shallow_result.txt")
-    Total_Lo_Shallow = concat_files(args.prefix, "_Lo_Shallow_result.txt")
+    Total_Up_Deep = concat_files(args.prefix, "_Up_Deep_result.txt", args.start, args.end)
+    Total_Lo_Deep = concat_files(args.prefix, "_Lo_Deep_result.txt", args.start, args.end)
+    Total_Up_All = concat_files(args.prefix, "_Up_All_result.txt", args.start, args.end)
+    Total_Lo_All = concat_files(args.prefix, "_Lo_All_result.txt", args.start, args.end)
+    Total_Up_Shallow = concat_files(args.prefix, "_Up_Shallow_result.txt", args.start, args.end)
+    Total_Lo_Shallow = concat_files(args.prefix, "_Lo_Shallow_result.txt", args.start, args.end)
 
     if args.prot:
         if os.path.isfile(f"Prot_{args.prefix}0_Up_All.txt"):
-            Total_Up_Deep_prot = concat_files_prot(f"Prot_{args.prefix}", "_Up_Deep.txt")
-            Total_Up_All_prot = concat_files_prot(f"Prot_{args.prefix}", "_Up_All.txt")
-            Total_Up_Shallow_prot = concat_files_prot(f"Prot_{args.prefix}", "_Up_Shallow.txt")
+            Total_Up_Deep_prot = concat_files_prot(f"Prot_{args.prefix}", "_Up_Deep.txt", args.start, args.end)
+            Total_Up_All_prot = concat_files_prot(f"Prot_{args.prefix}", "_Up_All.txt", args.start, args.end)
+            Total_Up_Shallow_prot = concat_files_prot(f"Prot_{args.prefix}", "_Up_Shallow.txt", args.start, args.end)
             # Save files
             Total_Up_Deep_prot.to_csv("Total_Up_Deep_prot.csv", header=False, index=False)
             Total_Up_All_prot.to_csv("Total_Up_All_prot.csv", header=False, index=False)
             Total_Up_Shallow_prot.to_csv("Total_Up_Shallow_prot.csv", header=False, index=False)
         elif os.path.isfile(f"Prot_{args.prefix}0_Lo_All.txt"):
-            Total_Lo_Deep_prot = concat_files_prot(f"Prot_{args.prefix}", "_Lo_Deep.txt")
-            Total_Lo_All_prot = concat_files_prot(f"Prot_{args.prefix}", "_Lo_All.txt")
-            Total_Lo_Shallow_prot = concat_files_prot(f"Prot_{args.prefix}", "_Lo_Shallow.txt")
+            Total_Lo_Deep_prot = concat_files_prot(f"Prot_{args.prefix}", "_Lo_Deep.txt", args.start, args.end)
+            Total_Lo_All_prot = concat_files_prot(f"Prot_{args.prefix}", "_Lo_All.txt", args.start, args.end)
+            Total_Lo_Shallow_prot = concat_files_prot(f"Prot_{args.prefix}", "_Lo_Shallow.txt", args.start, args.end)
             # Save files
             Total_Lo_Deep_prot.to_csv("Total_Lo_Deep_prot.csv", header=False, index=False)
             Total_Lo_All_prot.to_csv("Total_Up_All_prot.csv", header=False, index=False)
