@@ -12,16 +12,18 @@ def get_args():
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('-mol', action = 'store', dest = 'mol',
-                    help = 'the .ipt file for the molecule')
+                        required = True,
+                        help = 'the .ipt file for the molecule')
     parser.add_argument('-ff', action = 'store', dest = 'ff',
-                    help = 'forcefield.itp')
+                        required = True,
+                        help = 'forcefield.itp')
     parser.add_argument('-o', action = 'store', dest = 'output',
-                    default = 'vdw_out',
-                    help = 'The name of the output .txt file')
+                        default = 'vdw_out',
+                        help = 'The name of the output .txt file')
     parser.add_argument('-martini', action = 'store_true', dest = 'martini',
-                    help = 'If you want to compute the radii with the MARTINI forcefield')
+                        help = 'If you want to compute the radii with the MARTINI forcefield')
     parser.add_argument('-martini3', action = 'store_true', dest = 'martini3',
-                    help = 'If you specificaly have the MARTINI3 force field')
+                        help = 'If you specificaly have the MARTINI3 force field')
     args = parser.parse_args()
     return args
 

@@ -29,11 +29,14 @@ def get_args():
         Contains all the arguments for the script
     """
     parser = argparse.ArgumentParser(description = 'Arguments for PackMem_prot.py')
-    parser.add_argument('-f', action='store', dest='traj', required=True,
+    parser.add_argument('-f', action='store', dest='traj',
+                        required=True,
                         help = 'Trajectory file (.xtc)')
-    parser.add_argument('-s', action='store', dest='topo', required=True,
+    parser.add_argument('-s', action='store', dest='topo',
+                        required=True,
                         help = 'Topology file (.gro)')
-    parser.add_argument('-l', action='store', dest='lipid', required=True,
+    parser.add_argument('-l', action='store', dest='lipid',
+                        required=True,
                         help = 'Lipid name in the .gro file')
     parser.add_argument('-b', action='store', dest='start', type=int,
                         default = 0,

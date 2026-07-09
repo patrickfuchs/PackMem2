@@ -20,10 +20,9 @@ def get_args():
     parser.add_argument('-b', action = 'store', dest = 'start', type=int,
                         required=True,
                         help = 'The first frame.')
-    parser.add_argument('-e', action = 'store', dest = 'end',
+    parser.add_argument('-e', action = 'store', dest = 'end', type = int,
                         required=True,
-                        help = 'The number of frames.',
-                        type = int)
+                        help = 'The number of frames.')
     parser.add_argument('-prot', action='store_true', dest='prot', 
                         help='Put if you want to also concatenante Protein files.')
     args = parser.parse_args()
