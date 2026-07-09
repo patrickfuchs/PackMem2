@@ -17,6 +17,7 @@ dependencies = [
     "argparse>=1.4.0",
     "matplotlib>=3.9.4",
     "mdanalysis>=2.7.0",
+    "networkx>=3.2.1",
     "numpy>=1.26.4",
     "pandas>=2.3.3",
 ]
