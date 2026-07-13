@@ -44,7 +44,7 @@ def get_args():
     parser.add_argument('-e', action='store', dest='end', type=int,
                         default = None,
                         help = 'Frame to end the analysis (default: None)')
-    parser.add_argument('-r', action='store', dest='filesrad',
+    parser.add_argument('-r', action='store', dest='radiiFile',
                         default = 'vdw_radii_Charmm.txt',
                         help = 'File for the atom radius (default: vdw_radii_Charmm.txt)')
     parser.add_argument('-p', action='store', dest='paramFile',
@@ -69,7 +69,7 @@ def get_args():
     file_present(args.traj)
     file_present(args.topo)
     file_present(args.paramFile)
-    file_present(args.filesrad)    
+    file_present(args.radiiFile)    
 
     # Check that the variable d is positive
     if args.dist_suppl_Z < 0.0 :

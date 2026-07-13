@@ -82,7 +82,7 @@ def main():
     # rad = {'ALA N': 1.85, 'ALA HN': 0.22, 'ALA HT1': 0.22, etc}
     # ali = {'ALA N': 'n', 'ALA HN': 'n', 'ALA HT1': 'n', etc }
     # for the amino acids then the lipids
-    radius, aliphatic = p.set_rad_ali(args.filesrad)
+    radius, aliphatic = p.set_rad_ali(args.radiiFile)
 
 
     ######### LOAD UNIVERSE  #########
