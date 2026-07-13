@@ -6,6 +6,7 @@
 import argparse
 import os
 import numpy as np
+from pathlib import Path
 
 def build_args():
     """
@@ -63,9 +64,8 @@ def file_present(filename):
     filename: str
         The name if the file to test the presence of
     """
-    if not os.path.isfile(filename):
-        raise FileNotFoundError(f"ERROR : file '{filename}' not found.")
-
+    if not Path(filename).is_file():
+        raise FileNotFoundError(f"ERROR: file '{filename}' not found.")
 def get_args_packmem2():
     """
     Get the arguments the packmem2 and check that the inputfiles are valid.
