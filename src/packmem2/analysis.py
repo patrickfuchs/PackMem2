@@ -300,19 +300,17 @@ def plot_defect_constants(type, packdef_constants, errors, pdf):
     pdf.savefig()  # Save the current figure to the PDF
     plt.close()
 
-def main():
+def launch(output, prot, limx, limy, precision):
     """
     Analyse the defect size computed by PackMem2
     """
-    # Get arguments
-    args = get_arguments()
     # Open a pdf device
     # Create a single PDF file
-    pdf = PdfPages(f'{args.output}.pdf')
+    pdf = PdfPages(f'{output}.pdf')
 
     columns_dtf =  ['Deep_Total', 'Shallow_Total', 'All_Total', 'Deep_Total_Up', 'Shallow_Total_Up', 'All_Total_Up', 'Deep_Total_Lo', 'Shallow_Total_Lo', 'All_Total_Lo']
     index_dtf = ["PackDef_cst_global", "PackDef_cst_block1", "PackDef_cst_block2", "PackDef_cst_block3","PackDef_cst_all_blocks","error_all_blocks"]
-    if args.prot:
+    if prot:
         columns_dtf += ['Deep_Total_Up_close', 'Shallow_Total_Up_close', 'All_Total_Up_close', 'Deep_Total_Up_far', 'Shallow_Total_Up_far', 'All_Total_Up_far', 'Deep_Total_Lo_close', 'Shallow_Total_Lo_close', 'All_Total_Lo_close', 'Deep_Total_Lo_far', 'Shallow_Total_Lo_far', 'All_Total_Lo_far']
     # Initialize a data frame to store packdef constants + errors
     packdef_constants = pd.DataFrame(columns = columns_dtf, index = index_dtf)
@@ -324,7 +322,7 @@ def main():
             def_area = pd.read_csv(filename, header=None)[1]
 
             # Plot the fit of the defects distribution
-            packdef_constants = plot_defect_fit(name, defect, def_area, packdef_constants, args.limx, args.limy, args.precision, pdf)
+            packdef_constants = plot_defect_fit(name, defect, def_area, packdef_constants, limx, limy, precision, pdf)
     
         # Plot all packdef constants on a single barplot
         # Allows to estimate the relative convergence of the simulation
@@ -335,7 +333,7 @@ def main():
         # (for each packdef) on a barplot
         plot_defect_constants(name, packdef_constants, errors.loc[[f'Deep_{name}', f'Shallow_{name}', f'All_{name}'], 'PackDef_cst_all_blocks'], pdf)
     
-    if args.prot:
+    if prot:
         for name in ["Total_Up", "Total_Lo"]:
             # Now loop over the three default types
             for defect in ["Deep","Shallow","All"]:
@@ -365,6 +363,12 @@ def main():
 
     # Close the PDF file
     pdf.close()
+
+def main():
+    # Get arguments
+    args = get_arguments()
+
+    launch(args.output, args.prot, args.limx, args.limy, args.precision)
 
 if __name__=="__main__":
     main()

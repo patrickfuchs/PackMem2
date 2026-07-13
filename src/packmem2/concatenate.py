@@ -23,7 +23,7 @@ def get_args():
     parser.add_argument('-e', action = 'store', dest = 'end', type = int,
                         required=True,
                         help = 'The number of frames.')
-    parser.add_argument('-prot', action='store_true', dest='prot', 
+    parser.add_argument('-prot', action='store_true', dest='protein', 
                         help='Put if you want to also concatenante Protein files.')
     args = parser.parse_args()
 
@@ -148,32 +148,30 @@ def concat_files_prot(prefix, suffix, start, end):
 
     return file_concat
 
-def main():
+def launch(prefix, start, end, prot):
     """
     Launch the concatenation of the PackMem2 produced files
     """
-    args = get_args()
+    Total_Up_Deep = concat_files(prefix, "_Up_Deep_result.txt", start, end)
+    Total_Lo_Deep = concat_files(prefix, "_Lo_Deep_result.txt", start, end)
+    Total_Up_All = concat_files(prefix, "_Up_All_result.txt", start, end)
+    Total_Lo_All = concat_files(prefix, "_Lo_All_result.txt", start, end)
+    Total_Up_Shallow = concat_files(prefix, "_Up_Shallow_result.txt", start, end)
+    Total_Lo_Shallow = concat_files(prefix, "_Lo_Shallow_result.txt", start, end)
 
-    Total_Up_Deep = concat_files(args.prefix, "_Up_Deep_result.txt", args.start, args.end)
-    Total_Lo_Deep = concat_files(args.prefix, "_Lo_Deep_result.txt", args.start, args.end)
-    Total_Up_All = concat_files(args.prefix, "_Up_All_result.txt", args.start, args.end)
-    Total_Lo_All = concat_files(args.prefix, "_Lo_All_result.txt", args.start, args.end)
-    Total_Up_Shallow = concat_files(args.prefix, "_Up_Shallow_result.txt", args.start, args.end)
-    Total_Lo_Shallow = concat_files(args.prefix, "_Lo_Shallow_result.txt", args.start, args.end)
-
-    if args.prot:
-        if os.path.isfile(f"Prot_{args.prefix}0_Up_All.txt"):
-            Total_Up_Deep_prot = concat_files_prot(f"Prot_{args.prefix}", "_Up_Deep.txt", args.start, args.end)
-            Total_Up_All_prot = concat_files_prot(f"Prot_{args.prefix}", "_Up_All.txt", args.start, args.end)
-            Total_Up_Shallow_prot = concat_files_prot(f"Prot_{args.prefix}", "_Up_Shallow.txt", args.start, args.end)
+    if prot:
+        if os.path.isfile(f"Prot_{prefix}0_Up_All.txt"):
+            Total_Up_Deep_prot = concat_files_prot(f"Prot_{prefix}", "_Up_Deep.txt", start, end)
+            Total_Up_All_prot = concat_files_prot(f"Prot_{prefix}", "_Up_All.txt", start, end)
+            Total_Up_Shallow_prot = concat_files_prot(f"Prot_{prefix}", "_Up_Shallow.txt", start, end)
             # Save files
             Total_Up_Deep_prot.to_csv("Total_Up_Deep_prot.csv", header=False, index=False)
             Total_Up_All_prot.to_csv("Total_Up_All_prot.csv", header=False, index=False)
             Total_Up_Shallow_prot.to_csv("Total_Up_Shallow_prot.csv", header=False, index=False)
-        elif os.path.isfile(f"Prot_{args.prefix}0_Lo_All.txt"):
-            Total_Lo_Deep_prot = concat_files_prot(f"Prot_{args.prefix}", "_Lo_Deep.txt", args.start, args.end)
-            Total_Lo_All_prot = concat_files_prot(f"Prot_{args.prefix}", "_Lo_All.txt", args.start, args.end)
-            Total_Lo_Shallow_prot = concat_files_prot(f"Prot_{args.prefix}", "_Lo_Shallow.txt", args.start, args.end)
+        elif os.path.isfile(f"Prot_{prefix}0_Lo_All.txt"):
+            Total_Lo_Deep_prot = concat_files_prot(f"Prot_{prefix}", "_Lo_Deep.txt", start, end)
+            Total_Lo_All_prot = concat_files_prot(f"Prot_{prefix}", "_Lo_All.txt", start, end)
+            Total_Lo_Shallow_prot = concat_files_prot(f"Prot_{prefix}", "_Lo_Shallow.txt", start, end)
             # Save files
             Total_Lo_Deep_prot.to_csv("Total_Lo_Deep_prot.csv", header=False, index=False)
             Total_Lo_All_prot.to_csv("Total_Up_All_prot.csv", header=False, index=False)
@@ -181,7 +179,7 @@ def main():
         # Remove the files
         files = os.listdir('.')
         for file in files:
-            if file.startswith(f"Prot_{args.prefix}"):
+            if file.startswith(f"Prot_{prefix}"):
                 file_path = os.path.join('.', file)
                 os.remove(file_path)
         
@@ -203,13 +201,19 @@ def main():
     Total_Shallow.to_csv("Total_Shallow.csv", header=False, index=False)
 
     # Remove the files
-    for pdbnum in range(args.start, args.end+1):
-        os.remove(f"{args.prefix}{pdbnum}_Up_Deep_result.txt")
-        os.remove(f"{args.prefix}{pdbnum}_Lo_Deep_result.txt")
-        os.remove(f"{args.prefix}{pdbnum}_Up_All_result.txt")
-        os.remove(f"{args.prefix}{pdbnum}_Lo_All_result.txt")
-        os.remove(f"{args.prefix}{pdbnum}_Up_Shallow_result.txt")
-        os.remove(f"{args.prefix}{pdbnum}_Lo_Shallow_result.txt")
+    for pdbnum in range(start, end+1):
+        os.remove(f"{prefix}{pdbnum}_Up_Deep_result.txt")
+        os.remove(f"{prefix}{pdbnum}_Lo_Deep_result.txt")
+        os.remove(f"{prefix}{pdbnum}_Up_All_result.txt")
+        os.remove(f"{prefix}{pdbnum}_Lo_All_result.txt")
+        os.remove(f"{prefix}{pdbnum}_Up_Shallow_result.txt")
+        os.remove(f"{prefix}{pdbnum}_Lo_Shallow_result.txt")
+
+def main():
+    args = get_args()
+
+    launch(args.prefix, args.start, args.end, args.protein)
+
 
 if __name__=="__main__":
     main()

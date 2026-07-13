@@ -28,7 +28,7 @@ from packmem2.core import param as p
 from packmem2.core import protein as prot
 
 ##########################################################################################
-def main():
+def launch(topo, traj, lipid, start, end, paramFile, radiiFile, indexFile, outputname, dist_suppl_Z, protein, pdbout):
     """
     Python
     Script to compute Packing defect in flat bilayers
@@ -67,28 +67,21 @@ def main():
             3,close,6
     """
     start_time = time.time()
-    ####### PARAMETERS and INPUT #####
-    try:
-        args = p.get_args()
-
-    except (Exception, FileNotFoundError) as error:
-        # Don't print Traceback 
-        sys.exit(error)
-    
+       
 
     ######### READ PARAM FILES #########
     # RESNAME_GLYC = {'DOP': 'C2', 'DOE': 'C2', 'DPP': 'C2', etc}
-    RESNAME_GLYC = p.set_params(args.paramFile)
+    RESNAME_GLYC = p.set_params(paramFile)
     # rad = {'ALA N': 1.85, 'ALA HN': 0.22, 'ALA HT1': 0.22, etc}
     # ali = {'ALA N': 'n', 'ALA HN': 'n', 'ALA HT1': 'n', etc }
     # for the amino acids then the lipids
-    radius, aliphatic = p.set_rad_ali(args.radiiFile)
+    radius, aliphatic = p.set_rad_ali(radiiFile)
 
 
     ######### LOAD UNIVERSE  #########
-    u = mda.Universe(args.topo, args.traj)
+    u = mda.Universe(topo, traj)
     # If multiple lipids
-    lipid_names = args.lipid.replace('_', ' ')
+    lipid_names = lipid.replace('_', ' ')
     # select the lipids in system
     lipids = u.select_atoms(f"resname {lipid_names}")
     res_names = list(set(lipids.resnames))
@@ -97,18 +90,18 @@ def main():
     # Get the glycerol atom name(s)
     glyc_mb = a.get_glyc_lipids(res_names, RESNAME_GLYC)
     # If no index file seperating the leaflets
-    if args.indexFile == None:
+    if indexFile == None:
         # Create lists of the residue number  for upper and lower leaflets
         L = LeafletFinder(lipids, f'name {glyc_mb}')
         upper_leaflet_ori = np.sort(np.array(list(set(L.groups(0).resids))))
         lower_leaflet_ori = np.sort(np.array(list(set(L.groups(1).resids))))
     else:
-        upper_leaflet_ori, lower_leaflet_ori = p.read_ndx(args.indexFile)
+        upper_leaflet_ori, lower_leaflet_ori = p.read_ndx(indexFile)
 
 
     ############################## Main loop ##################################
-    for ts in u.trajectory[args.start:args.end+1]:
-        print(f"Frame {ts.frame} {f'/ {args.end}':>5}", end='\r', flush=True)
+    for ts in u.trajectory[start:end+1]:
+        print(f"Frame {ts.frame} {f'/ {end}':>5}", end='\r', flush=True)
         # select all atoms in systems
         system = u.select_atoms(f"resname {lipid_names} or protein")
 
@@ -122,7 +115,7 @@ def main():
             print("Please check that you only give to PackMem your membrane (+ protein)")
             sys.exit()
         
-        if args.protein:
+        if protein:
             protein = u.select_atoms(f"protein")
             zpos_prot = protein.positions[:,2]
 
@@ -161,8 +154,8 @@ def main():
         ymin, ymax, ymean = a.min_max_mean(y_atoms)
         zmin, zmax, zmean = a.min_max_mean(z_atoms)
         
-        upper_arrayZ = a.create_arrayZ(system.residues, upper_leaflet, RESNAME_GLYC, args.dist_suppl_Z, zmax)
-        lower_arrayZ = a.create_arrayZ(system.residues, lower_leaflet, RESNAME_GLYC, args.dist_suppl_Z, zmin, up=False)
+        upper_arrayZ = a.create_arrayZ(system.residues, upper_leaflet, RESNAME_GLYC, dist_suppl_Z, zmax)
+        lower_arrayZ = a.create_arrayZ(system.residues, lower_leaflet, RESNAME_GLYC, dist_suppl_Z, zmin, up=False)
 
         # Build an array from xmin-1 to xmax+1 every 1.0
         arrayX = a.create_array(int(xmin-1), int(xmax+2), m.SIZE)
@@ -319,23 +312,23 @@ def main():
         ####################  Output text file  #################
         # Compute the total area of the matrix
         total_area = len(arrayX) * len(arrayY)
-        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}_Up_Deep_result", area_defectsUp_Deep, 
+        pdb.outputTXT_defects(f"{outputname}{ts.frame}_Up_Deep_result", area_defectsUp_Deep, 
                             firstCoorUp_defects_Deep, total_area, area_edgeUp_Deep, arrayX, arrayY)
-        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}_Lo_Deep_result", area_defectsLo_Deep, 
+        pdb.outputTXT_defects(f"{outputname}{ts.frame}_Lo_Deep_result", area_defectsLo_Deep, 
                             firstCoorLo_defects_Deep, total_area, area_edgeLo_Deep, arrayX, arrayY)
-        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}_Up_Shallow_result", area_defectsUp_Shallow, 
+        pdb.outputTXT_defects(f"{outputname}{ts.frame}_Up_Shallow_result", area_defectsUp_Shallow, 
                             firstCoorUp_defects_Shallow, total_area, area_edgeUp_Shallow, arrayX, arrayY)
-        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}_Lo_Shallow_result", area_defectsLo_Shallow, 
+        pdb.outputTXT_defects(f"{outputname}{ts.frame}_Lo_Shallow_result", area_defectsLo_Shallow, 
                             firstCoorLo_defects_Shallow, total_area, area_edgeLo_Shallow, arrayX, arrayY)
-        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}_Up_All_result", area_defectsUp_All, 
+        pdb.outputTXT_defects(f"{outputname}{ts.frame}_Up_All_result", area_defectsUp_All, 
                             firstCoorUp_defects_All, total_area, area_edgeUp_All, arrayX, arrayY)
-        pdb.outputTXT_defects(f"{args.outputname}{ts.frame}_Lo_All_result", area_defectsLo_All, 
+        pdb.outputTXT_defects(f"{outputname}{ts.frame}_Lo_All_result", area_defectsLo_All, 
                             firstCoorLo_defects_All, total_area, area_edgeLo_All, arrayX, arrayY)
 
 
         ####################  Output PDB files  #################
         # final matrix values PD (X,Y) with Z cooresponding to the max(Upper/lowerZlevel)
-        if args.pdbout :
+        if pdbout :
             # Get the max/min of the z_coord+1
             valZmax=float(d.max_value_dict(upper_arrayZ))
             valZmin=float(d.min_value_dict(lower_arrayZ))
@@ -343,32 +336,32 @@ def main():
             # To ignore the warnings when writing a PDB
             warnings.filterwarnings("ignore", category=UserWarning)
             # Write the leaflets into a PDB
-            u.select_atoms(f"resid {upper_leaflet[0]}:{upper_leaflet[-1]}").write(f"{args.outputname}{ts.frame}_Upper_leaflet.pdb")
-            u.select_atoms(f"resid {lower_leaflet[0]}:{lower_leaflet[-1]}").write(f"{args.outputname}{ts.frame}_Lower_leaflet.pdb")
+            u.select_atoms(f"resid {upper_leaflet[0]}:{upper_leaflet[-1]}").write(f"{outputname}{ts.frame}_Upper_leaflet.pdb")
+            u.select_atoms(f"resid {lower_leaflet[0]}:{lower_leaflet[-1]}").write(f"{outputname}{ts.frame}_Lower_leaflet.pdb")
 
             # Write the Matrix (each cell) into a PDB
-            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}_MatrixUp", ts.frame,
+            pdb.outputPDB_Total_matrix(f"{outputname}{ts.frame}_MatrixUp", ts.frame,
                                     arrayX, arrayY, valZmax, Matrix_Up)
-            pdb.outputPDB_Total_matrix(f"{args.outputname}{ts.frame}_MatrixLo", ts.frame,
+            pdb.outputPDB_Total_matrix(f"{outputname}{ts.frame}_MatrixLo", ts.frame,
                                     arrayX, arrayY, valZmin, Matrix_Lo)
             
             # Write the defects into a PDB
-            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}_DefectsUp_Deep", ts.frame,
+            pdb.outputPDB_defects(f"{outputname}{ts.frame}_DefectsUp_Deep", ts.frame,
                                 arrayX, arrayY, valZmax, MatrixUp_labels_Deep, edge_labelsUp_Deep)
-            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}_DefectsLo_Deep", ts.frame,
+            pdb.outputPDB_defects(f"{outputname}{ts.frame}_DefectsLo_Deep", ts.frame,
                                 arrayX, arrayY, valZmin, MatrixLo_labels_Deep, edge_labelsLo_Deep)
-            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}_DefectsUp_Shallow", ts.frame,
+            pdb.outputPDB_defects(f"{outputname}{ts.frame}_DefectsUp_Shallow", ts.frame,
                                 arrayX, arrayY, valZmax, MatrixUp_labels_Shallow, edge_labelsUp_Shallow)
-            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}_DefectsLo_Shallow", ts.frame,
+            pdb.outputPDB_defects(f"{outputname}{ts.frame}_DefectsLo_Shallow", ts.frame,
                                 arrayX, arrayY, valZmin, MatrixLo_labels_Shallow, edge_labelsLo_Shallow)
-            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}_DefectsUp_All", ts.frame,
+            pdb.outputPDB_defects(f"{outputname}{ts.frame}_DefectsUp_All", ts.frame,
                                 arrayX, arrayY, valZmax, MatrixUp_labels_All, edge_labelsUp_All)
-            pdb.outputPDB_defects(f"{args.outputname}{ts.frame}_DefectsLo_All", ts.frame,
+            pdb.outputPDB_defects(f"{outputname}{ts.frame}_DefectsLo_All", ts.frame,
                                 arrayX, arrayY, valZmin, MatrixLo_labels_All, edge_labelsLo_All)
         
 
         ####################  Distance from the protein  #################
-        if args.protein :
+        if protein :
             # Select only the protein
             protein = u.select_atoms("protein")
             pos_prot = protein.positions
@@ -412,9 +405,9 @@ def main():
 
                 # Write the result in a text file
                 # format : label,dist_group,area
-                prot.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Up_Deep", DefectsUp_labels_group_Deep, area_defectsUp_Deep)
-                prot.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Up_Shallow", DefectsUp_labels_group_Shallow, area_defectsUp_Shallow)
-                prot.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Up_All", DefectsUp_labels_group_All, area_defectsUp_All)
+                prot.outputTXT_defects_prot(f"Prot_{outputname}{ts.frame}_Up_Deep", DefectsUp_labels_group_Deep, area_defectsUp_Deep)
+                prot.outputTXT_defects_prot(f"Prot_{outputname}{ts.frame}_Up_Shallow", DefectsUp_labels_group_Shallow, area_defectsUp_Shallow)
+                prot.outputTXT_defects_prot(f"Prot_{outputname}{ts.frame}_Up_All", DefectsUp_labels_group_All, area_defectsUp_All)
 
             # If there are proteins on the lower leaflet
             elif len(np.argwhere(MatrixLo_prot_All > 0)) > 0:
@@ -430,9 +423,9 @@ def main():
                 DefectsLo_labels_group_Shallow = prot.assign_dist_group(coor_prot_edgesLo_Shallow, coor_label_edgesLo_Shallow, 100)
                 DefectsLo_labels_group_All = prot.assign_dist_group(coor_prot_edgesLo_All, coor_label_edgesLo_All, 100)
 
-                prot.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Lo_Deep", DefectsLo_labels_group_Deep, area_defectsLo_Deep)
-                prot.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Lo_Shallow", DefectsLo_labels_group_Shallow, area_defectsLo_Shallow)
-                prot.outputTXT_defects_prot(f"Prot_{args.outputname}{ts.frame}_Lo_All", DefectsLo_labels_group_All, area_defectsLo_All)
+                prot.outputTXT_defects_prot(f"Prot_{outputname}{ts.frame}_Lo_Deep", DefectsLo_labels_group_Deep, area_defectsLo_Deep)
+                prot.outputTXT_defects_prot(f"Prot_{outputname}{ts.frame}_Lo_Shallow", DefectsLo_labels_group_Shallow, area_defectsLo_Shallow)
+                prot.outputTXT_defects_prot(f"Prot_{outputname}{ts.frame}_Lo_All", DefectsLo_labels_group_All, area_defectsLo_All)
     
     print("-- Analysis over --")
     ran_time = round((time.time() - start_time)/60, 2)
@@ -442,6 +435,20 @@ def main():
         print(f"-- Ran for {ran_time} minute(s) --")
     else:
         print(f"-- Ran for {round((ran_time / 60), 2)} hour(s) --")
+
+
+def main():
+    ####### PARAMETERS and INPUT #####
+    try:
+        args = p.get_args_packmem2()
+
+    except (Exception, FileNotFoundError) as error:
+        # Don't print Traceback 
+        sys.exit(error)
+
+    launch(args.topo, args.traj, args.lipid, args.start, args.end,\
+           args.paramFile, args.radiiFile, args.indexFile,\
+           args.outputname, args.dist_suppl_Z, args.protein, args.pdbout)
 
 if __name__ == '__main__':
     main()
