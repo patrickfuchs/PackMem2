@@ -1,16 +1,12 @@
 import pytest
 import sys
-import os
 import numpy as np
 
-# Add the parent rep to the sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-
-from bin import param as p
+import packmem2.core.param as p
 
 def test_file_present():
     # Test if file present
-    filename_OK = "src/PackMem_prot.py"
+    filename_OK = "src/packmem2/packmem2.py"
     p.file_present(str(filename_OK))
 
     # Test if file absent

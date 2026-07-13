@@ -2,14 +2,7 @@ import pytest
 import numpy as np
 import MDAnalysis as mda
 
-import sys
-import os
-
-# Add the parent rep to the sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-
-
-from  bin import arrays as a
+import packmem2.core.arrays as a
 
 def test_get_glyc_lipids():
     glycerol = {'DOP': 'C2', 'DOE': 'C2', 'DPP': 'C2'}

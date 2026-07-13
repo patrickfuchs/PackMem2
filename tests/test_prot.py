@@ -1,13 +1,7 @@
-import sys
-import os
 import numpy as np
 import MDAnalysis as mda
 
-# Add the parent rep to the sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-
-
-from bin import protein as prot
+import packmem2.core.protein as prot
 
 def test_find_protein():
     n_atoms = 2
