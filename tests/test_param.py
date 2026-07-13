@@ -14,7 +14,7 @@ def test_file_present():
     with pytest.raises(FileNotFoundError):
         p.file_present(str(filename_NO))
 
-def test_get_args(monkeypatch, tmp_path):
+def test_get_args_packmem2(monkeypatch, tmp_path):
     # Create tmp files
     traj = tmp_path / "traj.xtc"
     topo = tmp_path / "topo.gro"
@@ -32,17 +32,22 @@ def test_get_args(monkeypatch, tmp_path):
             "-f", str(traj),
             "-s", str(topo),
             "-l", "DPPC",
+            "-e", "10",
             "-p", str(param),
             "-r", str(radii),
             "-d", "1.0",
             "-prot"
         ]
     )
-    args = p.get_args()
+    args = p.get_args_packmem2()
     assert args.traj == str(traj)
     assert args.topo == str(topo)
     assert args.lipid == "DPPC"
+    assert args.start == 0
+    assert args.end == 10
+    assert args.outputname == "output"
     assert args.dist_suppl_Z == 1.0
+    assert args.pdbout is False
     assert args.protein is True
 
     ## TEST NO ##
@@ -53,14 +58,46 @@ def test_get_args(monkeypatch, tmp_path):
             "-f", str(traj),
             "-s", str(topo),
             "-l", "DPPC",
+            "-e", "10",
             "-p", str(param),
             "-r", str(radii),
             "-d", "-1.0",
         ]
     )
     with pytest.raises(Exception) as exc_info:
-        p.get_args()
+        p.get_args_packmem2()
     assert "must be > 0.0" in str(exc_info.value)
+
+def test_get_args_launch_packmem2(monkeypatch, tmp_path):
+    # Create tmp files
+    traj = tmp_path / "traj.xtc"
+    topo = tmp_path / "topo.gro"
+    param = tmp_path / "param_Charmm.txt"
+    radii = tmp_path / "vdw_radii_Charmm.txt"
+    for f in [traj, topo, param, radii]:
+        f.write_text("dummy content")
+
+    ## TEST OK ##
+    # Simulate the corect arguments
+    monkeypatch.setattr(
+        sys, "argv",
+        [
+            "prog",
+            "-f", str(traj),
+            "-s", str(topo),
+            "-l", "DPPC",
+            "-e", "10",
+            "-p", str(param),
+            "-r", str(radii),
+            "-d", "1.0",
+            "-prot"
+        ]
+    )
+    args = p.get_args_launch_packmem2()
+    assert args.cores == 1
+    assert args.precision == 2
+    assert args.limx == 15
+    assert args.limy == 1e-4
 
 def test_dict_2columns():
     list_str = ["DOPC C2", "DMPG C2", "POPC C2"]

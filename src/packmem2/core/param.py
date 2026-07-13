@@ -7,21 +7,9 @@ import argparse
 import os
 import numpy as np
 
-def file_present(filename):
+def build_args():
     """
-    Check if the file exists.
-
-    --------------------
-    INPUT
-    filename: str
-        The name if the file to test the presence of
-    """
-    if not os.path.isfile(filename):
-        raise FileNotFoundError(f"ERROR : file '{filename}' not found.")
-
-def get_args():
-    """
-    Get the arguments for the script and check that the inputfiles are valid.
+    Get the arguments for launch_packmem2 and packmem2.
 
     --------------------
     OUTPUT
@@ -37,19 +25,20 @@ def get_args():
                         help = 'Topology file (.gro)')
     parser.add_argument('-l', action='store', dest='lipid',
                         required=True,
-                        help = 'Lipid name in the .gro file')
+                        help = 'Lipid name(s) in the .gro file.. If multiple, seperate them with _')
     parser.add_argument('-b', action='store', dest='start', type=int,
                         default = 0,
                         help = 'Frame to start the analysis (default: 0)')
     parser.add_argument('-e', action='store', dest='end', type=int,
+                        required=True,
                         default = None,
                         help = 'Frame to end the analysis (default: None)')
     parser.add_argument('-r', action='store', dest='radiiFile',
                         default = 'vdw_radii_Charmm.txt',
-                        help = 'File for the atom radius (default: vdw_radii_Charmm.txt)')
+                        help = 'File for the atom radii.\nThe options are: vdw_radii_Charmm.txt (default), vdw_radii_Martini2.txt, vdw_radii_Martini2P.txt and vdw_radii_Martini3.txt')
     parser.add_argument('-p', action='store', dest='paramFile',
                         default = 'param_Charmm.txt',
-                        help = 'File for lipid parameters (default: param_Charmm.txt)')
+                        help = 'File for lipid parameters.\nThe options are: param_Charmm.txt (default), param_Martini.txt')
     parser.add_argument('-o', action='store', dest='outputname',
                         default = 'output',
                         help = 'Name for output file (default: output)')
@@ -62,6 +51,32 @@ def get_args():
                         help = 'Get .pdb outputs of the packing defects')
     parser.add_argument('-prot', dest = 'protein', action = 'store_true',
                         help = 'Analyse the packing defects close/far of the protein')
+    
+    return parser
+
+def file_present(filename):
+    """
+    Check if the file exists.
+
+    --------------------
+    INPUT
+    filename: str
+        The name if the file to test the presence of
+    """
+    if not os.path.isfile(filename):
+        raise FileNotFoundError(f"ERROR : file '{filename}' not found.")
+
+def get_args_packmem2():
+    """
+    Get the arguments the packmem2 and check that the inputfiles are valid.
+
+    --------------------
+    OUTPUT
+    parser.parse_args
+        Contains all the arguments for packmem2
+    """
+    # Get the argument parser
+    parser = build_args()
                         
     args = parser.parse_args()
 
@@ -75,6 +90,32 @@ def get_args():
     if args.dist_suppl_Z < 0.0 :
         raise Exception("ERROR : The distance for the -d option must be > 0.0")
     
+    return args
+
+def get_args_launch_packmem2():
+    """
+    Get the arguments for launch_packmem2 and check that the inputfiles are valid.
+
+    --------------------
+    OUTPUT
+    parser.parse_args
+        Contains all the arguments for launch_packmem2
+    """
+    parser = build_args()
+    parser.add_argument('-c', action = 'store', dest = 'cores',
+                        help = 'The number of cores you want the script to work on',
+                        default = 1, type = int)
+    parser.add_argument('-prec', action = 'store', dest = 'precision',
+                        type=int, default=2,
+                        help = 'The precision for writing packdef constants (nb of decimals) in the output. Default = 2')
+    parser.add_argument('-lx', action = 'store', dest = 'limx',
+                        type=int, default=15,
+                        help = 'The lowest defect area used for the fit (we recommand not to touch to this value). Default = 15')
+    parser.add_argument('-ly', action = 'store', dest = 'limy',
+                        type=float, default=1e-4,
+                        help = 'The lowest probability used for the fit (we recommand not to touch to this value). Default = 1e-4')
+    
+    args = parser.parse_args()
     return args
 
 def read_file(filename):
