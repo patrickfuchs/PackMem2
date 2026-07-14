@@ -10,8 +10,6 @@ def main():
     Launch the different python scripts for PackMem2
     """
     args = p.get_args_launch_packmem2()
-    path = sys.argv[0]
-    path = path.replace(".venv/bin/launch_packmem2", "src/packmem2/")
     
     ######## PackMem2 #######
     packmem2.packmem2.launch(args.topo, args.traj, args.lipid, args.start,\
