@@ -162,5 +162,5 @@ cython_debug/
 #.idea/
 
 # MD stuff
-.md_40ns.xtc_offsets.lock
-.md_40ns.xtc_offsets.npz
+.md_10ns.xtc_offsets.lock
+.md_10ns.xtc_offsets.npz
