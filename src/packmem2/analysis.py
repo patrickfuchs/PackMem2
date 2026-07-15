@@ -346,8 +346,8 @@ def launch(output, prot, limx, limy, precision):
                 def_area_prot_far = def_area_prot[def_area_prot[1] == "far"][2]
                 
                 # Plot the fit of the defects distribution
-                packdef_constants = plot_defect_fit(f'{name}_close', defect, def_area_prot_close, packdef_constants, pdf)
-                packdef_constants = plot_defect_fit(f'{name}_far', defect, def_area_prot_far, packdef_constants, pdf)
+                packdef_constants = plot_defect_fit(f'{name}_close', defect, def_area_prot_close, packdef_constants, limx, limy, precision, pdf)
+                packdef_constants = plot_defect_fit(f'{name}_far', defect, def_area_prot_far, packdef_constants, limx, limy, precision, pdf)
             if packdef_constants[[f'Deep_{name}_close', f'Shallow_{name}_close', f'All_{name}_close', f'Deep_{name}_far', f'Shallow_{name}_far', f'All_{name}_far']].isna().all().all():
                 continue
             # Plot all packdef constants on a single barplot
