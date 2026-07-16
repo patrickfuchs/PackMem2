@@ -1,15 +1,6 @@
-import pytest
-import io
 import numpy as np
 
-import sys
-import os
-
-# Add the parent rep to the sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-
-
-from bin import pdb as pdb
+import packmem2.core.pdb as pdb
 
 def test_outputTXT_defects():
     dict_area = {2: 1}

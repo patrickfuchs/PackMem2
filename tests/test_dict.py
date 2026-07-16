@@ -1,14 +1,6 @@
-import pytest
 import numpy as np
 
-import sys
-import os
-
-# Add the parent rep to the sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-
-
-from bin import dict as d
+import packmem2.core.dict as d
 
 
 def test_get_value():

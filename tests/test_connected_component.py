@@ -1,13 +1,7 @@
-import sys
-import os
 import numpy as np
 import MDAnalysis as mda
 
-# Add the parent rep to the sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-
-
-from bin import connected_component as cc
+import packmem2.core.connected_component as cc
 
 def test_find_neighbours():
     mat = np.array([[1, 1, 1, 1, 0, 1],

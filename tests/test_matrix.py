@@ -1,14 +1,6 @@
-import pytest
 import numpy as np
 
-import sys
-import os
-
-# Add the parent rep to the sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-
-
-from  bin import matrix as m
+import packmem2.core.matrix as m
 
 def test_initialize_matrix2D():
     tested_ouput = m.initialize_matrix2D(4, 4, np.nan)

@@ -1,0 +1,43 @@
+[project]
+name = "packmem2"
+version = "0.1.0"
+description = "Packing defects size analyser"
+readme = "README.md"
+authors = [
+    { name = "Romain Gautier", email = "gautier@ipmc.cnrs.fr" },
+    { name = "Maya Zygadlo", email = "maya.zygadlo@sorbonne-universite.fr" },
+    { name = "Patrick Fuchs", email = "patrick.fuchs@u-paris.fr"}
+]
+maintainers = [
+    { name = "Patrick Fuchs", email = "patrick.fuchs@u-paris.fr" }
+]
+
+requires-python = ">=3.10"
+dependencies = [
+    "argparse>=1.4.0",
+    "matplotlib>=3.9.4",
+    "mdanalysis>=2.7.0",
+    "networkx>=3.2.1",
+    "numpy>=1.26.4",
+    "pandas>=2.3.3",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+    "ruff>=0.15.20",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.22,<0.12.0"]
+build-backend = "uv_build"
+
+[project.scripts]
+# Big launch
+launch_packmem2 = "packmem2.launch_packmem2:main"
+# Separate scripts
+packmem2 = "packmem2.packmem2:main"
+concatenate = "packmem2.concatenate:main"
+analysis = "packmem2.analysis:main"
+# Add molecule
+calculate_radii = "packmem2.calculate_radii:main"
