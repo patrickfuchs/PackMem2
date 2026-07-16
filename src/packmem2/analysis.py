@@ -8,10 +8,6 @@ import math
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
-import warnings
-with warnings.catch_warnings():
-    warnings.simplefilter("ignore", np.exceptions.RankWarning)
-
 def get_arguments():
     """
     Get the arguments for the script and check that the inputfiles are valid.
