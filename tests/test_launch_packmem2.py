@@ -3,7 +3,7 @@ import pytest
 import packmem2.launch_packmem2 as launch_packmem2
 
 
-@pytest.mark.network
+@pytest.mark.slowest
 def test_launch_DMPC():
     """DMPC"""
     cores = 1
@@ -59,7 +59,7 @@ def test_launch_DMPC():
     assert expected_final_output.exists()
 
 
-@pytest.mark.network
+@pytest.mark.slowest
 def test_launch_DMPC_protein():
     """DMPC + protein"""
     cores = 1
