@@ -79,7 +79,7 @@ def launch(topo, traj, lipid, start, end, paramFile, radiiFile, indexFile, outpu
 
 
     ######### LOAD UNIVERSE  #########
-    u = mda.Universe(topo, traj)
+    u = mda.Universe(topo, traj, to_guess=())
     # If multiple lipids
     lipid_names = lipid.replace('_', ' ')
     # select the lipids in system
