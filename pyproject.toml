@@ -12,7 +12,7 @@ maintainers = [
     { name = "Patrick Fuchs", email = "patrick.fuchs@u-paris.fr" }
 ]
 
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "argparse>=1.4.0",
     "matplotlib>=3.9.4",
