@@ -12,13 +12,16 @@ def launch(cores, topo, traj, lipid, start, end, paramFile, radiiFile, indexFile
     ######## PackMem2 #######
     # Prepare how much frames are going to be analysed per core
     step = int(end / cores)
+    # Create a list of the minima / maxima frame of each interval
     intervals = list(range(start, end+1, step))
     processes = []
 
     # Launch PackMem2 on multiple processes
     for i in range(len(intervals)-1):
+        # Select starting and ending frame (limits of the interval)
         start_i = intervals[i]
         end_i =  intervals[i+1]-1
+        # If this is the last interval
         if i == (len(intervals)-2):
             end_i = end
         p = Process(target = packmem2.packmem2.launch,
