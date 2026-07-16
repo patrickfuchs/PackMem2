@@ -105,7 +105,7 @@ def get_args_launch_packmem2():
     parser = build_args()
     parser.add_argument('-c', action = 'store', dest = 'cores',
                         help = 'The number of cores you want the script to work on',
-                        default = cpu_count(), type = int)
+                        default = max(cpu_count()-2, 1), type = int)
     parser.add_argument('-prec', action = 'store', dest = 'precision',
                         type=int, default=2,
                         help = 'The precision for writing packdef constants (nb of decimals) in the output. Default = 2')
