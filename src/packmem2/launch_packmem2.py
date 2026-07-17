@@ -1,4 +1,4 @@
-import sys
+from multiprocessing import Process
 
 from packmem2.core import param as p
 import packmem2.packmem2
@@ -8,11 +8,33 @@ import packmem2.analysis
 def launch(cores, topo, traj, lipid, start, end, paramFile, radiiFile, indexFile, outputname, dist_suppl_Z, protein, pdbout, limx, limy, precision):
     """
     Launch the different python scripts for PackMem2
-    """    
+    """
     ######## PackMem2 #######
-    packmem2.packmem2.launch(topo, traj, lipid, start, end, paramFile,\
-                             radiiFile, indexFile, outputname, dist_suppl_Z,\
-                             protein, pdbout)
+    # Prepare how much frames are going to be analysed per core
+    step = int(end / cores)
+    # Create a list of the minima / maxima frame of each interval
+    intervals = list(range(start, end+1, step))
+    processes = []
+
+    # Launch PackMem2 on multiple processes
+    for i in range(len(intervals)-1):
+        # Select starting and ending frame (limits of the interval)
+        start_i = intervals[i]
+        end_i =  intervals[i+1]-1
+        # If this is the last interval
+        if i == (len(intervals)-2):
+            end_i = end
+        p = Process(target = packmem2.packmem2.launch,
+                    args = (topo, traj, lipid, start_i, end_i, paramFile,\
+                            radiiFile, indexFile, outputname, dist_suppl_Z,\
+                            protein, pdbout)
+        )
+        p.start()
+        processes.append(p)
+    
+    # Wait for the processes to finish
+    for p in processes:
+        p.join()
 
     ######## Concatenate #######
     packmem2.concatenate.launch(outputname, start, end, protein)
