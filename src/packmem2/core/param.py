@@ -44,6 +44,9 @@ def build_args():
     parser.add_argument('-o', action='store', dest='outputname',
                         default = 'output',
                         help = 'Name for output file (default: output)')
+    parser.add_argument('-od', action='store', dest='output_dir',
+                        default = './',
+                        help = 'Name for output directory (default: ./)')
     parser.add_argument('-d', action='store', dest='dist_suppl_Z', type=float,
                         default = 1.0, 
                         help = 'Distance to differenciate Deep from Shallow defects (default: 1.0)')

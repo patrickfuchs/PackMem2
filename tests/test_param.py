@@ -46,6 +46,7 @@ def test_get_args_packmem2(monkeypatch, tmp_path):
     assert args.start == 0
     assert args.end == 10
     assert args.outputname == "output"
+    assert args.output_dir == "./"
     assert args.dist_suppl_Z == 1.0
     assert args.pdbout is False
     assert args.protein is True
@@ -61,6 +62,7 @@ def test_get_args_packmem2(monkeypatch, tmp_path):
             "-e", "10",
             "-p", str(param),
             "-r", str(radii),
+            "-od", str(tmp_path),
             "-d", "-1.0",
         ]
     )
@@ -90,12 +92,14 @@ def test_get_args_launch_packmem2(monkeypatch, tmp_path):
             "-e", "10",
             "-p", str(param),
             "-r", str(radii),
+            "-od", str(tmp_path),
             "-d", "1.0",
             "-prot"
         ]
     )
     args = p.get_args_launch_packmem2()
     assert args.cores == 1
+    assert args.output_dir == str(tmp_path)
     assert args.precision == 2
     assert args.limx == 15
     assert args.limy == 1e-4
