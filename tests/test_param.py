@@ -83,6 +83,7 @@ def test_get_args_launch_packmem2(monkeypatch, tmp_path):
         sys, "argv",
         [
             "prog",
+            "-c", "1",
             "-f", str(traj),
             "-s", str(topo),
             "-l", "DPPC",
