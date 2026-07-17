@@ -3,6 +3,7 @@
 import argparse
 import os
 import pandas as pd
+from pathlib import Path
 
 def get_args():
     """
@@ -140,11 +141,11 @@ def concat_files_prot(prefix, suffix, start, end):
     file_concat = pd.read_csv(filename, header=None)
     
     for pdbnum in range(start+1, end+1):
-        if os.path.isfile(f"{prefix}{pdbnum}{suffix}"):
+        if Path(f"{prefix}{pdbnum}{suffix}").is_file():
             if check_file(f"{prefix}{pdbnum}{suffix}"):
                 file = pd.read_csv(f"{prefix}{pdbnum}{suffix}", header=None)
                 file_concat = pd.concat([file_concat, file], axis=0, ignore_index=True)
-        elif os.path.isfile(f"{prefix}{pdbnum}{other_suffix}"):
+        elif Path(f"{prefix}{pdbnum}{other_suffix}").is_file():
             if check_file(f"{prefix}{pdbnum}{other_suffix}"):
                 file = pd.read_csv(f"{prefix}{pdbnum}{other_suffix}", header=None)
                 file_concat = pd.concat([file_concat, file], axis=0, ignore_index=True)
@@ -163,7 +164,7 @@ def launch(output_dir, prefix, start, end, prot):
     Total_Lo_Shallow = concat_files(f"{output_dir}/{prefix}", "_Lo_Shallow_result.txt", start, end)
 
     if prot:
-        if os.path.isfile(f"{output_dir}/Prot_{prefix}0_Up_All.txt"):
+        if Path(f"{output_dir}/Prot_{prefix}0_Up_All.txt").is_file():
             Total_Up_Deep_prot = concat_files_prot(f"{output_dir}/Prot_{prefix}", "_Up_Deep.txt", start, end)
             Total_Up_All_prot = concat_files_prot(f"{output_dir}/Prot_{prefix}", "_Up_All.txt", start, end)
             Total_Up_Shallow_prot = concat_files_prot(f"{output_dir}/Prot_{prefix}", "_Up_Shallow.txt", start, end)
@@ -176,7 +177,7 @@ def launch(output_dir, prefix, start, end, prot):
                 os.remove(f"{output_dir}/Prot_{prefix}{pdbnum}_Up_Deep.txt")
                 os.remove(f"{output_dir}/Prot_{prefix}{pdbnum}_Up_All.txt")
                 os.remove(f"{output_dir}/Prot_{prefix}{pdbnum}_Up_Shallow.txt")
-        elif os.path.isfile(f"{output_dir}/Prot_{prefix}0_Lo_All.txt"):
+        elif Path(f"{output_dir}/Prot_{prefix}0_Lo_All.txt").is_file():
             Total_Lo_Deep_prot = concat_files_prot(f"{output_dir}/Prot_{prefix}", "_Lo_Deep.txt", start, end)
             Total_Lo_All_prot = concat_files_prot(f"{output_dir}/Prot_{prefix}", "_Lo_All.txt", start, end)
             Total_Lo_Shallow_prot = concat_files_prot(f"{output_dir}/Prot_{prefix}", "_Lo_Shallow.txt", start, end)

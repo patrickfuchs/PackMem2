@@ -5,6 +5,7 @@ import os
 import pandas as pd
 import numpy as np
 import math
+from pathlib import Path
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
@@ -342,7 +343,7 @@ def launch(output_dir, output, prot, limx, limy, precision):
             for defect in ["Deep","Shallow","All"]:
                 # Load PackMem data
                 filename = f"{output_dir}/{name}_{defect}_prot.csv"
-                if not os.path.isfile(filename):
+                if not Path(filename).is_file():
                     continue
                 def_area_prot = pd.read_csv(filename, header=None).iloc[:,1:]
                 def_area_prot_close = def_area_prot[def_area_prot[1] == "close"][2]
