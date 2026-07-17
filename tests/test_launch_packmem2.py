@@ -180,3 +180,58 @@ def test_launch_DLPC():
     # Check pdf
     expected_final_output = Path("DLPC.pdf")
     assert expected_final_output.exists()
+
+
+def test_launch_DLPC_multiprocess():
+    """DLPC (Martini) multiprocess"""
+    cores = 4
+    topo = "tests/data/end_to_end_DLPC/md.gro"
+    traj = "tests/data/end_to_end_DLPC/md_10ns.xtc"
+    lipid = "DLPC"
+    start = 0
+    end = 100
+    paramFile = "data/param_Martini.txt"
+    radiiFile = "data/vdw_radii_Martini_old.txt"
+    indexFile = None
+    outputname = "DLPC"
+    dist_suppl_Z = 1.0
+    protein = False
+    pdbout = False
+    limx = 15
+    limy = 1e-4
+    precision = 2
+
+    launch_packmem2.launch(
+        cores,
+        topo,
+        traj,
+        lipid,
+        start,
+        end,
+        paramFile,
+        radiiFile,
+        indexFile,
+        outputname,
+        dist_suppl_Z,
+        protein,
+        pdbout,
+        limx,
+        limy,
+        precision,
+    )
+
+    # Check Total files
+    expected_output_Deep = Path("Total_Deep.csv")
+    expected_output_Shallow = Path("Total_Shallow.csv")
+    expected_output_All = Path("Total_All.csv")
+    with open("tests/data/end_to_end_DLPC/Total_Deep.csv", "r") as f_in:
+        expected_content_Deep = f_in.read()
+
+    assert expected_output_Deep.exists()
+    assert expected_output_Shallow.exists()
+    assert expected_output_All.exists()
+    assert expected_output_Deep.read_text() == expected_content_Deep
+
+    # Check pdf
+    expected_final_output = Path("DLPC.pdf")
+    assert expected_final_output.exists()
