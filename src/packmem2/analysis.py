@@ -32,6 +32,9 @@ def get_arguments():
     parser.add_argument('-o', action = 'store', dest = 'output',
                     default="Res_membrane",
                     help = 'The name of the output .pdf file. Default = Res_membrane')
+    parser.add_argument('-od', action='store', dest='output_dir',
+                        default = './',
+                        help = 'Name for output directory (default: ./)')
     args = parser.parse_args()
 
     return args
@@ -300,13 +303,13 @@ def plot_defect_constants(type, packdef_constants, errors, pdf):
     pdf.savefig()  # Save the current figure to the PDF
     plt.close()
 
-def launch(output, prot, limx, limy, precision):
+def launch(output_dir, output, prot, limx, limy, precision):
     """
     Analyse the defect size computed by PackMem2
     """
     # Open a pdf device
     # Create a single PDF file
-    pdf = PdfPages(f'{output}.pdf')
+    pdf = PdfPages(f'{output_dir}/{output}.pdf')
 
     columns_dtf =  ['Deep_Total', 'Shallow_Total', 'All_Total', 'Deep_Total_Up', 'Shallow_Total_Up', 'All_Total_Up', 'Deep_Total_Lo', 'Shallow_Total_Lo', 'All_Total_Lo']
     index_dtf = ["PackDef_cst_global", "PackDef_cst_block1", "PackDef_cst_block2", "PackDef_cst_block3","PackDef_cst_all_blocks","error_all_blocks"]
@@ -368,7 +371,7 @@ def main():
     # Get arguments
     args = get_arguments()
 
-    launch(args.output, args.prot, args.limx, args.limy, args.precision)
+    launch(args.output_dir, args.output, args.prot, args.limx, args.limy, args.precision)
 
 if __name__=="__main__":
     main()
