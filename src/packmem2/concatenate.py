@@ -168,9 +168,9 @@ def launch(output_dir, prefix, start, end, prot):
             Total_Up_All_prot = concat_files_prot(f"{output_dir}/Prot_{prefix}", "_Up_All.txt", start, end)
             Total_Up_Shallow_prot = concat_files_prot(f"{output_dir}/Prot_{prefix}", "_Up_Shallow.txt", start, end)
             # Save files
-            Total_Up_Deep_prot.to_csv("Total_Up_Deep_prot.csv", header=False, index=False)
-            Total_Up_All_prot.to_csv("Total_Up_All_prot.csv", header=False, index=False)
-            Total_Up_Shallow_prot.to_csv("Total_Up_Shallow_prot.csv", header=False, index=False)
+            Total_Up_Deep_prot.to_csv(f"{output_dir}/Total_Up_Deep_prot.csv", header=False, index=False)
+            Total_Up_All_prot.to_csv(f"{output_dir}/Total_Up_All_prot.csv", header=False, index=False)
+            Total_Up_Shallow_prot.to_csv(f"{output_dir}/Total_Up_Shallow_prot.csv", header=False, index=False)
             # Remove the files
             for pdbnum in range(start, end+1):
                 os.remove(f"{output_dir}/Prot_{prefix}{pdbnum}_Up_Deep.txt")
@@ -181,9 +181,9 @@ def launch(output_dir, prefix, start, end, prot):
             Total_Lo_All_prot = concat_files_prot(f"{output_dir}/Prot_{prefix}", "_Lo_All.txt", start, end)
             Total_Lo_Shallow_prot = concat_files_prot(f"{output_dir}/Prot_{prefix}", "_Lo_Shallow.txt", start, end)
             # Save files
-            Total_Lo_Deep_prot.to_csv("Total_Lo_Deep_prot.csv", header=False, index=False)
-            Total_Lo_All_prot.to_csv("Total_Lo_All_prot.csv", header=False, index=False)
-            Total_Lo_Shallow_prot.to_csv("Total_Lo_Shallow_prot.csv", header=False, index=False)
+            Total_Lo_Deep_prot.to_csv(f"{output_dir}/Total_Lo_Deep_prot.csv", header=False, index=False)
+            Total_Lo_All_prot.to_csv(f"{output_dir}/Total_Lo_All_prot.csv", header=False, index=False)
+            Total_Lo_Shallow_prot.to_csv(f"{output_dir}/Total_Lo_Shallow_prot.csv", header=False, index=False)
             # Remove the files
             for pdbnum in range(start, end+1):
                 os.remove(f"{output_dir}/Prot_{prefix}{pdbnum}_Lo_Deep.txt")
@@ -196,21 +196,21 @@ def launch(output_dir, prefix, start, end, prot):
     Total_Shallow =  pd.concat([Total_Up_Shallow, Total_Lo_Shallow], axis=0, ignore_index=True)
 
     # Save all files to .csv
-    Total_Up_Deep.to_csv("Total_Up_Deep.csv", header=False, index=False)
-    Total_Lo_Deep.to_csv("Total_Lo_Deep.csv", header=False, index=False)
-    Total_Up_All.to_csv("Total_Up_All.csv", header=False, index=False)
-    Total_Lo_All.to_csv("Total_Lo_All.csv", header=False, index=False)
-    Total_Up_Shallow.to_csv("Total_Up_Shallow.csv", header=False, index=False)
-    Total_Lo_Shallow.to_csv("Total_Lo_Shallow.csv", header=False, index=False)
+    Total_Up_Deep.to_csv(f"{output_dir}/Total_Up_Deep.csv", header=False, index=False)
+    Total_Lo_Deep.to_csv(f"{output_dir}/Total_Lo_Deep.csv", header=False, index=False)
+    Total_Up_All.to_csv(f"{output_dir}/Total_Up_All.csv", header=False, index=False)
+    Total_Lo_All.to_csv(f"{output_dir}/Total_Lo_All.csv", header=False, index=False)
+    Total_Up_Shallow.to_csv(f"{output_dir}/Total_Up_Shallow.csv", header=False, index=False)
+    Total_Lo_Shallow.to_csv(f"{output_dir}/Total_Lo_Shallow.csv", header=False, index=False)
 
-    Total_Deep.to_csv("Total_Deep.csv", header=False, index=False)
-    Total_All.to_csv("Total_All.csv", header=False, index=False)
-    Total_Shallow.to_csv("Total_Shallow.csv", header=False, index=False)
+    Total_Deep.to_csv(f"{output_dir}/Total_Deep.csv", header=False, index=False)
+    Total_All.to_csv(f"{output_dir}/Total_All.csv", header=False, index=False)
+    Total_Shallow.to_csv(f"{output_dir}/Total_Shallow.csv", header=False, index=False)
 
     # Remove the files
     for pdbnum in range(start, end+1):
         os.remove(f"{output_dir}/{prefix}{pdbnum}_Up_Deep_result.txt")
-        os.remove(f"{output_dir}/{output_dir}/{prefix}{pdbnum}_Lo_Deep_result.txt")
+        os.remove(f"{output_dir}/{prefix}{pdbnum}_Lo_Deep_result.txt")
         os.remove(f"{output_dir}/{prefix}{pdbnum}_Up_All_result.txt")
         os.remove(f"{output_dir}/{prefix}{pdbnum}_Lo_All_result.txt")
         os.remove(f"{output_dir}/{prefix}{pdbnum}_Up_Shallow_result.txt")

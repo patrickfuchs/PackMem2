@@ -321,7 +321,7 @@ def launch(output_dir, output, prot, limx, limy, precision):
     for name in ["Total", "Total_Up", "Total_Lo"]:
         # Now loop over the three default types
         for defect in ["Deep","Shallow","All"]:
-            filename = f"{name}_{defect}.csv"
+            filename = f"{output_dir}/{name}_{defect}.csv"
             def_area = pd.read_csv(filename, header=None)[1]
 
             # Plot the fit of the defects distribution
@@ -341,7 +341,7 @@ def launch(output_dir, output, prot, limx, limy, precision):
             # Now loop over the three default types
             for defect in ["Deep","Shallow","All"]:
                 # Load PackMem data
-                filename = f"{name}_{defect}_prot.csv"
+                filename = f"{output_dir}/{name}_{defect}_prot.csv"
                 if not os.path.isfile(filename):
                     continue
                 def_area_prot = pd.read_csv(filename, header=None).iloc[:,1:]

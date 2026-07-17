@@ -15,7 +15,7 @@ def test_launch_DMPC(tmp_path):
     paramFile = "data/param_Charmm.txt"
     radiiFile = "data/vdw_radii_Charmm.txt"
     indexFile = None
-    output_dir = "./"
+    output_dir = str(tmp_path)
     outputname = "DMPC"
     dist_suppl_Z = 1.0
     protein = False
@@ -73,7 +73,7 @@ def test_launch_DMPC_protein(tmp_path):
     paramFile = "data/param_Charmm.txt"
     radiiFile = "data/vdw_radii_Charmm.txt"
     indexFile = None
-    output_dir = "./"
+    output_dir = str(tmp_path)
     outputname = "DMPC"
     dist_suppl_Z = 1.0
     protein = True
@@ -142,7 +142,7 @@ def test_launch_DLPC(tmp_path):
     paramFile = "data/param_Martini.txt"
     radiiFile = "data/vdw_radii_Martini_old.txt"
     indexFile = None
-    output_dir = "./"
+    output_dir = str(tmp_path)
     outputname = "DLPC"
     dist_suppl_Z = 1.0
     protein = False
@@ -199,7 +199,7 @@ def test_launch_DLPC_multiprocess(tmp_path):
     paramFile = "data/param_Martini.txt"
     radiiFile = "data/vdw_radii_Martini_old.txt"
     indexFile = None
-    output_dir = "./"
+    output_dir = str(tmp_path)
     outputname = "DLPC"
     dist_suppl_Z = 1.0
     protein = False

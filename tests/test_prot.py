@@ -1,3 +1,4 @@
+import pytest
 import numpy as np
 import MDAnalysis as mda
 
@@ -68,13 +69,13 @@ def test_assign_dist_group():
     for label in wanted_out:
         assert tested_out[label] == wanted_out[label]
 
-def test_outputTXT_defects_prot():
+def test_outputTXT_defects_prot(tmp_path):
     dict_prot_group = {1: 'far', 3: 'far', 4: 'close'}
     dict_area_defect = {3: 52, 4: 16}
 
-    prot.outputTXT_defects_prot('output', dict_prot_group, dict_area_defect)
+    prot.outputTXT_defects_prot(f"{tmp_path}/output", dict_prot_group, dict_area_defect)
 
-    with open("output.txt", 'r') as file_test:
+    with open(f"{tmp_path}/output.txt", 'r') as file_test:
         content = file_test.readlines()
     wanted_lines = ["3,far,52\n",
                     "4,close,16\n"]
