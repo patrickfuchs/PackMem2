@@ -1,4 +1,3 @@
-#-*- coding: utf-8 -*-
 """Functions about PDB data and output files."""
 # R. Gautier A. Bacle 2015
 # M. Zygadlo 2025
@@ -6,8 +5,15 @@
 import numpy as np
 
 
-def outputTXT_defects(out_name, area_defects, first_coord, 
-                        total_size, total_edge, arrayX, arrayY):
+def outputTXT_defects(
+    out_name: str,
+    area_defects: dict,
+    first_coord: dict, 
+    total_size: int,
+    total_edge: int,
+    arrayX: np.array,
+    arrayY: np.array
+    ) -> None:
     """
     Create output file for packing defects in TXT format.
 
@@ -45,7 +51,13 @@ def outputTXT_defects(out_name, area_defects, first_coord,
             f_result.write(f"{i+1:3d} {area_defects[key]:4d}   {arrayX[first_coord[key][0]]:6.2f}   {arrayY[first_coord[key][1]]:6.2f} \n")
             i+=1
 
-def write_a_pdb_line(nb_atm, atm_name, nb_res, coords, nb_defect):
+def write_a_pdb_line(
+    nb_atm: int,
+    atm_name: str,
+    nb_res: int,
+    coords: list,
+    nb_defect: int
+    ) -> str:
     """
     Write a PDB line.
 
@@ -64,7 +76,14 @@ def write_a_pdb_line(nb_atm, atm_name, nb_res, coords, nb_defect):
     """
     return f"{'ATOM  ':6s}{nb_atm:5d} {'  H1':4s} {atm_name:3s}  {nb_res:4d}    {float(coords[0]):8.3f}{float(coords[1]):8.3f}{float(coords[2]):8.3f}{1.0:6.2f}{nb_defect:6.2f}\n"
 
-def outputPDB_Total_matrix(out_name, num_frame, arrayX, arrayY, z_extr, mat_final):
+def outputPDB_Total_matrix(
+    out_name: str,
+    num_frame: int,
+    arrayX: np.array,
+    arrayY: np.array,
+    z_extr: float,
+    mat_final: np.array
+    ) -> None:
     """
     Create output file with Total Matrix in pdb format.
 
@@ -96,8 +115,15 @@ def outputPDB_Total_matrix(out_name, num_frame, arrayX, arrayY, z_extr, mat_fina
                     f_tot.write(write_a_pdb_line(nb, "MAT", nb, coordtmp, mat_final[i][j]))
         f_tot.write("ENDMDL\n")
 
-def outputPDB_defects(out_name, num_frame, arrayX, arrayY, z_extr, 
-                        mat_final, edge_labels):
+def outputPDB_defects(
+    out_name: str,
+    num_frame: int,
+    arrayX: np.array,
+    arrayY: np.array,
+    z_extr: flolat,
+    mat_final: np.array,
+    edge_labels: list
+    ) -> None:
     """
     Create output file with defects only in pdb format.
 
