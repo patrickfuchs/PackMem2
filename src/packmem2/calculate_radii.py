@@ -1,7 +1,7 @@
 import math
 import argparse
 
-def get_args():
+def get_args() -> argparse.Namespace:
     """
     Get the arguments for the script and check that the inputfiles are valid.
 
@@ -27,7 +27,12 @@ def get_args():
     args = parser.parse_args()
     return args
 
-def get_aliphatic(res_name, res_name_prev, atom_name, flag):
+def get_aliphatic(
+    res_name: str,
+    res_name_prev: str,
+    atom_name: str,
+    flag: bool
+    ) -> tuple[str, bool]:
     """
     Check if the atom or bead is aliphatic or not
 
@@ -61,7 +66,7 @@ def get_aliphatic(res_name, res_name_prev, atom_name, flag):
     else:
         return 'n', flag
 
-def main():
+def main() -> None:
     """
     Calcultate the radii of given molecules
     """
