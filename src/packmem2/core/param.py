@@ -1,4 +1,3 @@
-#-*- coding: utf-8 -*-
 """Get the arguments and parameter files."""
 # R. Gautier A. Bacle 2015
 # M. Zygadlo 2025
@@ -9,7 +8,7 @@ import numpy as np
 from pathlib import Path
 from multiprocessing import cpu_count
 
-def build_args():
+def build_args() -> argparse.Namespace:
     """
     Get the arguments for launch_packmem2 and packmem2.
 
@@ -59,7 +58,9 @@ def build_args():
     
     return parser
 
-def file_present(filename):
+def file_present(
+    filename: str
+    ) -> None:
     """
     Check if the file exists.
 
@@ -70,7 +71,8 @@ def file_present(filename):
     """
     if not Path(filename).is_file():
         raise FileNotFoundError(f"ERROR: file '{filename}' not found.")
-def get_args_packmem2():
+
+def get_args_packmem2() -> argparse.Namespace:
     """
     Get the arguments the packmem2 and check that the inputfiles are valid.
 
@@ -96,7 +98,7 @@ def get_args_packmem2():
     
     return args
 
-def get_args_launch_packmem2():
+def get_args_launch_packmem2() -> argparse.Namespace:
     """
     Get the arguments for launch_packmem2 and check that the inputfiles are valid.
 
@@ -122,7 +124,9 @@ def get_args_launch_packmem2():
     args = parser.parse_args()
     return args
 
-def read_file(filename):
+def read_file(
+    filename: str
+    ) -> list:
     """
     Read an input file and test if file is readable.
 
@@ -143,7 +147,9 @@ def read_file(filename):
         print(f"ERROR : Something went wrong with the file {filename}")
     return data
 
-def dict_2columns(list_str):
+def dict_2columns(
+    list_str: list
+    ) -> dict:
     """
     Transform list of strings with 2 columns into a dictionary.
 
@@ -164,7 +170,9 @@ def dict_2columns(list_str):
         dic[data[0]] = data[1]
     return dic
 
-def set_params(filename):
+def set_params(
+    filename: str
+    ) -> dict:
     """
     Read the parameter file and return a dictionary of the information.
 
@@ -184,7 +192,10 @@ def set_params(filename):
     resname_glyc = dict_2columns(lines)
     return resname_glyc
 
-def dict_4columns(list_str, nb):
+def dict_4columns(
+    list_str: list,
+    nb: int
+    ) -> dict:
     """
     Transform list of strings with 4 columns into a dictionary.
 
@@ -211,7 +222,9 @@ def dict_4columns(list_str, nb):
             dic[data[0]+' '+data[1]] = data[nb]
     return dic
 
-def set_rad_ali(filename):
+def set_rad_ali(
+    filename: str
+    ) -> tuple[dict, dict]:
     """
     Read the vdw_radii file and return two dictionaries.
 
@@ -232,7 +245,9 @@ def set_rad_ali(filename):
     aliph = dict_4columns(lines, 3)
     return  radius, aliph
 
-def read_ndx(ndx_file):
+def read_ndx(
+    ndx_file: str
+    ) -> np.array:
     """
     Read a .ndx file to set the lower/upper residue number lists.
 
