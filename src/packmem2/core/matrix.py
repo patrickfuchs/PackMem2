@@ -1,4 +1,3 @@
-#-*- coding: utf-8 -*-
 """Funtions for matrix."""
 # R. Gautier A. Bacle 2015
 # M. Zygadlo 2025
@@ -12,7 +11,11 @@ SIZE=1.0
 SIZE_SIDE=0.5*(math.sqrt((math.pow(SIZE, 2))* 3.))
 
 
-def initialize_matrix2D(val1, val2, default):
+def initialize_matrix2D(
+    val1: int,
+    val2: int,
+    default: int | float | str
+    ) -> np.array:
     """
     Initialise a 2D matrix with a default value.
     
@@ -33,7 +36,10 @@ def initialize_matrix2D(val1, val2, default):
     matrix = np.full((val1, val2), default)
     return matrix
 
-def diff_Z(arrayZ, coordZ):
+def diff_Z(
+    arrayZ: np.array,
+    coordZ: float
+    ) -> float:
     """
     Compute the difference between the last value in listZ and the Z for one atom.
 
@@ -52,7 +58,11 @@ def diff_Z(arrayZ, coordZ):
     """
     return arrayZ[-1] - coordZ
 
-def find_X_Y(coord, matX, matY):
+def find_X_Y(
+    coord: np.array,
+    matX: np.array,
+    matY: np.array
+    ) -> tuple[int, int]:
     """
     Determine from x,y coordinates the index in matX and matY.
     
@@ -80,7 +90,11 @@ def find_X_Y(coord, matX, matY):
     iY = np.where(matY == tmpY)[0][0]
     return iX,iY
 
-def check_edges(val, val_lim1, val_lim2):
+def check_edges(
+    val: int,
+    val_lim1: int,
+    val_lim2: int
+    ) -> int:
     """
     Check if the cell index is lower than val_lim1 or higher than val_lim2. Changes the value of the cell index if so.
 
@@ -105,7 +119,15 @@ def check_edges(val, val_lim1, val_lim2):
     else:
         return val
 
-def fill_matrix(mat, radius_atm, aliph_atom, coordtmp, arrayX, arrayY, arrayZ):
+def fill_matrix(
+    mat: np.array,
+    radius_atm: float,
+    aliph_atom: str,
+    coordtmp: np.array,
+    arrayX: np.array,
+    arrayY: np.array,
+    arrayZ: np.array
+    ) -> np.array:
     """
     Fill the matrix depending on the atom type.
 
@@ -177,7 +199,12 @@ def fill_matrix(mat, radius_atm, aliph_atom, coordtmp, arrayX, arrayY, arrayZ):
 
     return mat
 
-def binarize_matrix_without0(mat, mat_ini, val1=0, val2=0.99):
+def binarize_matrix_without0(
+    mat: np.array,
+    mat_ini: np.array,
+    val1: float = 0.0,
+    val2: float = 0.99
+    ) -> np.array:
     """
     Binarise the presence / absence of aliphatic atom (and packing defects) in matrix.
 
@@ -204,7 +231,10 @@ def binarize_matrix_without0(mat, mat_ini, val1=0, val2=0.99):
     mat_ini[index[:,0], index[:,1]] = 1. 
     return mat_ini
 
-def count_edge_area(area_defects, edge_labels):
+def count_edge_area(
+    area_defects: dict,
+    edge_labels: list
+    ) -> int:
     """
     Count the total area of the clusters on the edge.
 
