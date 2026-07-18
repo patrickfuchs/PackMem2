@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Here is implemented the Connected-component_labeling algorithm."""
 ##### Source: http://en.wikipedia.org/wiki/Connected-component_labeling
 # P. Fuchs 08/2014
@@ -6,7 +5,11 @@
 
 import numpy as np
 
-def find_neighbours(mat, ind_i, ind_j):
+def find_neighbours(
+    mat: np.array,
+    ind_i: int,
+    ind_j: int
+    ) -> list:
     """
     Find the defect neighbour cells in the upper left corner of a defect cell.
 
@@ -37,7 +40,10 @@ def find_neighbours(mat, ind_i, ind_j):
         defect_neighbours.append([ind_i, (ind_j-1) % mat.shape[1]])
     return defect_neighbours
 
-def find_label_neighbours(mat, defect_neighbours):
+def find_label_neighbours(
+    mat: np.array,
+    defect_neighbours: list[list]
+    ) -> list:
     """
     Find the label of the neighbours coordinates given.
     
@@ -65,7 +71,10 @@ def find_label_neighbours(mat, defect_neighbours):
     label_neighbours.sort()
     return label_neighbours
 
-def intersect(l1, l2):
+def intersect(
+    l1: list,
+    l2: list
+    ) -> list:
     """
     Return the intersection of 2 lists.
 
@@ -81,7 +90,10 @@ def intersect(l1, l2):
     """
     return list(set(l1) & set(l2))
 
-def sort_without_duplicate_merged_lists(l1, l2):
+def sort_without_duplicate_merged_lists(
+    l1: list,
+    l2: list
+    ) -> list:
     """
     Return the intersection of 2 lists.
 
@@ -99,7 +111,9 @@ def sort_without_duplicate_merged_lists(l1, l2):
     new_list.sort()
     return new_list
  
-def merge_list_of_lists(list_of_lists):
+def merge_list_of_lists(
+    list_of_lists: list[list]
+    ) -> list[list]:
     """
     Merge a list of lists.
 
@@ -125,7 +139,10 @@ def merge_list_of_lists(list_of_lists):
                 break
     return list_of_lists
 
-def get_uniq_labels(nb_labels, equiv_labels):
+def get_uniq_labels(
+    nb_labels: int,
+    equiv_labels: list[list]
+    ) -> tuple[dict, list]:
     """
     Build a dictionnary for assigning a uniq label.
 
@@ -163,7 +180,10 @@ def get_uniq_labels(nb_labels, equiv_labels):
     uniq_labels = list(set(dict_connected_labels.values()))
     return dict_connected_labels, uniq_labels
 
-def connect_labels_in_matrix(mat_labels, dict_connected_labels):
+def connect_labels_in_matrix(
+    mat_labels: np.array,
+    dict_connected_labels: dict
+    ) -> np.array:
     """
     Change the labels in mat_labels to the smallest one they are connected to.
 
@@ -200,7 +220,10 @@ def connect_labels_in_matrix(mat_labels, dict_connected_labels):
         mat_labels = np.where(mat_labels == label, dict_connected_labels[label], mat_labels)
     return mat_labels
 
-def get_area_first_coor_defects(mat, uniq_labels):
+def get_area_first_coor_defects(
+    mat: np.array,
+    uniq_labels: list
+    ) -> tuple[dict, dict]:
     """
     Get the area of each defect and their first coordinates.
 
@@ -246,7 +269,10 @@ def get_area_first_coor_defects(mat, uniq_labels):
         area_defects[label] += len(label_X)
     return area_defects, first_coor_defects
 
-def get_connected_components(mat, mat_labels):
+def get_connected_components(
+    mat: np.array,
+    mat_labels: np.array
+    ) -> tuple[np.array, list, dict, dict]:
     """
     Connect and label the defects. Get a list of the labels, tehir area and ttheir first coordinates.
 
@@ -254,6 +280,8 @@ def get_connected_components(mat, mat_labels):
     INPUT
     mat: numpy array 2D
         Contains the position of the aliphatic atoms + packing defects (marked by 0), 1 otherwise
+    mat_labels: numpy array 2D
+        Contains the connected labels
 
     --------------------
     OUPUT
@@ -326,7 +354,9 @@ def get_connected_components(mat, mat_labels):
                 
     return mat_labels, uniq_labels, area_defects, first_coor_defects
 
-def get_edge_defects(mat_labels):
+def get_edge_defects(
+    mat_labels: np.array
+    ) -> list:
     """
     Get the labels that are on the edge of the matrix.
 
