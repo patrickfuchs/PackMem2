@@ -9,7 +9,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
-def get_arguments():
+def get_arguments() -> argparse.Namespace:
     """
     Get the arguments for the script and check that the inputfiles are valid.
 
@@ -40,7 +40,9 @@ def get_arguments():
 
     return args
 
-def log(y_list):
+def log(
+    y_list: list
+    ) -> list:
     """
     Calculate the logarithm of a list.
     
@@ -62,7 +64,12 @@ def log(y_list):
             log_y.append(0)
     return log_y
 
-def fit_decay(x,y, LIMX, LIMY):
+def fit_decay(
+    x: np.array,
+    y: np.array,
+    limx: int | float,
+    limy: float
+    ) -> np.array:
     """
     Function does a linear fit.
     
@@ -74,9 +81,9 @@ def fit_decay(x,y, LIMX, LIMY):
         Packing area.
     y : numpy array
         probability of having a certain packing area.
-    LIMX : int
+    limx : int
         The lowest defect area used for the fit.
-    LIMY : float
+    limy : float
         The lowest probability used for the fit
     
     --------------------
@@ -85,14 +92,19 @@ def fit_decay(x,y, LIMX, LIMY):
         A linear fit of x and y.
     """
     # fit with defects above LIMX nm and proba > LIMY
-    y = y[x >= LIMX]
-    x = x[x >= LIMX]
-    x = x[y >= LIMY]
-    y = y[y >= LIMY]
+    y = y[x >= limx]
+    x = x[x >= limx]
+    x = x[y >= limy]
+    y = y[y >= limy]
     FIT = np.polyfit(x, log(y), 1)
     return (FIT)
 
-def block_averaging(vect, nb_block, limx, limy):
+def block_averaging(
+    vect: pd.DataFrame,
+    nb_block: int,
+    limx: int | float,
+    limy: float
+    ) -> list[float, float, float]:
     """
     Divide the packing data into n blocks.
     
@@ -110,7 +122,7 @@ def block_averaging(vect, nb_block, limx, limy):
     --------------------
     OUTPUT
     list
-        Avector of 3 decays.
+        A vector of 3 decays.
     """
     bornes = [int((len(vect)/3)*nb) for nb in range(nb_block+1)]
     decays = []
@@ -124,7 +136,16 @@ def block_averaging(vect, nb_block, limx, limy):
         decays.append(abs(1/FIT[0]))
     return decays
 
-def plot_defect_fit(type, defect, packdef_data, packdef_constants, limx, limy, precision, pdf):
+def plot_defect_fit(
+    type: str,
+    defect: str,
+    packdef_data: pd.DataFrame,
+    packdef_constants: pd.DataFrame,
+    limx: int | float,
+    limy: float,
+    precision: int,
+    pdf: matplotlib.backends.backend_pdf.PdfPages
+    ) -> pd.DataFrame:
     """
     Compute and plot the fit of the defects distribution.
 
@@ -144,7 +165,9 @@ def plot_defect_fit(type, defect, packdef_data, packdef_constants, limx, limy, p
         The lowest probability used for the fit
     precision : int
         The precision for writing packdef constants
-    
+    pdf : matplotlib.backends.backend_pdf.PdfPages
+        Contains the figures in the final pdf
+
     --------------------
     OUTPUT
     pandas DataFrame
@@ -200,7 +223,12 @@ def plot_defect_fit(type, defect, packdef_data, packdef_constants, limx, limy, p
     
     return packdef_constants
 
-def plot_defect_constants_blocks(type, packdef_constants, errors, pdf):
+def plot_defect_constants_blocks(
+    type: str,
+    packdef_constants: pd.DataFrame,
+    errors: pd.Series,
+    pdf: matplotlib.backends.backend_pdf.PdfPages
+    ) -> None:
     """
     Plot the defect constants of all block and their average.
 
@@ -212,6 +240,8 @@ def plot_defect_constants_blocks(type, packdef_constants, errors, pdf):
         Will contains the statistics of the defects found in this function
     errors: pandas Series
         Contains the errors of each defect
+    pdf : matplotlib.backends.backend_pdf.PdfPages
+        Contains the figures in the final pdf
     """    
     # Plot and save the second figure (bar plot for just one row)
     packdef_constants[[f"Deep_{type}", f"Shallow_{type}", f"All_{type}"]][:5].T.plot.bar(color=["darkred", "firebrick", "indianred", "lightcoral", "rosybrown"], yerr=errors, capsize=3, rot=0)
@@ -221,7 +251,10 @@ def plot_defect_constants_blocks(type, packdef_constants, errors, pdf):
     pdf.savefig()  # Save the current figure to the PDF
     plt.close()
 
-def get_outliers(dtf_packdef_values, type):
+def get_outliers(
+    dtf_packdef_values: pd.DataFrame,
+    type: str
+    ) -> pd.DataFrame:
     """
     Get the outliers in a dataframe
 
@@ -263,7 +296,12 @@ def get_outliers(dtf_packdef_values, type):
 
     return outliers
 
-def plot_defect_constants(type, packdef_constants, errors, pdf):
+def plot_defect_constants(
+    type: str,
+    packdef_constants: pd.DataFrame,
+    errors: pd.Series,
+    pdf: matplotlib.backends.backend_pdf.PdfPages
+    ) -> None:
     """
     Plot the defects constants for each defect.
 
@@ -275,6 +313,8 @@ def plot_defect_constants(type, packdef_constants, errors, pdf):
         Will contains the statistics of the defects found in this function
     errors: pandas Series
         Contains the errors of each defect
+    pdf : matplotlib.backends.backend_pdf.PdfPages
+        Contains the figures in the final pdf
     """
     cst_packing = pd.DataFrame(packdef_constants[[f"Deep_{type}", f"Shallow_{type}", f"All_{type}"]])
 
@@ -304,7 +344,14 @@ def plot_defect_constants(type, packdef_constants, errors, pdf):
     pdf.savefig()  # Save the current figure to the PDF
     plt.close()
 
-def launch(output_dir, output, prot, limx, limy, precision):
+def launch(
+    output_dir: str,
+    output: str,
+    prot: bool,
+    limx: int | float,
+    limy: float,
+    precision: int
+    ) -> None:
     """
     Analyse the defect size computed by PackMem2
     """
@@ -368,7 +415,7 @@ def launch(output_dir, output, prot, limx, limy, precision):
     # Close the PDF file
     pdf.close()
 
-def main():
+def main() -> None:
     # Get arguments
     args = get_arguments()
 
