@@ -1,11 +1,11 @@
-"""Script to concatenate the PackMem analysis on multiple PDB files."""
+"""Script to concatenate the PackMem analysis results."""
 
 import argparse
 import os
 import pandas as pd
 from pathlib import Path
 
-def get_args():
+def get_args() -> argparse.Namespace:
     """
     Get the arguments for the script and check that the inputfiles are valid.
 
@@ -33,7 +33,9 @@ def get_args():
 
     return args
 
-def check_file(filename):
+def check_file(
+    filename: str
+    ) -> bool:
     """
     Check if there is content in the file.
 
@@ -55,7 +57,12 @@ def check_file(filename):
                 return True
         return False
 
-def start_file(prefix, suffix, start, end):
+def start_file(
+    prefix: str,
+    suffix: str,
+    start: int,
+    end: int
+    ) -> tuple[str, int]:
     """
     Find the first file to read
 
@@ -82,7 +89,12 @@ def start_file(prefix, suffix, start, end):
             filename = f"{prefix}{i}{suffix}"
             return filename, i
 
-def concat_files(prefix, suffix, start, end):
+def concat_files(
+    prefix: str,
+    suffix: str,
+    start: int,
+    end: int
+    ) -> pd.DataFrame:
     """
     Concatenate .txt files from PackMem_prot.py
 
@@ -112,7 +124,12 @@ def concat_files(prefix, suffix, start, end):
 
     return file_concat
 
-def concat_files_prot(prefix, suffix, start, end):
+def concat_files_prot(
+    prefix: str,
+    suffix: str,
+    start: int,
+    end: int
+    ) -> pd.DataFrame:
     """
     Concatenate .txt files from PackMem_prot.py for the protein
 
@@ -152,7 +169,13 @@ def concat_files_prot(prefix, suffix, start, end):
 
     return file_concat
 
-def launch(output_dir, prefix, start, end, prot):
+def launch(
+    output_dir: str,
+    prefix: str,
+    start: int,
+    end: int,
+    prot: bool
+    ) -> None:
     """
     Launch the concatenation of the PackMem2 produced files
     """
@@ -217,7 +240,7 @@ def launch(output_dir, prefix, start, end, prot):
         os.remove(f"{output_dir}/{prefix}{pdbnum}_Up_Shallow_result.txt")
         os.remove(f"{output_dir}/{prefix}{pdbnum}_Lo_Shallow_result.txt")
 
-def main():
+def main() -> None:
     args = get_args()
 
     launch(args.output_dir, args.prefix, args.start, args.end, args.protein)
