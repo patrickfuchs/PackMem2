@@ -6,19 +6,15 @@ import math
 import numpy as np
 
 # matrix size  (square size = 1A)
-SIZE=1.0
+SIZE = 1.0
 # calculate limit size (half diagonal) 3D (= 0.87 A)
-SIZE_SIDE=0.5*(math.sqrt((math.pow(SIZE, 2))* 3.))
+SIZE_SIDE = 0.5 * (math.sqrt((math.pow(SIZE, 2)) * 3.0))
 
 
-def initialize_matrix2D(
-    val1: int,
-    val2: int,
-    default: int | float | str
-    ) -> np.array:
+def initialize_matrix2D(val1: int, val2: int, default: int | float | str) -> np.array:
     """
     Initialise a 2D matrix with a default value.
-    
+
     --------------------
     INPUT
     val1: int
@@ -27,7 +23,7 @@ def initialize_matrix2D(
         Dimension in X/Y for the array
     default : int / float / string
         Default value in the matrix cells
-        
+
     --------------------
     OUTPUT
     numpy matrix
@@ -36,10 +32,8 @@ def initialize_matrix2D(
     matrix = np.full((val1, val2), default)
     return matrix
 
-def diff_Z(
-    arrayZ: np.array,
-    coordZ: float
-    ) -> float:
+
+def diff_Z(arrayZ: np.array, coordZ: float) -> float:
     """
     Compute the difference between the last value in listZ and the Z for one atom.
 
@@ -58,14 +52,11 @@ def diff_Z(
     """
     return arrayZ[-1] - coordZ
 
-def find_X_Y(
-    coord: np.array,
-    matX: np.array,
-    matY: np.array
-    ) -> tuple[int, int]:
+
+def find_X_Y(coord: np.array, matX: np.array, matY: np.array) -> tuple[int, int]:
     """
     Determine from x,y coordinates the index in matX and matY.
-    
+
     Has been said to determine the central value in matrix
 
     --------------------
@@ -76,7 +67,7 @@ def find_X_Y(
         Contains integer from xmin-1 to xmax+1 by step of 1.0
     matY: numpy array
         Contains integer from ymin-1 to ymax+1 by step of 1.0
-    
+
     --------------------
     OUTPUT
     tuple of int
@@ -88,13 +79,10 @@ def find_X_Y(
     # Find the index of the value given (x_atom or y_atom)
     iX = np.where(matX == tmpX)[0][0]
     iY = np.where(matY == tmpY)[0][0]
-    return iX,iY
+    return iX, iY
 
-def check_edges(
-    val: int,
-    val_lim1: int,
-    val_lim2: int
-    ) -> int:
+
+def check_edges(val: int, val_lim1: int, val_lim2: int) -> int:
     """
     Check if the cell index is lower than val_lim1 or higher than val_lim2. Changes the value of the cell index if so.
 
@@ -114,10 +102,11 @@ def check_edges(
     """
     if val < val_lim1:
         return val_lim1
-    elif val >= val_lim2-val_lim1:
-        return val_lim2-(val_lim1+1)
+    elif val >= val_lim2 - val_lim1:
+        return val_lim2 - (val_lim1 + 1)
     else:
         return val
+
 
 def fill_matrix(
     mat: np.array,
@@ -126,8 +115,8 @@ def fill_matrix(
     coordtmp: np.array,
     arrayX: np.array,
     arrayY: np.array,
-    arrayZ: np.array
-    ) -> np.array:
+    arrayZ: np.array,
+) -> np.array:
     """
     Fill the matrix depending on the atom type.
 
@@ -158,53 +147,51 @@ def fill_matrix(
         0 if it's a defect
     """
     # Number of cells to work around
-    v = min(5, len(arrayX)//2, len(arrayY)//2)
+    v = min(5, len(arrayX) // 2, len(arrayY) // 2)
     # Limit distance to roughly select the cells that are near the atom+radius
-    sqrtdist_lim = (SIZE + radius_atm)**2
+    sqrtdist_lim = (SIZE + radius_atm) ** 2
     # Limit distance to select the cells that intersect the atom+radius
-    sqrtdist_meet = (SIZE_SIDE + radius_atm)**2
+    sqrtdist_meet = (SIZE_SIDE + radius_atm) ** 2
     # Find the equivalent index in the matrix of the x,y positions
     iX, iY = find_X_Y(coordtmp, arrayX, arrayY)
     # Change if too close to the edge
     iX = check_edges(iX, v, len(arrayX))
     iY = check_edges(iY, v, len(arrayY))
     # Select the cells to work in at i+-v (to not spend too much time on useless cells)
-    gridX = arrayX[iX-v:iX+v+1]
-    gridY = arrayY[iY-v:iY+v+1]
+    gridX = arrayX[iX - v : iX + v + 1]
+    gridY = arrayY[iY - v : iY + v + 1]
     # Find the closest distance in Z
-    sqrtdZ_min = np.min((arrayZ - coordtmp[2])**2)
-    if sqrtdZ_min > sqrtdist_lim:   # no close Z found
+    sqrtdZ_min = np.min((arrayZ - coordtmp[2]) ** 2)
+    if sqrtdZ_min > sqrtdist_lim:  # no close Z found
         return mat
 
     # Get all the pair of x,y possible around the atom
     Xg, Yg = np.meshgrid(gridX, gridY, indexing="ij")
 
-    sqrt_distances = (Xg-coordtmp[0])**2 + (Yg-coordtmp[1])**2
+    sqrt_distances = (Xg - coordtmp[0]) ** 2 + (Yg - coordtmp[1]) ** 2
     # Get the distances that are in the effective radius of the atom
     mask = sqrt_distances <= sqrtdist_meet - sqrtdZ_min
 
     # Convert the indexes to get the location in the matrix (global index) and not in the sublist (local)
-    Xind = np.arange(iX-v, iX+v+1)
-    Yind = np.arange(iY-v, iY+v+1)
+    Xind = np.arange(iX - v, iX + v + 1)
+    Yind = np.arange(iY - v, iY + v + 1)
     # Put the indexes that are in the effective radius (local) to be globalised to the matrix length
     X_idx, Y_idx = np.where(mask)  # local
-    X_idx = Xind[X_idx]            # Get to global
+    X_idx = Xind[X_idx]  # Get to global
     Y_idx = Yind[Y_idx]
 
     # Update the matrix
-    if aliph_atom == 'a':
+    if aliph_atom == "a":
         mat[X_idx, Y_idx] += 0.001
-    elif aliph_atom == 'n':
+    elif aliph_atom == "n":
         mat[X_idx, Y_idx] += 1
 
     return mat
 
+
 def binarize_matrix_without0(
-    mat: np.array,
-    mat_ini: np.array,
-    val1: float = 0.0,
-    val2: float = 0.99
-    ) -> np.array:
+    mat: np.array, mat_ini: np.array, val1: float = 0.0, val2: float = 0.99
+) -> np.array:
     """
     Binarise the presence / absence of aliphatic atom (and packing defects) in matrix.
 
@@ -223,18 +210,16 @@ def binarize_matrix_without0(
     OUTPUT
     numpy matrix
         Contains the position of the aliphatic / polar atoms (+ packing defects) (1)
-        in the simulation box    
+        in the simulation box
     """
     # Get the index of the polar atoms / deep defects if val2 = 0.99
     # Get the index of the apolar atoms if val 2 = 0.001
     index = np.argwhere((mat >= val2) | (mat <= val1))
-    mat_ini[index[:,0], index[:,1]] = 1. 
+    mat_ini[index[:, 0], index[:, 1]] = 1.0
     return mat_ini
 
-def count_edge_area(
-    area_defects: dict,
-    edge_labels: list
-    ) -> int:
+
+def count_edge_area(area_defects: dict, edge_labels: list) -> int:
     """
     Count the total area of the clusters on the edge.
 
@@ -244,7 +229,7 @@ def count_edge_area(
         Contains the labels of each defects and their areas
     edge_labels: list
         Contains the labels of the defects on the edge
-    
+
     --------------------
     OUTPUT
     int
@@ -253,4 +238,4 @@ def count_edge_area(
     total_edge_area = 0
     for key in edge_labels:
         total_edge_area += area_defects[key]
-    return  total_edge_area
+    return total_edge_area

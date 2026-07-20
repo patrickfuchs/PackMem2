@@ -5,25 +5,26 @@ import packmem2.packmem2
 import packmem2.concatenate
 import packmem2.analysis
 
+
 def launch(
-    cores: int, 
-    topo: str, 
-    traj: str, 
-    lipid: str, 
-    start: int, 
-    end: int, 
-    paramFile: str, 
-    radiiFile: str, 
-    indexFile: str | None, 
-    output_dir: str, 
-    outputname: str, 
-    dist_suppl_Z: float, 
-    protein: bool, 
-    pdbout: bool, 
-    limx: int | float, 
-    limy: float, 
-    precision: int
-    ) -> None:
+    cores: int,
+    topo: str,
+    traj: str,
+    lipid: str,
+    start: int,
+    end: int,
+    paramFile: str,
+    radiiFile: str,
+    indexFile: str | None,
+    output_dir: str,
+    outputname: str,
+    dist_suppl_Z: float,
+    protein: bool,
+    pdbout: bool,
+    limx: int | float,
+    limy: float,
+    precision: int,
+) -> None:
     """
     Launch the different python scripts for PackMem2
     """
@@ -31,25 +32,38 @@ def launch(
     # Prepare how much frames are going to be analysed per core
     step = int(end / cores)
     # Create a list of the minima / maxima frame of each interval
-    intervals = list(range(start, end+1, step))
+    intervals = list(range(start, end + 1, step))
     processes = []
 
     # Launch PackMem2 on multiple processes
-    for i in range(len(intervals)-1):
+    for i in range(len(intervals) - 1):
         # Select starting and ending frame (limits of the interval)
         start_i = intervals[i]
-        end_i =  intervals[i+1]-1
+        end_i = intervals[i + 1] - 1
         # If this is the last interval
-        if i == (len(intervals)-2):
+        if i == (len(intervals) - 2):
             end_i = end
-        p = Process(target = packmem2.packmem2.launch,
-                    args = (topo, traj, lipid, start_i, end_i, paramFile,\
-                            radiiFile, indexFile, output_dir, outputname,\
-                            dist_suppl_Z, protein, pdbout)
+        p = Process(
+            target=packmem2.packmem2.launch,
+            args=(
+                topo,
+                traj,
+                lipid,
+                start_i,
+                end_i,
+                paramFile,
+                radiiFile,
+                indexFile,
+                output_dir,
+                outputname,
+                dist_suppl_Z,
+                protein,
+                pdbout,
+            ),
         )
         p.start()
         processes.append(p)
-    
+
     # Wait for the processes to finish
     for p in processes:
         p.join()
@@ -59,17 +73,32 @@ def launch(
 
     ######## Analysis #######
     # Then launch packing defect analysis
-    packmem2.analysis.launch(output_dir, outputname, protein,\
-                            limx, limy, precision)
+    packmem2.analysis.launch(output_dir, outputname, protein, limx, limy, precision)
+
 
 def main() -> None:
     args = p.get_args_launch_packmem2()
 
-    launch(args.cores, args.topo, args.traj, args.lipid, args.start, args.end,\
-           args.paramFile, args.radiiFile, args.indexFile,\
-           args.output_dir, args.outputname, args.dist_suppl_Z, args.protein,\
-           args.pdbout, args.limx, args.limy, args.precision)
+    launch(
+        args.cores,
+        args.topo,
+        args.traj,
+        args.lipid,
+        args.start,
+        args.end,
+        args.paramFile,
+        args.radiiFile,
+        args.indexFile,
+        args.output_dir,
+        args.outputname,
+        args.dist_suppl_Z,
+        args.protein,
+        args.pdbout,
+        args.limx,
+        args.limy,
+        args.precision,
+    )
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main()

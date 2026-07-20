@@ -4,11 +4,8 @@
 
 import sys
 
-def get_value(
-    dict_info: dict,
-    resname: str,
-    atom_name: str
-    ) -> float | str:
+
+def get_value(dict_info: dict, resname: str, atom_name: str) -> float | str:
     """
     Get value from a dictionary of the form "lipid_name atom_name" : value.
 
@@ -20,22 +17,22 @@ def get_value(
         Name of the residue (lipid / amino acid)
     atom_name: string
         Name of the atom
-    
+
     --------------------
     OUTPUT
     float / str
         The atom radius or nature
     """
-    key = resname+" "+atom_name
+    key = resname + " " + atom_name
     if key not in dict_info.keys():
-        print(f"ERROR : Association of lipid {resname} and atom {atom_name} not found in vdw radii file")
+        print(
+            f"ERROR : Association of lipid {resname} and atom {atom_name} not found in vdw radii file"
+        )
         sys.exit()
     return dict_info[key]
 
-def del_key_dict(
-    dict_info: dict,
-    list_key: list
-    ) -> dict:
+
+def del_key_dict(dict_info: dict, list_key: list) -> dict:
     """
     Remove in a dictionary keys from list_key.
 
@@ -56,9 +53,8 @@ def del_key_dict(
             del dict_info[key]
     return dict_info
 
-def max_value_dict(
-    dict_arrayZ: dict
-    ) -> float:
+
+def max_value_dict(dict_arrayZ: dict) -> float:
     """
     Return the maximum value from the dictionary.
 
@@ -67,7 +63,7 @@ def max_value_dict(
     dict_arrayZ:  dictionary
         For each resid, contains array of floats ranging from z_coord to zmin
         or from zmax to z_coord by 1.0 steps
-    
+
     --------------------
     OUTPUT
     float
@@ -75,9 +71,8 @@ def max_value_dict(
     """
     return max([max(arrayZ) for arrayZ in dict_arrayZ.values()])
 
-def min_value_dict(
-    dict_arrayZ: dict
-    ) -> float:
+
+def min_value_dict(dict_arrayZ: dict) -> float:
     """
     Return the minimum value from the dictionary.
 
@@ -86,7 +81,7 @@ def min_value_dict(
     dict_arrayZ:  dictionary
         For each resid, contains array of floats ranging from z_coord to zmin
         or from zmax to z_coord by 1.0 steps
-    
+
     --------------------
     OUTPUT
     float
