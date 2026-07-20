@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-#-*- coding: utf-8 -*-
 # Pg compute packing defects on membranes simulations
 # R. Gautier A. Bacle april 2016
 # R. Gerard may 2024
@@ -28,7 +26,21 @@ from packmem2.core import param as p
 from packmem2.core import protein as prot
 
 ##########################################################################################
-def launch(topo, traj, lipid, start, end, paramFile, radiiFile, indexFile, output_dir, outputname, dist_suppl_Z, protein, pdbout):
+def launch(
+    topo: str,
+    traj: str,
+    lipid: str,
+    start: int,
+    end: int,
+    paramFile: str,
+    radiiFile: str,
+    indexFile: str | None,
+    output_dir: str,
+    outputname: str,
+    dist_suppl_Z: float,
+    protein: bool,
+    pdbout: bool
+    ) -> None:
     """
     Python
     Script to compute Packing defect in flat bilayers
@@ -437,7 +449,7 @@ def launch(topo, traj, lipid, start, end, paramFile, radiiFile, indexFile, outpu
         print(f"-- Ran for {round((ran_time / 60), 2)} hour(s) --")
 
 
-def main():
+def main() -> None:
     ####### PARAMETERS and INPUT #####
     try:
         args = p.get_args_packmem2()

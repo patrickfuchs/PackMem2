@@ -1,4 +1,3 @@
-#-*- coding: utf-8 -*-
 """Compute packing defects analysis with a protein."""
 # R. Gerard 2024
 # M. Zygadlo 2025
@@ -7,7 +6,14 @@ import numpy as np
 
 from packmem2.core import matrix as m
 
-def find_protein(mat, defect, protein, arrayX, arrayY, zmean):
+def find_protein(
+    mat: np.array,
+    defect: str,
+    protein: MDAnalysis.core.groups.AtomGroup,
+    arrayX: np.array,
+    arrayY: np.array,
+    zmean: float
+    ) -> np.array:
     """
     Locate the protein in the matrix.
 
@@ -43,7 +49,9 @@ def find_protein(mat, defect, protein, arrayX, arrayY, zmean):
             mat[iX, iY] = 1
     return mat
 
-def find_edges(mat):
+def find_edges(
+    mat: np.array
+    ) -> dict:
     """
     Find the border coordinates of packing defects based on their labels.
 
@@ -82,7 +90,10 @@ def find_edges(mat):
                 defects_edges_coors[label] = np.vstack((defects_edges_coors[label], np.array([indX, indY])))
     return defects_edges_coors
 
-def find_shortest_sqdist(coor_prot_edge, coor_defect_edge):
+def find_shortest_sqdist(
+    coor_prot_edge: np.array,
+    coor_defect_edge: np.array
+    ) -> float:
     """
     Find the shortest squared distance between the protein edge coordinates and packing defects one.
 
@@ -104,7 +115,11 @@ def find_shortest_sqdist(coor_prot_edge, coor_defect_edge):
     min_sqdist = np.min(square_dist)
     return min_sqdist
 
-def assign_dist_group(coor_prot_edge, coor_defect_edge, sqdist_thres):
+def assign_dist_group(
+    coor_prot_edge: np.array,
+    coor_defect_edge: dict,
+    sqdist_thres: int
+    ) -> dict:
     """
     Assign distance groups to packing defects based on their proximity to the protein.
 
@@ -135,7 +150,11 @@ def assign_dist_group(coor_prot_edge, coor_defect_edge, sqdist_thres):
             defects_labels_group[label] = 'far'
     return defects_labels_group
 
-def outputTXT_defects_prot(out_name, labels_group, defect_area):
+def outputTXT_defects_prot(
+    out_name: str,
+    labels_group: dict,
+    defect_area: dict
+    ) -> None:
     """
     Create output file with information about the packing defects and their distance groups.
 

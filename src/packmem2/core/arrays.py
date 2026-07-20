@@ -1,4 +1,3 @@
-#-*- coding: utf-8 -*-
 """Functions to create, analyse list variables."""
 # R. Gautier 2015
 # M. Zygadlo 2025
@@ -7,7 +6,10 @@ import numpy as np
 
 from packmem2.core import matrix as m
 
-def get_glyc_lipids(lipid_list, RESNAME_GLYC):
+def get_glyc_lipids(
+    lipid_list: list,
+    resname_glyc: dict
+    ) -> str:
     """
     Get the glycerol atom name(s) for each lipid in the bilayer.
 
@@ -15,7 +17,7 @@ def get_glyc_lipids(lipid_list, RESNAME_GLYC):
     INPUT
     lipid_list:  list
         Contains the name of every lipid(s) in the bilayer given by the user
-    RESNAME_GLYC: dictionary
+    resname_glyc: dictionary
         Contains as keys to lipid name and as keys the glycerol atom name
     
     --------------------
@@ -26,14 +28,16 @@ def get_glyc_lipids(lipid_list, RESNAME_GLYC):
     atom_mb =  []
     # Find the glycerol atom for all lipids selected
     for lip in lipid_list:
-        atom_mb.append(RESNAME_GLYC[lip])
+        atom_mb.append(resname_glyc[lip])
     # Delete the multi occurrences
     atom_mb = set(atom_mb)
     # Cast to string
     atom_mb = ' '.join(atom_mb)
     return atom_mb
 
-def min_max_mean(data):
+def min_max_mean(
+    data: np.array
+    ) -> tuple[float, float, float]:
     """
     Find the minimum, maximum and mean of an array.
 
@@ -55,7 +59,11 @@ def min_max_mean(data):
     mean = np.mean(data)
     return mini, maxi, mean
 
-def create_array(v1, v2, step):
+def create_array(
+    v1: float,
+    v2: float,
+    step: float
+    ) -> np.array:
     """
     Create numpy array from v1 to v2 by step step.
 
@@ -71,7 +79,14 @@ def create_array(v1, v2, step):
     """
     return np.arange(v1, v2, step)
 
-def create_arrayZ(residues, array_resids, resname_glyc, dist_suppl_Z, z_extr, up=True):
+def create_arrayZ(
+    residues: MDAnalysis.ResidueGroup,
+    array_resids: np.array,
+    resname_glyc: dict,
+    dist_suppl_Z: float,
+    z_extr: float,
+    up: bool = True
+    ) -> dict:
     """
     Create a dictionary of the Z position for upper and lower leaflet.
 

@@ -5,7 +5,25 @@ import packmem2.packmem2
 import packmem2.concatenate
 import packmem2.analysis
 
-def launch(cores, topo, traj, lipid, start, end, paramFile, radiiFile, indexFile, output_dir, outputname, dist_suppl_Z, protein, pdbout, limx, limy, precision):
+def launch(
+    cores: int, 
+    topo: str, 
+    traj: str, 
+    lipid: str, 
+    start: int, 
+    end: int, 
+    paramFile: str, 
+    radiiFile: str, 
+    indexFile: str | None, 
+    output_dir: str, 
+    outputname: str, 
+    dist_suppl_Z: float, 
+    protein: bool, 
+    pdbout: bool, 
+    limx: int | float, 
+    limy: float, 
+    precision: int
+    ) -> None:
     """
     Launch the different python scripts for PackMem2
     """
@@ -44,7 +62,7 @@ def launch(cores, topo, traj, lipid, start, end, paramFile, radiiFile, indexFile
     packmem2.analysis.launch(output_dir, outputname, protein,\
                             limx, limy, precision)
 
-def main():
+def main() -> None:
     args = p.get_args_launch_packmem2()
 
     launch(args.cores, args.topo, args.traj, args.lipid, args.start, args.end,\

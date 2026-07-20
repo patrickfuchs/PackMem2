@@ -1,11 +1,14 @@
-#-*- coding: utf-8 -*-
 """Functions about dictionaries."""
 # R. Gautier 2015
 # M. Zygadlo 2025
 
 import sys
 
-def get_value(dict_info, resname, atom_name):
+def get_value(
+    dict_info: dict,
+    resname: str,
+    atom_name: str
+    ) -> float | str:
     """
     Get value from a dictionary of the form "lipid_name atom_name" : value.
 
@@ -29,7 +32,10 @@ def get_value(dict_info, resname, atom_name):
         sys.exit()
     return dict_info[key]
 
-def del_key_dict(dict_info, list_key):
+def del_key_dict(
+    dict_info: dict,
+    list_key: list
+    ) -> dict:
     """
     Remove in a dictionary keys from list_key.
 
@@ -50,7 +56,9 @@ def del_key_dict(dict_info, list_key):
             del dict_info[key]
     return dict_info
 
-def max_value_dict(dict_arrayZ):
+def max_value_dict(
+    dict_arrayZ: dict
+    ) -> float:
     """
     Return the maximum value from the dictionary.
 
@@ -67,7 +75,9 @@ def max_value_dict(dict_arrayZ):
     """
     return max([max(arrayZ) for arrayZ in dict_arrayZ.values()])
 
-def min_value_dict(dict_arrayZ):
+def min_value_dict(
+    dict_arrayZ: dict
+    ) -> float:
     """
     Return the minimum value from the dictionary.
 
