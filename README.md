@@ -1,7 +1,8 @@
 # PackMem2
-[PackMem](https://packmem.ipmc.cnrs.fr/) ([link to the github repo](https://github.com/rogautier/packmem)) is a computational tool that compute the distributions of packing defects in lipid bilayers from molecular dynamics trajectories. The present repository contains the scripts for the new version of PackMem called **PackMem2**.
 
-PackMem2 was written in python 3 and completely refactorized compared to the original PackMem (notably with the use of Numpy arrays, MDAnalysis module, multiprocessing), which hevily improved the performance. It contains also some new features, notably computing packing defects around a protein inserted into the membrane.
+[PackMem](https://packmem.ipmc.cnrs.fr/) ([link to the github repo](https://github.com/rogautier/packmem)) is a computational tool that computes the distributions of packing defects in lipid bilayers from molecular dynamics trajectories. The present repository contains the new version of PackMem called **PackMem2**.
+
+PackMem2 has been completely refactorized compared to the original PackMem (notably with the use of Numpy, MDAnalysis, and the multiprocessing modules), which heavily improved performances. PackMem2 also implements some new features, notably computing packing defects around a protein inserted into the membrane.
 
 -------------------------------------------------------------------------------
 
@@ -55,6 +56,7 @@ And the result file:\
 -------------------------------------------------------------------------------
 
 ## Possible problems
+
 If your lipid isn't present in the parameter files (in the data folder), then you can add it on your own using the same convention.\
 In param_Charmm.txt or param_Martini.txt:\
 * LIPID NAME glycerol / central atom. Example : DMPC C2
@@ -68,5 +70,10 @@ Note that you can use the `-martini` or `-martini3` option to precise how to com
 -------------------------------------------------------------------------------
 
 ## Contact
-If there are any other problems, please contact me at :\
-`maya.zygadlo@sorbonne-universite.fr`
+
+If there are any other problems, please contact: `maya.zygadlo@sorbonne-universite.fr`
+
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md)
