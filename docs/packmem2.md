@@ -44,10 +44,10 @@ packmem2 -f [trajectory] -s [structure] -l [lipid name] -b [starting frame] -e [
 Input files options:
 - `-f` Trajectory file [.xtc/.trr/...]
 - `-s` topology file [.gro/...]
-- `-r` Van der Waals radii file (Default: `vdw_radii_Charmm.txt`)\
-Other options are: `vdw_radii_Martini_old.txt`, `vdw_radii_Martini2.txt`, `vdw_radii_Martini2P.txt`, `vdw_radii_Martini3.txt`
-- `-p` Parameter file (Default: `param_Charmm.txt`)\
-Other option is: `param_Martini.txt`
+- `-r` Van der Waals radii file (Default: `data/vdw_radii_Charmm.txt`)\
+Other options are: `data/vdw_radii_Martini_old.txt`, `data/vdw_radii_Martini2.txt`, `data/vdw_radii_Martini2P.txt`, `data/vdw_radii_Martini3.txt`
+- `-p` Parameter file (Default: `data/param_Charmm.txt`)\
+Other option is: `data/param_Martini.txt`
 - `-n` Index file (Optional)\
 Index to the upper and lower leaflet
 

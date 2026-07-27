@@ -52,15 +52,15 @@ def build_args() -> argparse.Namespace:
         "-r",
         action="store",
         dest="radiiFile",
-        default="vdw_radii_Charmm.txt",
-        help="File for the atom radii.\nThe options are: vdw_radii_Charmm.txt (default), vdw_radii_Martini2.txt, vdw_radii_Martini2P.txt and vdw_radii_Martini3.txt",
+        default="data/vdw_radii_Charmm.txt",
+        help="File for the atom radii.\nThe options are: data/vdw_radii_Charmm.txt (default), data/vdw_radii_Martini_old.txt, data/vdw_radii_Martini2.txt, data/vdw_radii_Martini2P.txt and data/vdw_radii_Martini3.txt",
     )
     parser.add_argument(
         "-p",
         action="store",
         dest="paramFile",
-        default="param_Charmm.txt",
-        help="File for lipid parameters.\nThe options are: param_Charmm.txt (default), param_Martini.txt",
+        default="data/param_Charmm.txt",
+        help="File for lipid parameters.\nThe options are: data/param_Charmm.txt (default), data/param_Martini.txt",
     )
     parser.add_argument(
         "-o",
