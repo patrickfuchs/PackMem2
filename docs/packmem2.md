@@ -6,17 +6,17 @@ This script runs PackMem2's main loop. It reads the trajectory and computes if t
 * All: the combination of the previous two defects
 
 The output comprises of multiple .txt file:
-* [outputname][Frame]_[Up/Lo]_[Shallow/Deep/All]_result.txt\
+* [outputname][Frame]\_[Up/Lo]\_[Shallow/Deep/All]\_result.txt\
         ## MatrixSize  9646  9801   # Membrane matrix size, Total matrix size\
         ## Total   51   582 11.41 6.034   # number of packing defects, total area of packing defects, average size, pourcent of membrane (Membrane matrix size)\
         1    1    77.00     2.00          # for each packing defect number, size, x_position (first cell), y_mean (first cell)\
         2    1    21.00     3.00\
         3    8    59.12     7.00
-* Prot_[outputname][Frame]_[Up/Lo]_[Deep/Shallow/All].txt (if `-prot` flag)\
+* Prot_[outputname][Frame]\_[Up/Lo]\_[Deep/Shallow/All].txt (if `-prot` flag)\
         1,far,2 # defects number, distance category, size\
         2,far,3\
         3,close,6
-* [outputname]_Total[Up/Lo]_[Shallow/Deep/All].pdb\
+* [outputname]\_Total[Up/Lo]\_[Shallow/Deep/All].pdb\
             Matrix x,y with, for each cell, the value of "packing defect" (in B_factor column, the last column)\
             if 0 = Deep packing defects The value increases with the number of atoms in the cell.\
             if > 0 and < 1 = Shallow defect\
@@ -24,7 +24,7 @@ The output comprises of multiple .txt file:
             ATOM      3   H1 EDG     3       4.000  54.000  56.940  1.00 -1.00\
             ATOM      3   H1 MAT     3       4.000  54.000  56.940  1.00  0.00\
             ATOM      3   H1 MAT     3       4.000  54.000  56.940  1.00  0.00
-* [outputname]_Defect[Up/Lo]_[Shallow/Deep/All].pdb
+* [outputname]\_Defect[Up/Lo]\_[Shallow/Deep/All].pdb
             Packing defects in pdb format:\
             the residue number corresponds to the different packing defects.\
             ATOM      5   H1 DEF     2       6.000  22.000  56.940  1.00  2.00\
@@ -34,7 +34,7 @@ The output comprises of multiple .txt file:
 
 ## Command line
 
-The complete options for launch_packmem2 are:
+The complete options for packmem2 are:
 ```
 packmem2 -f [trajectory] -s [structure] -l [lipid name] -b [starting frame] -e [ending frame] -r [radii file] -p [parameter file] -d [distance in z] -n [index file] -o [output name] -od [output directory] [-prot] [-pdb] [-h]
 ```
