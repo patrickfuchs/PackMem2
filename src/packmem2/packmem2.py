@@ -45,7 +45,7 @@ def launch(
     """
     Python
     Script to compute Packing defect in flat bilayers
-    Lipids parameters adapted to either Berger lipid (with corrections), CHARMM36 (with Klauda corrections) or Martini FF.
+    Lipids parameters adapted to either CHARMM36 (with Klauda corrections) or Martini FF.
 
     Output files:
         outputname_Up/Lo_Shallow/Deep/All_result.txt
