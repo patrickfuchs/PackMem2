@@ -2,8 +2,8 @@ project = "PackMem2"
 copyright = "2026, Patrick Fuchs"
 author = "Maya Zygadlo, Pierre Poulain, Romain Gautier, Patrick Fuchs"
 
-import packmem2
 # To uncomment when we have a release
+#import packmem2
 #release = packmem2.__version__
 
 extensions = ["sphinx.ext.mathjax",
