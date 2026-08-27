@@ -1,5 +1,6 @@
 # M. Zygadlo 2025
 
+import sys
 import argparse
 import pandas as pd
 import numpy as np
@@ -115,6 +116,10 @@ def fit_decay(x: np.array, y: np.array, limx: int | float, limy: float) -> np.ar
     x = x[x >= limx]
     x = x[y >= limy]
     y = y[y >= limy]
+    if len(x) < 2 or len(y) < 2:
+        raise ValueError("Not enough data to perform the fit."
+            "\nPlease check that enough frames were given to packmem2"
+            " or that you have given all the lipids in your system (separated by '_') to packmem2")
     FIT = np.polyfit(x, log(y), 1)
     return FIT
 
@@ -586,9 +591,13 @@ def main() -> None:
     # Get arguments
     args = get_arguments()
 
-    launch(
-        args.output_dir, args.output, args.prot, args.limx, args.limy, args.precision
-    )
+    try:
+        launch(
+                args.output_dir, args.output, args.prot, args.limx, args.limy, args.precision
+            )
+    except ValueError as e:
+        print(f"\nERROR: {e}\n")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
