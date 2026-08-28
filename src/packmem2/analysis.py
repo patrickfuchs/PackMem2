@@ -117,12 +117,13 @@ def fit_decay(x: np.array, y: np.array, limx: int | float, limy: float) -> np.ar
     x = x[x >= limx]
     x = x[y >= limy]
     y = y[y >= limy]
-    if len(x) < 2 or len(y) < 2:
-        raise ValueError("Not enough data to perform the fit."
+    try:
+        FIT = np.polyfit(x, log(y), 1)
+    except:
+        raise TypeError("Not enough data to perform the fit."
             "\nPlease check that enough frames were given to packmem2"
             " or that you have well supplied all the lipids in your system with the -l option(separated by '_') to packmem2"
             " or that you have not misspelled a lipid.")
-    FIT = np.polyfit(x, log(y), 1)
     # As the fit is linear
     r_squared = np.corrcoef(x, log(y))[0, 1] ** 2
     if r_squared < 0.9:
@@ -598,13 +599,9 @@ def main() -> None:
     # Get arguments
     args = get_arguments()
 
-    try:
-        launch(
-                args.output_dir, args.output, args.prot, args.limx, args.limy, args.precision
-            )
-    except ValueError as e:
-        print(f"\nERROR: {e}\n")
-        sys.exit(1)
+    launch(
+         args.output_dir, args.output, args.prot, args.limx, args.limy, args.precision
+        )
 
 
 if __name__ == "__main__":
