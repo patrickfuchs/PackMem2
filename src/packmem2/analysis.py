@@ -119,7 +119,8 @@ def fit_decay(x: np.array, y: np.array, limx: int | float, limy: float) -> np.ar
     if len(x) < 2 or len(y) < 2:
         raise ValueError("Not enough data to perform the fit."
             "\nPlease check that enough frames were given to packmem2"
-            " or that you have given all the lipids in your system (separated by '_') to packmem2")
+            " or that you have given all the lipids in your system (separated by '_') to packmem2"
+            " or that you haven't misspelled a lipid.")
     FIT = np.polyfit(x, log(y), 1)
     return FIT
 
