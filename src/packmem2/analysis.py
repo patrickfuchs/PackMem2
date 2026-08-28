@@ -124,11 +124,11 @@ def fit_decay(x: np.array, y: np.array, limx: int | float, limy: float) -> np.ar
             " or that you have not misspelled a lipid.")
     FIT = np.polyfit(x, log(y), 1)
     # As the fit is linear
-    rfactor = np.corrcoef(x, log(y))[0, 1] ** 2
-    if rfactor < 0.9:
-        warnings.warn(f"Warning: rfactor is low ({rfactor:.2f})."
+    r_squared = np.corrcoef(x, log(y))[0, 1] ** 2
+    if r_squared < 0.9:
+        warnings.warn(f"Warning: r_squared is low ({r_squared:.2f})."
                       "Please provide more frames to packmem2")
-    return FIT, rfactor
+    return FIT, r_squared
 
 
 def block_averaging(
@@ -161,7 +161,7 @@ def block_averaging(
         x = H[1] + 0.5
         x = x[: len(x) - 1]
         y = H[0] / sum(H[0])
-        FIT, rfactor = fit_decay(x, y, limx, limy)
+        FIT, r_squared = fit_decay(x, y, limx, limy)
         decays.append(abs(1 / FIT[0]))
     return decays
 
@@ -209,7 +209,7 @@ def plot_defect_fit(
     x = np.arange(0, max(packdef_data) - 1)
     # nb of observations of a certain defect length
     y = H[0] / sum(H[0])
-    FIT, rfactor = fit_decay(x, y, limx, limy)
+    FIT, r_squared = fit_decay(x, y, limx, limy)
     fit_function = np.poly1d(FIT)
 
     ### Plot for defect fit
