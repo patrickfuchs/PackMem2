@@ -1,5 +1,6 @@
 # M. Zygadlo 2025
 
+import sys
 import argparse
 import pandas as pd
 import numpy as np
@@ -7,6 +8,7 @@ import math
 from pathlib import Path
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
+import warnings
 
 
 def get_arguments() -> argparse.Namespace:
@@ -115,8 +117,18 @@ def fit_decay(x: np.array, y: np.array, limx: int | float, limy: float) -> np.ar
     x = x[x >= limx]
     x = x[y >= limy]
     y = y[y >= limy]
+    if len(x) < 2 or len(y) < 2:
+        raise TypeError("Not enough data to perform the fit."
+            "\nPlease check that enough frames were given to packmem2"
+            " or that you have well supplied all the lipids in your system with the -l option(separated by '_') to packmem2"
+            " or that you have not misspelled a lipid.")
     FIT = np.polyfit(x, log(y), 1)
-    return FIT
+    # As the fit is linear
+    r_squared = np.corrcoef(x, log(y))[0, 1] ** 2
+    if r_squared < 0.9:
+        warnings.warn(f"Warning: r_squared is low ({r_squared:.2f})."
+                      "Please provide more frames to packmem2")
+    return FIT, r_squared
 
 
 def block_averaging(
@@ -149,7 +161,7 @@ def block_averaging(
         x = H[1] + 0.5
         x = x[: len(x) - 1]
         y = H[0] / sum(H[0])
-        FIT = fit_decay(x, y, limx, limy)
+        FIT, r_squared = fit_decay(x, y, limx, limy)
         decays.append(abs(1 / FIT[0]))
     return decays
 
@@ -197,7 +209,7 @@ def plot_defect_fit(
     x = np.arange(0, max(packdef_data) - 1)
     # nb of observations of a certain defect length
     y = H[0] / sum(H[0])
-    FIT = fit_decay(x, y, limx, limy)
+    FIT, r_squared = fit_decay(x, y, limx, limy)
     fit_function = np.poly1d(FIT)
 
     ### Plot for defect fit
@@ -587,8 +599,8 @@ def main() -> None:
     args = get_arguments()
 
     launch(
-        args.output_dir, args.output, args.prot, args.limx, args.limy, args.precision
-    )
+         args.output_dir, args.output, args.prot, args.limx, args.limy, args.precision
+        )
 
 
 if __name__ == "__main__":
