@@ -15,7 +15,6 @@ maintainers = [
 requires-python = ">=3.10"
 dependencies = [
     "argparse>=1.4.0",
-    "jupyter-book>=1.0,<2",
     "matplotlib>=3.9.4",
     "mdanalysis>=2.7.0",
     "networkx>=3.2.1",
