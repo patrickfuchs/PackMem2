@@ -4,6 +4,7 @@
 
 title: "PackMem2"
 author: "Maya Zygadlo, Pierre Poulain, Romain Gautier, Patrick Fuchs"
+copyright: "2026, Patrick Fuchs"
 
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
