@@ -26,6 +26,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "jupyter-book>=2.1.6",
     "pytest>=8.4.2",
     "ruff>=0.15.20",
 ]
