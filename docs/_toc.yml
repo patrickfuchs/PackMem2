@@ -2,7 +2,6 @@
 # Learn more at https://jupyterbook.org/customize/toc.html
 
 format: jb-book
-root: packmem2.md
 parts:
 - caption: Running PackMem2
   chapters:
