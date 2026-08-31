@@ -1,0 +1,14 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: packmem2.md
+parts:
+- caption: Running PackMem2
+  chapters:
+  - file: launch_packmem2.md
+  - file: concatenate.md
+- caption: Examples
+  chapters:
+  - file: calculate_radii.md
+  - file: analysis.md

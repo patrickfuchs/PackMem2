@@ -1,0 +1,47 @@
+# Book settings
+# Learn more at https://jupyterbook.org/customize/config.html
+# Comprehensive example: https://github.com/executablebooks/jupyter-book/blob/master/docs/_config.yml
+
+title: "PackMem2"
+author: "Maya Zygadlo, Pierre Poulain, Romain Gautier, Patrick Fuchs"
+logo: logo.png
+
+# Force re-execution of notebooks on each build.
+# See https://jupyterbook.org/content/execute.html
+execute:
+  execute_notebooks: force
+
+
+# Information about where the book exists on the web
+repository:
+  url: https://github.com/patrickfuchs/PackMem2
+  path_to_book: docs  # Optional path to your book, relative to the repository root
+
+# Add GitHub buttons to your book
+# See https://jupyterbook.org/customize/config.html#add-a-link-to-your-repository
+html:
+  use_issues_button: true
+  use_repository_button: true
+
+sphinx:
+  config:
+      myst-parser:
+        - "https://myst-parser.readthedocs.io/en/latest/"
+        - null
+      myst-nb:
+        - "https://myst-nb.readthedocs.io/en/latest/"
+        - null
+      sphinx:
+        - "https://www.sphinx-doc.org/en/master"
+        - null
+      nbformat:
+        - "https://nbformat.readthedocs.io/en/latest"
+        - null
+      mathjax3_config:
+        tex:
+          macros:
+            "N": "\\mathbb{N}"
+            "floor": ["\\lfloor#1\\rfloor", 1]
+            "bmat": ["\\left[\\begin{array}"]
+            "emat": ["\\end{array}\\right]"]
+        
