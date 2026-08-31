@@ -31,17 +31,4 @@ sphinx:
       myst-nb:
         - "https://myst-nb.readthedocs.io/en/latest/"
         - null
-      sphinx:
-        - "https://www.sphinx-doc.org/en/master"
-        - null
-      nbformat:
-        - "https://nbformat.readthedocs.io/en/latest"
-        - null
-      mathjax3_config:
-        tex:
-          macros:
-            "N": "\\mathbb{N}"
-            "floor": ["\\lfloor#1\\rfloor", 1]
-            "bmat": ["\\left[\\begin{array}"]
-            "emat": ["\\end{array}\\right]"]
-        
+
