@@ -1,6 +1,7 @@
 """Script to concatenate the PackMem analysis results."""
 
 import argparse
+import importlib.metadata
 import os
 import pandas as pd
 from pathlib import Path
@@ -15,7 +16,9 @@ def get_args() -> argparse.Namespace:
     parser.parse_args
         Contains all the arguments for the script
     """
-    parser = argparse.ArgumentParser()
+    packmem2_version = importlib.metadata.version('packmem2')
+    # Getting the arguments
+    parser = argparse.ArgumentParser(description=f"Arguments for concatenate of PackMem2 version {packmem2_version}")
     parser.add_argument(
         "-l",
         action="store",
@@ -52,6 +55,12 @@ def get_args() -> argparse.Namespace:
         dest="protein",
         help="Put if you want to also concatenante Protein files.",
     )
+    parser.add_argument(
+        "--version",
+        action='version',
+        version=packmem2_version
+    )
+
     args = parser.parse_args()
 
     return args

@@ -1,7 +1,7 @@
 # M. Zygadlo 2025
 
-import sys
 import argparse
+import importlib.metadata
 import pandas as pd
 import numpy as np
 import math
@@ -19,8 +19,9 @@ def get_arguments() -> argparse.Namespace:
     OUTPUT
     parser.parse_args
     """
+    packmem2_version = importlib.metadata.version('packmem2')
     # Getting the arguments
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=f"Arguments for analysis of PackMem2 version {packmem2_version}")
     parser.add_argument(
         "-prot", action="store_true", dest="prot", help="If there is a protein"
     )
@@ -61,6 +62,11 @@ def get_arguments() -> argparse.Namespace:
         dest="output_dir",
         default="./",
         help="Name for output directory (default: ./)",
+    )
+    parser.add_argument(
+        "--version",
+        action='version',
+        version=packmem2_version
     )
     args = parser.parse_args()
 
