@@ -72,7 +72,7 @@ def log(y_list: list) -> list:
 
     --------------------
     INPUT
-    y_list : list
+    y_list: list
         The y values.
 
     --------------------
@@ -89,7 +89,7 @@ def log(y_list: list) -> list:
     return log_y
 
 
-def fit_decay(x: np.array, y: np.array, limx: int | float, limy: float) -> np.array:
+def fit_decay(x: np.array, y: np.array, limx: int | float, limy: float) -> tuple[np.array, float]:
     """
     Function does a linear fit.
 
@@ -97,19 +97,20 @@ def fit_decay(x: np.array, y: np.array, limx: int | float, limy: float) -> np.ar
 
     --------------------
     INPUT
-    x : numpy array
+    x: numpy array
         Packing area.
-    y : numpy array
+    y: numpy array
         probability of having a certain packing area.
-    limx : int
+    limx: int
         The lowest defect area used for the fit.
-    limy : float
+    limy: float
         The lowest probability used for the fit
 
     --------------------
     OUTPUT
-    numpy array
-        A linear fit of x and y.
+    tuple
+        array[float, float]: the fit of the distribution
+        float: the r_squared of the fit
     """
     # fit with defects above LIMX nm and proba > LIMY
     y = y[x >= limx]
@@ -130,88 +131,41 @@ def fit_decay(x: np.array, y: np.array, limx: int | float, limy: float) -> np.ar
     return FIT, r_squared
 
 
-def block_averaging(
-    vect: pd.DataFrame, nb_block: int, limx: int | float, limy: float
-) -> list[float, float, float]:
-    """
-    Divide the packing data into n blocks.
-
-    --------------------
-    INPUT
-    vect : pandas dataframe
-        The size of the packing defect.
-    nb_block : int
-        The number of blocks we want to have.
-    limx : int
-        The lowest defect area used for the fit.
-    limy : float
-        The lowest probability used for the fit.
-
-    --------------------
-    OUTPUT
-    list
-        A vector of 3 decays.
-    """
-    bornes = [int((len(vect) / 3) * nb) for nb in range(nb_block + 1)]
-    decays = []
-    for i in range(0, nb_block):
-        subvect = vect[bornes[i] : bornes[i + 1]]
-        H = plt.hist(subvect, bins=np.arange(0.5, max(vect) + 0.5))
-        x = H[1] + 0.5
-        x = x[: len(x) - 1]
-        y = H[0] / sum(H[0])
-        FIT, r_squared = fit_decay(x, y, limx, limy)
-        decays.append(abs(1 / FIT[0]))
-    return decays
-
-
 def plot_defect_fit(
-    type: str,
+    name: str,
     defect: str,
-    packdef_data: pd.DataFrame,
-    packdef_constants: pd.DataFrame,
+    fit: np.array,
+    x: list,
+    y: list,
     limx: int | float,
     limy: float,
-    precision: int,
     pdf: PdfPages,
-) -> pd.DataFrame:
+) -> None:
     """
     Compute and plot the fit of the defects distribution.
 
     --------------------
     INPUT
-    type: string
+    name: string
         The type to analyse: Total/Total_Up/Total_Lo
     defect: string
         The type  of  defect: Deep/Shallow/All
-    packdef_data: pandas DataFrame
-        Contains the sizes of the defects
-    packdef_constants: pandas DataFrame
-        Will contains the statistics of the defects found in this function
+    fit: numpy array
+        Contains the fit on the area data
+    x: list
+        Contains x data for the plot
+    y: list
+        Contains the y data for the plot - areas distribution
     limx : int
         The lowest defect area used for the fit
     limy : float
         The lowest probability used for the fit
-    precision : int
-        The precision for writing packdef constants
     pdf : matplotlib.backends.backend_pdf.PdfPages
         Contains the figures in the final pdf
-
-    --------------------
-    OUTPUT
-    pandas DataFrame
-        Contains the statistics of the defects found in this function
     """
-    # Compute PackDef distributions (on the whole set)
-    H = plt.hist(packdef_data, bins=np.arange(0.5, max(packdef_data) + 0.5))
-    # Length of the defects
-    x = np.arange(0, max(packdef_data) - 1)
-    # nb of observations of a certain defect length
-    y = H[0] / sum(H[0])
-    FIT, r_squared = fit_decay(x, y, limx, limy)
-    fit_function = np.poly1d(FIT)
 
-    ### Plot for defect fit
+    fit_function = np.poly1d(fit)
+
     plt.clf()
     plt.scatter(x, log(y), marker="o", facecolor="none", edgecolor="black")
     plt.xlim(-2, 102)
@@ -222,44 +176,105 @@ def plot_defect_fit(
     )
     plt.ylabel("Probability")
     plt.xlabel("Defect area ${Å^2}$")
-    plt.title(f"{defect} {type}")
+    plt.title(f"{defect} {name}")
     plt.axvline(limx, color="gray", linestyle="--")
     plt.axhline(math.log(limy), color="gray", linestyle="-")
     plt.plot(x, fit_function(x), color="red", label="Fit")
     pdf.savefig()  # Save the current figure to the PDF
     plt.close()
 
-    global_inv_decay = abs(1 / FIT[0])
 
-    # print global results
-    print("")
-    print(f"Results for {defect} {type} defects")
+def compute_decay(
+        name: str,
+        defect: str, 
+        area_dtf: pd.DataFrame,
+        limx: int | float,
+        limy: float,
+        pdf: PdfPages,
+        plot: bool = False
+) -> float:
+    """
+    Compute packing defects distributions
+    
+    --------------------
+    INPUT
+    name: string
+        The type to analyse: Total/Total_Up/Total_Lo
+    defect: string
+        The type  of  defect: Deep/Shallow/All
+    area_dtf: pandas dataframe
+        Conatins the size of the packing defects.
+    limx: int
+        The lowest defect area used for the fit.
+    limy: float
+        The lowest probability used for the fit.
+    pdf : matplotlib.backends.backend_pdf.PdfPages
+        Contains the figures in the final pdf.
+    plot: boolean
+        If a plot is done for the fit.
 
-    # Compute PackDef distributions with block averaging method, and print results
-    FITS_3blocks = block_averaging(packdef_data, 3, limx, limy)
-    for i in range(3):
-        print(f"Using block {i + 1}: {round(FITS_3blocks[i], precision)} Å\u00b2")
-    # Compute the mean of the 3 blocks averages
-    inv_decay_block = sum(FITS_3blocks) / len(FITS_3blocks)
-    # Compute the standard deviation of the 3 values
-    error_inv_decay_block = np.std(FITS_3blocks)
-    print(
-        f"Mean +/- sd on 3 blocks: {round(inv_decay_block, precision)} ± {round(error_inv_decay_block, precision)} Å\u00b2"
-    )
+    --------------------
+    OUTPUT
+    float
+        The inverse decay.
+    """
+    H = plt.hist(area_dtf, bins=np.arange(0.5, max(area_dtf) + 0.5))
+    # Length of the defects
+    x = H[1][:-1] + 0.5
+    # nb of observations of a certain defect length
+    y = H[0] / sum(H[0])
+    FIT, r_squared = fit_decay(x, y, limx, limy)
 
-    # store all the results in the data frame
-    packdef_constants.loc["PackDef_cst_global", f"{defect}_{type}"] = global_inv_decay
-    packdef_constants.loc["PackDef_cst_block1", f"{defect}_{type}"] = FITS_3blocks[0]
-    packdef_constants.loc["PackDef_cst_block2", f"{defect}_{type}"] = FITS_3blocks[1]
-    packdef_constants.loc["PackDef_cst_block3", f"{defect}_{type}"] = FITS_3blocks[2]
-    packdef_constants.loc["PackDef_cst_all_blocks", f"{defect}_{type}"] = (
-        inv_decay_block
-    )
-    packdef_constants.loc["error_all_blocks", f"{defect}_{type}"] = (
-        error_inv_decay_block
-    )
+    if plot:
+        plot_defect_fit(name, defect, FIT, x, y, limx, limy, pdf)
 
-    return packdef_constants
+    # compute inv decay
+    inv_decay = abs(1 / FIT[0])
+
+    return inv_decay
+
+
+def block_averaging(
+    def_area: pd.DataFrame,
+    nb_block: int,
+    limx: int | float,
+    limy: float,
+    name: str,
+    defect: str,
+    pdf: PdfPages,
+) -> list[float, float, float]:
+    """
+    Divide the packing data into n_block blocks.
+
+    --------------------
+    INPUT
+    def_area : pandas dataframe
+        The size of the packing defect.
+    nb_block : int
+        The number of blocks we want to have.
+    limx : int
+        The lowest defect area used for the fit.
+    limy : float
+        The lowest probability used for the fit.
+    name: string
+        The type to analyse: Total/Total_Up/Total_Lo
+    defect: string
+        The type  of  defect: Deep/Shallow/All
+    pdf : matplotlib.backends.backend_pdf.PdfPages
+        Contains the figures in the final pdf.
+
+    --------------------
+    OUTPUT
+    list
+        A vector of nb_block decays.
+    """
+    limits = [int((len(def_area) / nb_block) * nb) for nb in range(nb_block + 1)]
+    decays = []
+    for i in range(nb_block):
+        subvect = def_area[limits[i] : limits[i + 1]]
+        inv_decay = compute_decay(name, defect, subvect, limx, limy, pdf)
+        decays.append(inv_decay)
+    return decays
 
 
 def plot_defect_constants_blocks(
@@ -331,7 +346,7 @@ def plot_defect_constants(
 
     # Get the variables needed for the graph
     x_index = cst_packing.columns
-    packdef_values = cst_packing.loc["PackDef_cst_all_blocks"]
+    packdef_values = cst_packing.loc["cst_mean_blocks"]
     colour = ["firebrick", "forestgreen", "royalblue"]
     text_pos = [0.0, 1.01, 2.01]
 
@@ -353,6 +368,25 @@ def plot_defect_constants(
     plt.close()
 
 
+def write_packdef_csts(output_dir, output, packdef_csts, precision):
+    """
+    Write the packing defects results
+
+    --------------------
+    INPUT
+    output_dir: str
+        The name of the output directory
+    output: str
+        The name of the output file
+    packdef_csts: pandas DataFrame
+        Contains the statistics of the defects
+    precision: float
+        The precision in the output file
+    """
+    packdef_csts = packdef_csts.astype(float)
+    packdef_csts.to_csv(f"{output_dir}/{output}.csv", float_format=f"%.{precision}f")
+
+
 def launch(
     output_dir: str,
     output: str,
@@ -369,41 +403,27 @@ def launch(
     pdf = PdfPages(f"{output_dir}/{output}.pdf")
 
     columns_dtf = [
-        "Deep_Total",
-        "Shallow_Total",
-        "All_Total",
-        "Deep_Total_Up",
-        "Shallow_Total_Up",
-        "All_Total_Up",
-        "Deep_Total_Lo",
-        "Shallow_Total_Lo",
-        "All_Total_Lo",
+        "Deep_Total", "Shallow_Total", "All_Total",
+        "Deep_Total_Up", "Shallow_Total_Up", "All_Total_Up",
+        "Deep_Total_Lo", "Shallow_Total_Lo", "All_Total_Lo",
     ]
     index_dtf = [
-        "PackDef_cst_global",
-        "PackDef_cst_block1",
-        "PackDef_cst_block2",
-        "PackDef_cst_block3",
-        "PackDef_cst_all_blocks",
-        "error_all_blocks",
+        "cst_global",
+        "cst_block1",
+        "cst_block2",
+        "cst_block3",
+        "cst_mean_blocks",
+        "error_mean_blocks",
     ]
     if prot:
         columns_dtf += [
-            "Deep_Total_Up_close",
-            "Shallow_Total_Up_close",
-            "All_Total_Up_close",
-            "Deep_Total_Up_far",
-            "Shallow_Total_Up_far",
-            "All_Total_Up_far",
-            "Deep_Total_Lo_close",
-            "Shallow_Total_Lo_close",
-            "All_Total_Lo_close",
-            "Deep_Total_Lo_far",
-            "Shallow_Total_Lo_far",
-            "All_Total_Lo_far",
+        "Deep_Total_Up_close", "Shallow_Total_Up_close", "All_Total_Up_close",
+        "Deep_Total_Up_far", "Shallow_Total_Up_far", "All_Total_Up_far",
+        "Deep_Total_Lo_close", "Shallow_Total_Lo_close", "All_Total_Lo_close",
+        "Deep_Total_Lo_far", "Shallow_Total_Lo_far", "All_Total_Lo_far",
         ]
     # Initialize a data frame to store packdef constants + errors
-    packdef_constants = pd.DataFrame(columns=columns_dtf, index=index_dtf)
+    packdef_csts = pd.DataFrame(columns=columns_dtf, index=index_dtf)
 
     for name in ["Total", "Total_Up", "Total_Lo"]:
         # Now loop over the three default types
@@ -411,24 +431,40 @@ def launch(
             filename = f"{output_dir}/{name}_{defect}.csv"
             def_area = pd.read_csv(filename, header=None)[1]
 
-            # Plot the fit of the defects distribution
-            packdef_constants = plot_defect_fit(
-                name, defect, def_area, packdef_constants, limx, limy, precision, pdf
+            # Compute the packing defect constant on the whole traj
+            global_inv_decay = compute_decay(name, defect, def_area, limx, limy, pdf, plot=True)
+            packdef_csts.loc["cst_global", f"{defect}_{name}"] = global_inv_decay
+
+            # Compute the packdef constants on 3 blocks of the traj
+            decays_3blocks = block_averaging(def_area, 3, limx, limy, name, defect, pdf)
+            for i in range(1,3+1):
+                packdef_csts.loc[f"cst_block{i}", f"{defect}_{name}"] = decays_3blocks[i-1]
+
+            # Compute the mean of the 3 blocks averages
+            mean_inv_decay = sum(decays_3blocks) / len(decays_3blocks)
+            # Compute the standard deviation of the 3 values
+            error_mean_inv_decay = np.std(decays_3blocks)
+            # Add values to the dtf
+            packdef_csts.loc["cst_mean_blocks", f"{defect}_{name}"] = (
+                mean_inv_decay
+            )
+            packdef_csts.loc["error_mean_blocks", f"{defect}_{name}"] = (
+                error_mean_inv_decay
             )
 
         # Plot all packdef constants on a single barplot
         # Allows to estimate the relative convergence of the simulation
-        errors = packdef_constants.T.error_all_blocks.to_frame("PackDef_cst_all_blocks")
-        plot_defect_constants_blocks(name, packdef_constants, errors, pdf)
+        errors = packdef_csts.T.error_mean_blocks.to_frame("cst_mean_blocks")
+        plot_defect_constants_blocks(name, packdef_csts, errors, pdf)
 
         # Plot the final decays + errors computed with block averaging
         # (for each packdef) on a barplot
         plot_defect_constants(
             name,
-            packdef_constants,
+            packdef_csts,
             errors.loc[
                 [f"Deep_{name}", f"Shallow_{name}", f"All_{name}"],
-                "PackDef_cst_all_blocks",
+                "cst_mean_blocks",
             ],
             pdf,
         )
@@ -445,80 +481,94 @@ def launch(
                 def_area_prot_close = def_area_prot[def_area_prot[1] == "close"][2]
                 def_area_prot_far = def_area_prot[def_area_prot[1] == "far"][2]
 
-                # Plot the fit of the defects distribution
-                packdef_constants = plot_defect_fit(
-                    f"{name}_close",
-                    defect,
-                    def_area_prot_close,
-                    packdef_constants,
-                    limx,
-                    limy,
-                    precision,
-                    pdf,
+                # Compute the packing defect constant on the whole traj
+                global_inv_decay = compute_decay(f"{name}_close", defect, def_area_prot_close, limx, limy, pdf, plot=True)
+                packdef_csts.loc["cst_global", f"{defect}_{name}_close"] = global_inv_decay
+                global_inv_decay = compute_decay(f"{name}_far", defect, def_area_prot_far, limx, limy, pdf, plot=True)
+                packdef_csts.loc["cst_global", f"{defect}_{name}_far"] = global_inv_decay
+
+    
+                # Compute the packdef constants on 3 blocks of the traj
+                decays_3blocks_close = block_averaging(def_area_prot_close, 3, limx, limy, f"{name}_close", defect, pdf)
+                for i in range(1,3+1):
+                    packdef_csts.loc[f"cst_block{i}", f"{defect}_{name}_close"] = decays_3blocks_close[i-1]
+    
+                # Compute the mean of the 3 blocks averages
+                mean_inv_decay = sum(decays_3blocks_close) / len(decays_3blocks_close)
+                # Compute the standard deviation of the 3 values
+                error_mean_inv_decay = np.std(decays_3blocks_close)
+                # Add values to the dtf
+                packdef_csts.loc["cst_mean_blocks", f"{defect}_{name}_close"] = (
+                    mean_inv_decay
                 )
-                packdef_constants = plot_defect_fit(
-                    f"{name}_far",
-                    defect,
-                    def_area_prot_far,
-                    packdef_constants,
-                    limx,
-                    limy,
-                    precision,
-                    pdf,
+                packdef_csts.loc["error_mean_blocks", f"{defect}_{name}_close"] = (
+                    error_mean_inv_decay
                 )
-            if (
-                packdef_constants[
-                    [
-                        f"Deep_{name}_close",
-                        f"Shallow_{name}_close",
-                        f"All_{name}_close",
-                        f"Deep_{name}_far",
-                        f"Shallow_{name}_far",
-                        f"All_{name}_far",
+
+                decays_3blocks_far = block_averaging(def_area_prot_far, 3, limx, limy, f"{name}_far", defect, pdf)
+                for i in range(1,3+1):
+                    packdef_csts.loc[f"cst_block{i}", f"{defect}_{name}_far"] = decays_3blocks_far[i-1]
+
+                # Compute the mean of the 3 blocks averages
+                mean_inv_decay = sum(decays_3blocks_far) / len(decays_3blocks_far)
+                # Compute the standard deviation of the 3 values
+                error_mean_inv_decay = np.std(decays_3blocks_far)
+                # Add values to the dtf
+                packdef_csts.loc["cst_mean_blocks", f"{defect}_{name}_far"] = (
+                    mean_inv_decay
+                )
+                packdef_csts.loc["error_mean_blocks", f"{defect}_{name}_far"] = (
+                    error_mean_inv_decay
+                )
+
+            if (packdef_csts[
+                    [f"Deep_{name}_close",
+                     f"Shallow_{name}_close",
+                     f"All_{name}_close",
+                     f"Deep_{name}_far",
+                     f"Shallow_{name}_far",
+                     f"All_{name}_far",
                     ]
-                ]
-                .isna()
-                .all()
-                .all()
+                ].isna().all().all()
             ):
                 continue
+    
             # Plot all packdef constants on a single barplot
             # Allows to estimate the relative convergence of the simulation
-            errors = packdef_constants.T.error_all_blocks.to_frame(
-                "PackDef_cst_all_blocks"
-            )
+            errors = packdef_csts.T.error_mean_blocks.to_frame(
+                        "cst_mean_blocks"
+                    )
             plot_defect_constants_blocks(
-                f"{name}_close", packdef_constants, errors, pdf
+                f"{name}_close", packdef_csts, errors, pdf
             )
-            plot_defect_constants_blocks(f"{name}_far", packdef_constants, errors, pdf)
+            plot_defect_constants_blocks(f"{name}_far", packdef_csts, errors, pdf)
+
 
             # Plot the final decays + errors computed with block averaging
             # (for each packdef) on a barplot
             plot_defect_constants(
                 f"{name}_close",
-                packdef_constants,
+                packdef_csts,
                 errors.loc[
-                    [
-                        f"Deep_{name}_close",
-                        f"Shallow_{name}_close",
-                        f"All_{name}_close",
-                    ],
-                    "PackDef_cst_all_blocks",
+                    [f"Deep_{name}_close", f"Shallow_{name}_close", f"All_{name}_close"],
+                    "cst_mean_blocks",
                 ],
                 pdf,
             )
             plot_defect_constants(
                 f"{name}_far",
-                packdef_constants,
+                packdef_csts,
                 errors.loc[
                     [f"Deep_{name}_far", f"Shallow_{name}_far", f"All_{name}_far"],
-                    "PackDef_cst_all_blocks",
+                    "cst_mean_blocks",
                 ],
                 pdf,
             )
 
     # Close the PDF file
     pdf.close()
+    
+    write_packdef_csts(output_dir, output, packdef_csts, precision)
 
 
 def main() -> None:
