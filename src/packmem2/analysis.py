@@ -21,6 +21,14 @@ def get_arguments() -> argparse.Namespace:
     # Getting the arguments
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        "-n",
+        action="store",
+        dest="nb_block",
+        type=int,
+        default=3,
+        help="The number of block for block averaging. Default = 3",
+    )
+    parser.add_argument(
         "-prot", action="store_true", dest="prot", help="If there is a protein"
     )
     parser.add_argument(
@@ -300,9 +308,9 @@ def plot_defect_constants_blocks(
     """
     # Plot and save the second figure (bar plot for just one row)
     packdef_constants[[f"Deep_{type}", f"Shallow_{type}", f"All_{type}"]][
-        :5
+        :-1
     ].T.plot.bar(
-        color=["darkred", "firebrick", "indianred", "lightcoral", "rosybrown"],
+        color=["darkred", "firebrick", "indianred", "lightcoral", "mistyrose", "pink", "palevioletred", "orchid"],
         yerr=errors,
         capsize=3,
         rot=0,
@@ -395,6 +403,7 @@ def launch(
     output_dir: str,
     output: str,
     prot: bool,
+    nb_block: int,
     limx: int | float,
     limy: float,
     precision: int,
@@ -411,14 +420,13 @@ def launch(
         "Deep_Total_Up", "Shallow_Total_Up", "All_Total_Up",
         "Deep_Total_Lo", "Shallow_Total_Lo", "All_Total_Lo",
     ]
-    index_dtf = [
-        "cst_global",
-        "cst_block1",
-        "cst_block2",
-        "cst_block3",
-        "cst_mean_blocks",
-        "error_mean_blocks",
-    ]
+
+    index_dtf = ["cst_global"]
+    for i in range(1, nb_block+1):
+        index_dtf.append(f"cst_block{i}")
+    index_dtf.append("cst_mean_blocks")
+    index_dtf.append("error_mean_blocks")
+        
     if prot:
         columns_dtf += [
         "Deep_Total_Up_close", "Shallow_Total_Up_close", "All_Total_Up_close",
@@ -440,14 +448,14 @@ def launch(
             packdef_csts.loc["cst_global", f"{defect}_{name}"] = global_inv_decay
 
             # Compute the packdef constants on 3 blocks of the traj
-            decays_3blocks = block_averaging(def_area, 3, limx, limy, name, defect, pdf)
-            for i in range(1,3+1):
-                packdef_csts.loc[f"cst_block{i}", f"{defect}_{name}"] = decays_3blocks[i-1]
+            decays_Xblocks = block_averaging(def_area, nb_block, limx, limy, name, defect, pdf)
+            for i in range(1, nb_block + 1):
+                packdef_csts.loc[f"cst_block{i}", f"{defect}_{name}"] = decays_Xblocks[i-1]
 
-            # Compute the mean of the 3 blocks averages
-            mean_inv_decay = sum(decays_3blocks) / len(decays_3blocks)
+            # Compute the mean of the X blocks averages
+            mean_inv_decay = sum(decays_Xblocks) / len(decays_Xblocks)
             # Compute the standard deviation of the 3 values
-            error_mean_inv_decay = np.std(decays_3blocks)
+            error_mean_inv_decay = np.std(decays_Xblocks)
             # Add values to the dtf
             packdef_csts.loc["cst_mean_blocks", f"{defect}_{name}"] = (
                 mean_inv_decay
@@ -492,15 +500,15 @@ def launch(
                 packdef_csts.loc["cst_global", f"{defect}_{name}_far"] = global_inv_decay
 
     
-                # Compute the packdef constants on 3 blocks of the traj
-                decays_3blocks_close = block_averaging(def_area_prot_close, 3, limx, limy, f"{name}_close", defect, pdf)
-                for i in range(1,3+1):
-                    packdef_csts.loc[f"cst_block{i}", f"{defect}_{name}_close"] = decays_3blocks_close[i-1]
+                # Compute the packdef constants on X blocks of the traj
+                decays_Xblocks_close = block_averaging(def_area_prot_close, nb_block, limx, limy, f"{name}_close", defect, pdf)
+                for i in range(1, nb_block + 1):
+                    packdef_csts.loc[f"cst_block{i}", f"{defect}_{name}_close"] = decays_Xblocks_close[i-1]
     
                 # Compute the mean of the 3 blocks averages
-                mean_inv_decay = sum(decays_3blocks_close) / len(decays_3blocks_close)
+                mean_inv_decay = sum(decays_Xblocks_close) / len(decays_Xblocks_close)
                 # Compute the standard deviation of the 3 values
-                error_mean_inv_decay = np.std(decays_3blocks_close)
+                error_mean_inv_decay = np.std(decays_Xblocks_close)
                 # Add values to the dtf
                 packdef_csts.loc["cst_mean_blocks", f"{defect}_{name}_close"] = (
                     mean_inv_decay
@@ -509,14 +517,14 @@ def launch(
                     error_mean_inv_decay
                 )
 
-                decays_3blocks_far = block_averaging(def_area_prot_far, 3, limx, limy, f"{name}_far", defect, pdf)
-                for i in range(1,3+1):
-                    packdef_csts.loc[f"cst_block{i}", f"{defect}_{name}_far"] = decays_3blocks_far[i-1]
+                decays_Xblocks_far = block_averaging(def_area_prot_far, nb_block, limx, limy, f"{name}_far", defect, pdf)
+                for i in range(1, nb_block + 1):
+                    packdef_csts.loc[f"cst_block{i}", f"{defect}_{name}_far"] = decays_Xblocks_far[i-1]
 
-                # Compute the mean of the 3 blocks averages
-                mean_inv_decay = sum(decays_3blocks_far) / len(decays_3blocks_far)
+                # Compute the mean of the X blocks averages
+                mean_inv_decay = sum(decays_Xblocks_far) / len(decays_Xblocks_far)
                 # Compute the standard deviation of the 3 values
-                error_mean_inv_decay = np.std(decays_3blocks_far)
+                error_mean_inv_decay = np.std(decays_Xblocks_far)
                 # Add values to the dtf
                 packdef_csts.loc["cst_mean_blocks", f"{defect}_{name}_far"] = (
                     mean_inv_decay
@@ -580,7 +588,7 @@ def main() -> None:
     args = get_arguments()
 
     launch(
-         args.output_dir, args.output, args.prot, args.limx, args.limy, args.precision
+         args.output_dir, args.output, args.prot, args.nb_block, args.limx, args.limy, args.precision
         )
 
 
