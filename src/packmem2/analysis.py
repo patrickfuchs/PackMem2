@@ -1,6 +1,5 @@
 # M. Zygadlo 2025
 
-import sys
 import argparse
 import pandas as pd
 import numpy as np
@@ -222,7 +221,7 @@ def plot_defect_fit(
         labels=[str(1e-4), str(1e-3), str(1e-2)],
     )
     plt.ylabel("Probability")
-    plt.xlabel("Defect area ${A^2}$")
+    plt.xlabel("Defect area ${Å^2}$")
     plt.title(f"{defect} {type}")
     plt.axvline(limx, color="gray", linestyle="--")
     plt.axhline(math.log(limy), color="gray", linestyle="-")
@@ -289,7 +288,7 @@ def plot_defect_constants_blocks(
         capsize=3,
         rot=0,
     )
-    plt.ylabel("Defect size constant ${A^2}$")
+    plt.ylabel("Defect size constant ${Å^2}$")
     plt.ylim(
         0,
         int(
@@ -304,66 +303,6 @@ def plot_defect_constants_blocks(
     plt.title("Packing defect constants")
     pdf.savefig()  # Save the current figure to the PDF
     plt.close()
-
-
-def get_outliers(dtf_packdef_values: pd.DataFrame, type: str) -> pd.DataFrame:
-    """
-    Get the outliers in a dataframe
-
-    --------------------
-    INPUT
-    dtf_packdef_values: pandas DataFrame
-        Contains the informations on the packing defects (mean, data, error)
-    type: string
-        the type to analyse: Total/Total_Up/Total_Lo
-
-    --------------------
-    OUTPUT
-    pandas DataFrame
-        Contains the x and y values of the outliers
-    """
-    # Prepare empty dtf
-    outliers = pd.DataFrame(
-        columns=["outliers", "x_index"],
-    )
-    list_outliers = []
-    list_index = []
-
-    for defect in ["Deep", "Shallow", "All"]:
-        # Compute the maximum and minimum values for the standard deviation
-        mean_top = (
-            dtf_packdef_values.loc["PackDef_cst_all_blocks", f"{defect}_{type}"]
-            + dtf_packdef_values.loc["error_all_blocks", f"{defect}_{type}"]
-        )
-        mean_bot = (
-            dtf_packdef_values.loc["PackDef_cst_all_blocks", f"{defect}_{type}"]
-            - dtf_packdef_values.loc["error_all_blocks", f"{defect}_{type}"]
-        )
-
-        sub_dtf = dtf_packdef_values.loc[
-            ["PackDef_cst_block1", "PackDef_cst_block2", "PackDef_cst_block3"],
-            f"{defect}_{type}",
-        ]
-        list_outliers += list(sub_dtf[(sub_dtf < mean_bot) | (sub_dtf > mean_top)])
-
-        if defect == "Deep":
-            list_index += [0] * len(
-                sub_dtf[(sub_dtf < mean_bot) | (sub_dtf > mean_top)]
-            )
-        elif defect == "Shallow":
-            list_index += [1] * len(
-                sub_dtf[(sub_dtf < mean_bot) | (sub_dtf > mean_top)]
-            )
-        else:
-            list_index += [2] * len(
-                sub_dtf[(sub_dtf < mean_bot) | (sub_dtf > mean_top)]
-            )
-
-    # Complete the final dtf
-    outliers["outliers"] = np.array(list_outliers)
-    outliers["x_index"] = np.array(list_index)
-
-    return outliers
 
 
 def plot_defect_constants(
@@ -394,33 +333,21 @@ def plot_defect_constants(
     x_index = cst_packing.columns
     packdef_values = cst_packing.loc["PackDef_cst_all_blocks"]
     colour = ["firebrick", "forestgreen", "royalblue"]
-    outliers = get_outliers(cst_packing, type)
     text_pos = [0.0, 1.01, 2.01]
 
-    ax.bar(x_index, packdef_values, color=colour, width=0.5, yerr=errors, capsize=3)
-    plt.scatter(
-        x=outliers["x_index"], y=outliers["outliers"], s=15, c="black", alpha=0.5
-    )
+    ax.bar(x_index, packdef_values, color=colour, width=0.5, yerr=errors, error_kw=dict(ecolor='darkgrey'), capsize=3)
     # Add the text for the packing constant and the percentage
     for i, defect in enumerate(["Deep", "Shallow", "All"]):
         ax.text(
             text_pos[i],
-            0.25,
-            f"{packdef_values.loc[f'{defect}_{type}'] / max(packdef_values) * 100:.1f}%",
+            packdef_values.loc[f"{defect}_{type}"] + (packdef_values.loc[f"{defect}_{type}"]/100),
+            f"{packdef_values.loc[f"{defect}_{type}"]:.1f} $Å^2$",
             verticalalignment="bottom",
             horizontalalignment="center",
             fontsize=12,
         )
-        ax.text(
-            text_pos[i],
-            1.4,
-            f"{packdef_values.loc[f'{defect}_{type}']:.1f} $A^2$",
-            verticalalignment="bottom",
-            horizontalalignment="center",
-            fontsize=12,
-        )
-    ax.set_ylabel("Defect size constant ${A^2}$")
-    ax.set_ylim(0, int(max(packdef_values)) + 2)
+    ax.set_ylabel("Defect size constant ${Å^2}$")
+    ax.set_ylim(0, int(max(packdef_values)) + (20*max(packdef_values)/100))
     ax.set_title("Packing defect constants computed by block averaging")
     pdf.savefig()  # Save the current figure to the PDF
     plt.close()
