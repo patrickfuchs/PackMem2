@@ -24,6 +24,7 @@ def launch(
     limx: int | float,
     limy: float,
     precision: int,
+    nb_block: int,
 ) -> None:
     """
     Launch the different python scripts for PackMem2
@@ -73,7 +74,7 @@ def launch(
 
     ######## Analysis #######
     # Then launch packing defect analysis
-    packmem2.analysis.launch(output_dir, outputname, protein, limx, limy, precision)
+    packmem2.analysis.launch(output_dir, outputname, protein, nb_block, limx, limy, precision)
 
 
 def main() -> None:
@@ -97,6 +98,7 @@ def main() -> None:
         args.limx,
         args.limy,
         args.precision,
+        args.nb_block
     )
 
 

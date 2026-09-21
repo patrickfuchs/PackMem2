@@ -165,6 +165,14 @@ def get_args_launch_packmem2() -> argparse.Namespace:
         type=int,
     )
     parser.add_argument(
+        "-nb",
+        action="store",
+        dest="nb_block",
+        type=int,
+        default=3,
+        help="The number of block for block averaging(default: 3)",
+    )
+    parser.add_argument(
         "-prec",
         action="store",
         dest="precision",

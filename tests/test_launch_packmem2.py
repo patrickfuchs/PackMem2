@@ -23,6 +23,7 @@ def test_launch_DMPC(tmp_path):
     limx = 15
     limy = 1e-4
     precision = 2
+    nb_block = 3
 
     launch_packmem2.launch(
         cores,
@@ -42,6 +43,7 @@ def test_launch_DMPC(tmp_path):
         limx,
         limy,
         precision,
+        nb_block
     )
 
     # Check Total files
@@ -81,6 +83,7 @@ def test_launch_DMPC_protein(tmp_path):
     limx = 15
     limy = 1e-4
     precision = 2
+    nb_block = 3
 
     launch_packmem2.launch(
         cores,
@@ -100,6 +103,7 @@ def test_launch_DMPC_protein(tmp_path):
         limx,
         limy,
         precision,
+        nb_block
     )
 
     # Check Total files
@@ -150,6 +154,7 @@ def test_launch_DLPC(tmp_path):
     limx = 15
     limy = 1e-4
     precision = 2
+    nb_block = 3
 
     launch_packmem2.launch(
         cores,
@@ -169,6 +174,7 @@ def test_launch_DLPC(tmp_path):
         limx,
         limy,
         precision,
+        nb_block,
     )
 
     # Check Total files
@@ -207,6 +213,7 @@ def test_launch_DLPC_multiprocess(tmp_path):
     limx = 15
     limy = 1e-4
     precision = 2
+    nb_block = 3
 
     launch_packmem2.launch(
         cores,
@@ -226,6 +233,7 @@ def test_launch_DLPC_multiprocess(tmp_path):
         limx,
         limy,
         precision,
+        nb_block
     )
 
     # Check Total files
