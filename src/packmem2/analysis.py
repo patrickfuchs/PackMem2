@@ -137,6 +137,7 @@ def plot_defect_fit(
     fit: np.array,
     x: list,
     y: list,
+    r_squared: float,
     limx: int | float,
     limy: float,
     pdf: PdfPages,
@@ -156,6 +157,8 @@ def plot_defect_fit(
         Contains x data for the plot
     y: list
         Contains the y data for the plot - areas distribution
+    r_squared: float
+        Measure of the quality of the fit
     limx : int
         The lowest defect area used for the fit
     limy : float
@@ -179,7 +182,8 @@ def plot_defect_fit(
     plt.title(f"{defect} {name}")
     plt.axvline(limx, color="gray", linestyle="--")
     plt.axhline(math.log(limy), color="gray", linestyle="-")
-    plt.plot(x, fit_function(x), color="red", label="Fit")
+    plt.plot(x, fit_function(x), color="red", label=f"Fit (R² = {r_squared:.2f})")
+    plt.legend()
     pdf.savefig()  # Save the current figure to the PDF
     plt.close()
 
@@ -226,7 +230,7 @@ def compute_decay(
     FIT, r_squared = fit_decay(x, y, limx, limy)
 
     if plot:
-        plot_defect_fit(name, defect, FIT, x, y, limx, limy, pdf)
+        plot_defect_fit(name, defect, FIT, x, y, r_squared, limx, limy, pdf)
 
     # compute inv decay
     inv_decay = abs(1 / FIT[0])
