@@ -83,11 +83,11 @@ def get_aliphatic(
         and (atom_name == "GL2" or atom_name == "AM1" or atom_name == "R1")
     ) or ((not martini and not martini3) and atom_name == "C2"):
         flag = True
-        return "n", flag
+        return "p", flag
     elif flag:
         return "a", flag
     else:
-        return "n", flag
+        return "p", flag
 
 
 def main() -> None:
