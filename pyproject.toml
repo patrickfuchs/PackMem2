@@ -42,3 +42,5 @@ concatenate = "packmem2.concatenate:main"
 analysis = "packmem2.analysis:main"
 # Add molecule
 calculate_radii = "packmem2.calculate_radii:main"
+# Compare results
+analysis_comp = "packmem2.analysis_comp:main"
