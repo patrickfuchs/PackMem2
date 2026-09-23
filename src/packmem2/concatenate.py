@@ -17,6 +17,13 @@ def get_args() -> argparse.Namespace:
     """
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        "-p",
+        action="store",
+        dest="path",
+        required=True,
+        help="The path to file files to concatenate.",
+    )
+    parser.add_argument(
         "-l",
         action="store",
         dest="prefix",
@@ -50,7 +57,13 @@ def get_args() -> argparse.Namespace:
         "-prot",
         action="store_true",
         dest="protein",
-        help="Put if you want to also concatenante Protein files.",
+        help="Put if you want to also concatenate Protein files.",
+    )
+    parser.add_argument(
+        "-keep",
+        action="store_true",
+        dest="keep",
+        help="Put if you want to keep the files that are concatenated.",
     )
     args = parser.parse_args()
 
@@ -182,39 +195,39 @@ def concat_files_prot(prefix: str, suffix: str, start: int, end: int) -> pd.Data
     return file_concat
 
 
-def launch(output_dir: str, prefix: str, start: int, end: int, prot: bool) -> None:
+def launch(path: str, output_dir: str, prefix: str, start: int, end: int, prot: bool, keep: bool) -> None:
     """
     Launch the concatenation of the PackMem2 produced files
     """
     Total_Up_Deep = concat_files(
-        f"{output_dir}/{prefix}", "_Up_Deep_result.txt", start, end
+        f"{path}/{prefix}", "_Up_Deep_result.txt", start, end
     )
     Total_Lo_Deep = concat_files(
-        f"{output_dir}/{prefix}", "_Lo_Deep_result.txt", start, end
+        f"{path}/{prefix}", "_Lo_Deep_result.txt", start, end
     )
     Total_Up_All = concat_files(
-        f"{output_dir}/{prefix}", "_Up_All_result.txt", start, end
+        f"{path}/{prefix}", "_Up_All_result.txt", start, end
     )
     Total_Lo_All = concat_files(
-        f"{output_dir}/{prefix}", "_Lo_All_result.txt", start, end
+        f"{path}/{prefix}", "_Lo_All_result.txt", start, end
     )
     Total_Up_Shallow = concat_files(
-        f"{output_dir}/{prefix}", "_Up_Shallow_result.txt", start, end
+        f"{path}/{prefix}", "_Up_Shallow_result.txt", start, end
     )
     Total_Lo_Shallow = concat_files(
-        f"{output_dir}/{prefix}", "_Lo_Shallow_result.txt", start, end
+        f"{path}/{prefix}", "_Lo_Shallow_result.txt", start, end
     )
 
     if prot:
-        if Path(f"{output_dir}/Prot_{prefix}0_Up_All.txt").is_file():
+        if Path(f"{path}/Prot_{prefix}0_Up_All.txt").is_file():
             Total_Up_Deep_prot = concat_files_prot(
-                f"{output_dir}/Prot_{prefix}", "_Up_Deep.txt", start, end
+                f"{path}/Prot_{prefix}", "_Up_Deep.txt", start, end
             )
             Total_Up_All_prot = concat_files_prot(
-                f"{output_dir}/Prot_{prefix}", "_Up_All.txt", start, end
+                f"{path}/Prot_{prefix}", "_Up_All.txt", start, end
             )
             Total_Up_Shallow_prot = concat_files_prot(
-                f"{output_dir}/Prot_{prefix}", "_Up_Shallow.txt", start, end
+                f"{path}/Prot_{prefix}", "_Up_Shallow.txt", start, end
             )
             # Save files
             Total_Up_Deep_prot.to_csv(
@@ -226,20 +239,23 @@ def launch(output_dir: str, prefix: str, start: int, end: int, prot: bool) -> No
             Total_Up_Shallow_prot.to_csv(
                 f"{output_dir}/Total_Up_Shallow_prot.csv", header=False, index=False
             )
-            # Remove the files
-            for pdbnum in range(start, end + 1):
-                os.remove(f"{output_dir}/Prot_{prefix}{pdbnum}_Up_Deep.txt")
-                os.remove(f"{output_dir}/Prot_{prefix}{pdbnum}_Up_All.txt")
-                os.remove(f"{output_dir}/Prot_{prefix}{pdbnum}_Up_Shallow.txt")
-        elif Path(f"{output_dir}/Prot_{prefix}0_Lo_All.txt").is_file():
+            print(keep)
+            if not keep:
+                print(keep)
+                # Remove the files
+                for pdbnum in range(start, end + 1):
+                    os.remove(f"{path}/Prot_{prefix}{pdbnum}_Up_Deep.txt")
+                    os.remove(f"{path}/Prot_{prefix}{pdbnum}_Up_All.txt")
+                    os.remove(f"{path}/Prot_{prefix}{pdbnum}_Up_Shallow.txt")
+        elif Path(f"{path}/Prot_{prefix}0_Lo_All.txt").is_file():
             Total_Lo_Deep_prot = concat_files_prot(
-                f"{output_dir}/Prot_{prefix}", "_Lo_Deep.txt", start, end
+                f"{path}/Prot_{prefix}", "_Lo_Deep.txt", start, end
             )
             Total_Lo_All_prot = concat_files_prot(
-                f"{output_dir}/Prot_{prefix}", "_Lo_All.txt", start, end
+                f"{path}/Prot_{prefix}", "_Lo_All.txt", start, end
             )
             Total_Lo_Shallow_prot = concat_files_prot(
-                f"{output_dir}/Prot_{prefix}", "_Lo_Shallow.txt", start, end
+                f"{path}/Prot_{prefix}", "_Lo_Shallow.txt", start, end
             )
             # Save files
             Total_Lo_Deep_prot.to_csv(
@@ -251,11 +267,12 @@ def launch(output_dir: str, prefix: str, start: int, end: int, prot: bool) -> No
             Total_Lo_Shallow_prot.to_csv(
                 f"{output_dir}/Total_Lo_Shallow_prot.csv", header=False, index=False
             )
-            # Remove the files
-            for pdbnum in range(start, end + 1):
-                os.remove(f"{output_dir}/Prot_{prefix}{pdbnum}_Lo_Deep.txt")
-                os.remove(f"{output_dir}/Prot_{prefix}{pdbnum}_Lo_All.txt")
-                os.remove(f"{output_dir}/Prot_{prefix}{pdbnum}_Lo_Shallow.txt")
+            if not keep:
+                # Remove the files
+                for pdbnum in range(start, end + 1):
+                    os.remove(f"{path}/Prot_{prefix}{pdbnum}_Lo_Deep.txt")
+                    os.remove(f"{path}/Prot_{prefix}{pdbnum}_Lo_All.txt")
+                    os.remove(f"{path}/Prot_{prefix}{pdbnum}_Lo_Shallow.txt")
 
     # Concatenate the leaflets results
     Total_Deep = pd.concat([Total_Up_Deep, Total_Lo_Deep], axis=0, ignore_index=True)
@@ -280,20 +297,22 @@ def launch(output_dir: str, prefix: str, start: int, end: int, prot: bool) -> No
     Total_All.to_csv(f"{output_dir}/Total_All.csv", header=False, index=False)
     Total_Shallow.to_csv(f"{output_dir}/Total_Shallow.csv", header=False, index=False)
 
-    # Remove the files
-    for pdbnum in range(start, end + 1):
-        os.remove(f"{output_dir}/{prefix}{pdbnum}_Up_Deep_result.txt")
-        os.remove(f"{output_dir}/{prefix}{pdbnum}_Lo_Deep_result.txt")
-        os.remove(f"{output_dir}/{prefix}{pdbnum}_Up_All_result.txt")
-        os.remove(f"{output_dir}/{prefix}{pdbnum}_Lo_All_result.txt")
-        os.remove(f"{output_dir}/{prefix}{pdbnum}_Up_Shallow_result.txt")
-        os.remove(f"{output_dir}/{prefix}{pdbnum}_Lo_Shallow_result.txt")
+    if not keep:
+        # Remove the files
+        for pdbnum in range(start, end + 1):
+            os.remove(f"{path}/{prefix}{pdbnum}_Up_Deep_result.txt")
+            os.remove(f"{path}/{prefix}{pdbnum}_Lo_Deep_result.txt")
+            os.remove(f"{path}/{prefix}{pdbnum}_Up_All_result.txt")
+            os.remove(f"{path}/{prefix}{pdbnum}_Lo_All_result.txt")
+            os.remove(f"{path}/{prefix}{pdbnum}_Up_Shallow_result.txt")
+            os.remove(f"{path}/{prefix}{pdbnum}_Lo_Shallow_result.txt")
 
 
 def main() -> None:
     args = get_args()
 
-    launch(args.output_dir, args.prefix, args.start, args.end, args.protein)
+    launch(args.path, args.output_dir, args.prefix, args.start, args.end,
+           args.protein, args.keep)
 
 
 if __name__ == "__main__":
