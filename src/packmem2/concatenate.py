@@ -307,8 +307,9 @@ def launch(path: str, output_dir: str, prefix: str, start: int, end: int, prot: 
 
 
 def main() -> None:
+    # Get the argument
     args = get_args()
-
+    # Launch concatenate
     launch(args.path, args.output_dir, args.prefix, args.start, args.end,
            args.protein, args.keep)
 
