@@ -85,7 +85,7 @@ def launch(
     # RESNAME_GLYC = {'DOP': 'C2', 'DOE': 'C2', 'DPP': 'C2', etc}
     RESNAME_GLYC = p.set_params(paramFile)
     # rad = {'ALA N': 1.85, 'ALA HN': 0.22, 'ALA HT1': 0.22, etc}
-    # ali = {'ALA N': 'n', 'ALA HN': 'n', 'ALA HT1': 'n', etc }
+    # ali = {'ALA N': 'p', 'ALA HN': 'p', 'ALA HT1': 'p', etc }
     # for the amino acids then the lipids
     radius, aliphatic = p.set_rad_ali(radiiFile)
 

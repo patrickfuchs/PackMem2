@@ -183,7 +183,7 @@ def fill_matrix(
     # Update the matrix
     if aliph_atom == "a":
         mat[X_idx, Y_idx] += 0.001
-    elif aliph_atom == "n":
+    elif aliph_atom == "p":
         mat[X_idx, Y_idx] += 1
 
     return mat
