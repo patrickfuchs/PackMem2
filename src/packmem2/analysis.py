@@ -36,7 +36,7 @@ def get_arguments() -> argparse.Namespace:
         action="store",
         dest="precision",
         type=int,
-        default=2,
+        default=3,
         help="The precision for writing packdef constants (nb of decimals) in the output. Default = 2",
     )
     parser.add_argument(
