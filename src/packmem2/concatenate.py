@@ -219,7 +219,7 @@ def launch(path: str, output_dir: str, prefix: str, start: int, end: int, prot: 
     )
 
     if prot:
-        if Path(f"{path}/Prot_{prefix}0_Up_All.txt").is_file():
+        if Path(f"{path}/Prot_{prefix}{start}_Up_All.txt").is_file():
             Total_Up_Deep_prot = concat_files_prot(
                 f"{path}/Prot_{prefix}", "_Up_Deep.txt", start, end
             )
@@ -239,15 +239,13 @@ def launch(path: str, output_dir: str, prefix: str, start: int, end: int, prot: 
             Total_Up_Shallow_prot.to_csv(
                 f"{output_dir}/Total_Up_Shallow_prot.csv", header=False, index=False
             )
-            print(keep)
             if not keep:
-                print(keep)
                 # Remove the files
                 for pdbnum in range(start, end + 1):
                     os.remove(f"{path}/Prot_{prefix}{pdbnum}_Up_Deep.txt")
                     os.remove(f"{path}/Prot_{prefix}{pdbnum}_Up_All.txt")
                     os.remove(f"{path}/Prot_{prefix}{pdbnum}_Up_Shallow.txt")
-        elif Path(f"{path}/Prot_{prefix}0_Lo_All.txt").is_file():
+        elif Path(f"{path}/Prot_{prefix}{start}_Lo_All.txt").is_file():
             Total_Lo_Deep_prot = concat_files_prot(
                 f"{path}/Prot_{prefix}", "_Lo_Deep.txt", start, end
             )
