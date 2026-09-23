@@ -70,7 +70,7 @@ def launch(
         p.join()
 
     ######## Concatenate #######
-    packmem2.concatenate.launch(output_dir, outputname, start, end, protein)
+    packmem2.concatenate.launch(output_dir, output_dir, outputname, start, end, protein, False)
 
     ######## Analysis #######
     # Then launch packing defect analysis
