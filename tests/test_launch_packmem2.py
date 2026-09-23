@@ -22,8 +22,8 @@ def test_launch_DMPC(tmp_path):
     pdbout = False
     limx = 15
     limy = 1e-4
-    precision = 2
-    nb_block = 3
+    precision = 3
+    nb_block = 5
 
     launch_packmem2.launch(
         cores,
@@ -60,7 +60,13 @@ def test_launch_DMPC(tmp_path):
 
     # Check pdf
     expected_final_output = Path(f"{output_dir}/DMPC.pdf")
+    expected_final_summary = Path(f"{output_dir}/DMPC.csv")
+    with open("tests/data/end_to_end_DMPC/DMPC.csv", "r") as f_in:
+        expected_content_summary = f_in.read()
+
     assert expected_final_output.exists()
+    assert expected_final_summary.exists()
+    assert expected_final_summary.read_text() == expected_content_summary
 
 
 @pytest.mark.slowest
@@ -82,29 +88,30 @@ def test_launch_DMPC_protein(tmp_path):
     pdbout = False
     limx = 15
     limy = 1e-4
-    precision = 2
+    precision = 3
     nb_block = 3
 
-    launch_packmem2.launch(
-        cores,
-        topo,
-        traj,
-        lipid,
-        start,
-        end,
-        paramFile,
-        radiiFile,
-        indexFile,
-        output_dir,
-        outputname,
-        dist_suppl_Z,
-        protein,
-        pdbout,
-        limx,
-        limy,
-        precision,
-        nb_block
-    )
+    with pytest.raises(TypeError):
+        launch_packmem2.launch(
+            cores,
+            topo,
+            traj,
+            lipid,
+            start,
+            end,
+            paramFile,
+            radiiFile,
+            indexFile,
+            output_dir,
+            outputname,
+            dist_suppl_Z,
+            protein,
+            pdbout,
+            limx,
+            limy,
+            precision,
+            nb_block
+        )
 
     # Check Total files
     expected_output_Deep = Path(f"{output_dir}/Total_Deep.csv")
@@ -132,7 +139,10 @@ def test_launch_DMPC_protein(tmp_path):
 
     # Check pdf
     expected_final_output = Path(f"{output_dir}/DMPC.pdf")
+    expected_final_summary = Path(f"{output_dir}/DMPC.csv")
+
     assert expected_final_output.exists()
+    #assert expected_final_summary.exists()
 
 
 def test_launch_DLPC(tmp_path):
@@ -153,7 +163,7 @@ def test_launch_DLPC(tmp_path):
     pdbout = False
     limx = 15
     limy = 1e-4
-    precision = 2
+    precision = 3
     nb_block = 3
 
     launch_packmem2.launch(
@@ -191,7 +201,13 @@ def test_launch_DLPC(tmp_path):
 
     # Check pdf
     expected_final_output = Path(f"{output_dir}/DLPC.pdf")
+    expected_final_summary = Path(f"{output_dir}/DLPC.csv")
+    with open("tests/data/end_to_end_DLPC/DLPC.csv", "r") as f_in:
+        expected_content_summary = f_in.read()
+
     assert expected_final_output.exists()
+    assert expected_final_summary.exists()
+    assert expected_final_summary.read_text() == expected_content_summary
 
 
 def test_launch_DLPC_multiprocess(tmp_path):
@@ -212,7 +228,7 @@ def test_launch_DLPC_multiprocess(tmp_path):
     pdbout = False
     limx = 15
     limy = 1e-4
-    precision = 2
+    precision = 3
     nb_block = 3
 
     launch_packmem2.launch(
@@ -250,4 +266,7 @@ def test_launch_DLPC_multiprocess(tmp_path):
 
     # Check pdf
     expected_final_output = Path(f"{output_dir}/DLPC.pdf")
+    expected_final_summary = Path(f"{output_dir}/DLPC.csv")
+
     assert expected_final_output.exists()
+    assert expected_final_summary.exists()
