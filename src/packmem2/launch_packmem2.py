@@ -74,7 +74,7 @@ def launch(
 
     ######## Analysis #######
     # Then launch packing defect analysis
-    packmem2.analysis.launch(output_dir, outputname, protein, nb_block, limx, limy, precision)
+    packmem2.analysis.launch(output_dir, output_dir, outputname, protein, nb_block, limx, limy, precision)
 
 
 def main() -> None:
