@@ -16,12 +16,10 @@ def test_file_present():
 
 def test_get_args_packmem2(monkeypatch, tmp_path):
     # Create tmp files
-    traj = tmp_path / "traj.xtc"
-    topo = tmp_path / "topo.gro"
-    param = tmp_path / "param_Charmm.txt"
-    radii = tmp_path / "vdw_radii_Charmm.txt"
-    for f in [traj, topo, param, radii]:
-        f.write_text("dummy content")
+    topo = "tests/data/end_to_end_DMPC/md.gro"
+    traj = "tests/data/end_to_end_DMPC/md_10ns.xtc"
+    param = "data/param_Charmm.txt"
+    radii = "data/vdw_radii_Charmm.txt"
 
     ## TEST OK ##
     # Simulate the corect arguments
@@ -72,12 +70,10 @@ def test_get_args_packmem2(monkeypatch, tmp_path):
 
 def test_get_args_launch_packmem2(monkeypatch, tmp_path):
     # Create tmp files
-    traj = tmp_path / "traj.xtc"
-    topo = tmp_path / "topo.gro"
+    topo = "tests/data/end_to_end_DMPC/md.gro"
+    traj = "tests/data/end_to_end_DMPC/md_10ns.xtc"
     param = tmp_path / "param_Charmm.txt"
     radii = tmp_path / "vdw_radii_Charmm.txt"
-    for f in [traj, topo, param, radii]:
-        f.write_text("dummy content")
 
     ## TEST OK ##
     # Simulate the corect arguments
