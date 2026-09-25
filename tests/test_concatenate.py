@@ -40,7 +40,7 @@ def test_concatenate_keep(tmp_path):
     
 
 
-def test_concatenate_keep(tmp_path):
+def test_concatenate(tmp_path):
     """DMPG (Charmm)"""
     path = "tests/data/concatenate_data"
     output_dir = str(tmp_path)

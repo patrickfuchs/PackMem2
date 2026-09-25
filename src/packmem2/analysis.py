@@ -21,6 +21,13 @@ def get_arguments() -> argparse.Namespace:
     # Getting the arguments
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        "-p",
+        action="store",
+        dest="path",
+        default="./",
+        help="The path to the Total files. Default = ./",
+    )
+    parser.add_argument(
         "-n",
         action="store",
         dest="nb_block",
@@ -32,7 +39,7 @@ def get_arguments() -> argparse.Namespace:
         "-prot", action="store_true", dest="prot", help="If there is a protein"
     )
     parser.add_argument(
-        "-p",
+        "-pr",
         action="store",
         dest="precision",
         type=int,
@@ -400,6 +407,7 @@ def write_packdef_csts(output_dir, output, packdef_csts, precision):
 
 
 def launch(
+    input_path: str,
     output_dir: str,
     output: str,
     prot: bool,
@@ -440,7 +448,7 @@ def launch(
     for name in ["Total", "Total_Up", "Total_Lo"]:
         # Now loop over the three default types
         for defect in ["Deep", "Shallow", "All"]:
-            filename = f"{output_dir}/{name}_{defect}.csv"
+            filename = f"{input_path}/{name}_{defect}.csv"
             def_area = pd.read_csv(filename, header=None)[1]
 
             # Compute the packing defect constant on the whole traj
@@ -486,7 +494,7 @@ def launch(
             # Now loop over the three default types
             for defect in ["Deep", "Shallow", "All"]:
                 # Load PackMem data
-                filename = f"{output_dir}/{name}_{defect}_prot.csv"
+                filename = f"{input_path}/{name}_{defect}_prot.csv"
                 if not Path(filename).is_file():
                     continue
                 def_area_prot = pd.read_csv(filename, header=None).iloc[:, 1:]
@@ -588,7 +596,7 @@ def main() -> None:
     args = get_arguments()
 
     launch(
-         args.output_dir, args.output, args.prot, args.nb_block, args.limx, args.limy, args.precision
+         args.path, args.output_dir, args.output, args.prot, args.nb_block, args.limx, args.limy, args.precision
         )
 
 
