@@ -3,6 +3,7 @@
 # M. Zygadlo 2025
 
 import argparse
+import importlib.metadata
 import numpy as np
 from pathlib import Path
 from multiprocessing import cpu_count
@@ -17,7 +18,9 @@ def build_args() -> argparse.Namespace:
     parser.parse_args
         Contains all the arguments for the script
     """
-    parser = argparse.ArgumentParser(description="Arguments for PackMem_prot.py")
+    packmem2_version = importlib.metadata.version('packmem2')
+    # Getting the arguments
+    parser = argparse.ArgumentParser(description=f"Arguments for PackMem2 version {packmem2_version}")
     parser.add_argument(
         "-f", action="store", dest="traj", required=True, help="Trajectory file (.xtc)"
     )
@@ -102,7 +105,12 @@ def build_args() -> argparse.Namespace:
         action="store_true",
         help="Analyse the packing defects close/far of the protein",
     )
-
+    parser.add_argument(
+        "--version",
+        action='version',
+        version=packmem2_version
+    )
+    
     return parser
 
 

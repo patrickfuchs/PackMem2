@@ -1,5 +1,8 @@
+"""Calculate the radii for PackMem2 van der Waals data"""
+
 import math
 import argparse
+import importlib.metadata
 
 
 def get_args() -> argparse.Namespace:
@@ -11,7 +14,9 @@ def get_args() -> argparse.Namespace:
     parser.parse_args
         Contains all the arguments for the script
     """
-    parser = argparse.ArgumentParser()
+    packmem2_version = importlib.metadata.version('packmem2')
+    # Getting the arguments
+    parser = argparse.ArgumentParser(description=f"Arguments for calculate_radii of PackMem2 version {packmem2_version}")
     parser.add_argument(
         "-mol",
         action="store",
@@ -41,6 +46,12 @@ def get_args() -> argparse.Namespace:
         dest="martini3",
         help="If you specificaly have the MARTINI3 force field",
     )
+    parser.add_argument(
+        "--version",
+        action='version',
+        version=packmem2_version
+    )
+    
     args = parser.parse_args()
     return args
 
