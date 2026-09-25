@@ -38,20 +38,20 @@ def get_args() -> argparse.Namespace:
         help="Name for output directory (default: ./)",
     )
     parser.add_argument(
-        "-b",
-        action="store",
-        dest="start",
-        type=int,
-        required=True,
-        help="The first frame.",
-    )
-    parser.add_argument(
         "-e",
         action="store",
         dest="end",
         type=int,
         required=True,
         help="The number of frames.",
+    )
+    parser.add_argument(
+        "-b",
+        action="store",
+        dest="start",
+        type=int,
+        default=0,
+        help="The first frame (default: 0).",
     )
     parser.add_argument(
         "-prot",
