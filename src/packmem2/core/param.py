@@ -6,6 +6,7 @@ import argparse
 import numpy as np
 from pathlib import Path
 import MDAnalysis as mda
+import warnings
 from multiprocessing import cpu_count
 
 
@@ -38,14 +39,14 @@ def build_args() -> argparse.Namespace:
         dest="start",
         type=int,
         default=0,
-        help="Frame to start the analysis (default: 0)",
+        help="Frame number to start the analysis (default: 0)",
     )
     parser.add_argument(
         "-e",
         action="store",
         dest="end",
         type=int,
-        help="Frame to end the analysis (default: None)",
+        help="Frame number to end the analysis (default: None)",
     )
     parser.add_argument(
         "-r",
@@ -105,6 +106,32 @@ def build_args() -> argparse.Namespace:
     return parser
 
 
+def check_ending_frame(end, topo, traj):
+    """
+    Check if there was a user input of the end argument
+    or if the user's end argument is correct
+
+    --------------------
+    INPUT
+    end: int
+        The new ending frame
+    end: int
+        The new ending frame
+    topo: string
+        The name of the topology file
+    traj: string
+        The name of the trajectory file
+    """
+    u = mda.Universe(topo, traj, to_guess=())
+    total_frames = len(u.trajectory)
+    if end == None:
+        end = total_frames
+    elif end > total_frames:
+        warnings.warn("The ending frame number given is greater than the number of frames in the trajectory given")
+        end = total_frames
+    return end
+
+
 def file_present(filename: str) -> None:
     """
     Check if the file exists.
@@ -112,7 +139,7 @@ def file_present(filename: str) -> None:
     --------------------
     INPUT
     filename: str
-        The name if the file to test the presence of
+        The name if the file to test the presence of a file
     """
     if not Path(filename).is_file():
         raise FileNotFoundError(f"ERROR: file '{filename}' not found.")
@@ -132,9 +159,8 @@ def get_args_packmem2() -> argparse.Namespace:
 
     args = parser.parse_args()
 
-    if args.end == None:
-        u = mda.Universe(args.topo, args.traj, to_guess=())
-        args.end = len(u.trajectory)
+    # Check ending frame
+    args.end = check_ending_frame(args.end, args.topo, args.traj)    
 
     # Check that the files exist
     file_present(args.traj)
@@ -202,9 +228,8 @@ def get_args_launch_packmem2() -> argparse.Namespace:
 
     args = parser.parse_args()
 
-    if args.end == None:
-        u = mda.Universe(args.topo, args.traj, to_guess=())
-        args.end = len(u.trajectory)
+    # Check ending frame
+    args.end = check_ending_frame(args.end, args.topo, args.traj)
 
     return args
 
