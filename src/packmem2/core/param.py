@@ -5,6 +5,7 @@
 import argparse
 import numpy as np
 from pathlib import Path
+import MDAnalysis as mda
 from multiprocessing import cpu_count
 
 
@@ -44,8 +45,6 @@ def build_args() -> argparse.Namespace:
         action="store",
         dest="end",
         type=int,
-        required=True,
-        default=None,
         help="Frame to end the analysis (default: None)",
     )
     parser.add_argument(
@@ -133,6 +132,10 @@ def get_args_packmem2() -> argparse.Namespace:
 
     args = parser.parse_args()
 
+    if args.end == None:
+        u = mda.Universe(args.topo, args.traj, to_guess=())
+        args.end = len(u.trajectory)
+
     # Check that the files exist
     file_present(args.traj)
     file_present(args.topo)
@@ -198,6 +201,11 @@ def get_args_launch_packmem2() -> argparse.Namespace:
     )
 
     args = parser.parse_args()
+
+    if args.end == None:
+        u = mda.Universe(args.topo, args.traj, to_guess=())
+        args.end = len(u.trajectory)
+
     return args
 
 
