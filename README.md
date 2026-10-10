@@ -1,89 +1,67 @@
 # PackMem2
 
-[PackMem](https://packmem.ipmc.cnrs.fr/) ([link to the github repo](https://github.com/rogautier/packmem)) is a computational tool that computes the distributions of packing defects in lipid bilayers from molecular dynamics trajectories. The present repository contains the new version of PackMem called **PackMem2**.
+**PackMem2** is a computational tool that computes lipid packing defects and their distribution from of packing defects in lipid bilayers from a molecular dynamics trajectory. **PackMem2** is an upgrade of the former [PackMem](https://packmem.ipmc.cnrs.fr/). It has been completely refactorized compared to the original PackMem (notably with the use of Numpy, MDAnalysis, and the multiprocessing modules), which heavily improved performances. **PackMem2** also implements some new features, notably computing packing defects around a protein inserted into the membrane.
 
-PackMem2 has been completely refactorized compared to the original PackMem (notably with the use of Numpy, MDAnalysis, and the multiprocessing modules), which heavily improved performances. PackMem2 also implements some new features, notably computing packing defects around a protein inserted into the membrane.
+## Installation
 
--------------------------------------------------------------------------------
+We highly recommand the use of [uv](https://docs.astral.sh/uv/) to manage all dependencies and the project environment. First, [install uv](https://docs.astral.sh/uv/getting-started/installation/). Once done, you can simply use:
 
-## Setup environment
-
-We use [uv](https://docs.astral.sh/uv/) to manage all dependencies and the project environment.
-
-To get PackMem2 up and running, follow the next steps.\
-Clone this repository:
-```
-git clone https://github.com/patrickfuchs/PackMem2.git
+```bash
+uv tool install packmem2
 ```
 
-Then move to PackMem2 directory:
-```
-cd PackMem2
-```
+More on installation [here]().
 
-Create the environment:
-```
-uv sync
-```
+## Running PackMem2
 
--------------------------------------------------------------------------------
+The previous command installed all the scripts in your `~/.local/bin` directory, thus they are directly accessible on the command line. The main script is called `launch_packmem2` which will do the full analysis. A minimal command on a pure lipid bilayer would look like this:
 
-## How to run the code
-
-The package is launched with the minimal command:
-```
-uv run launch_packmem2 -f [trajectory] -s [structure] -l [lipid name] -e [ending frame]
+```bash
+launch_packmem2 -f [trajectory] -s [structure] -l [lipid name] -e [ending frame]
 ```
 
-You can see the full explanation of the options in [launch_packmem2](docs/launch_packmem2.md).
+This command will loop over the trajectory, calculate all types of defects (deep, shallow, all) on each frames, concatenate defects from all frames, and perform the analysis and write results into csv files and generate a pdf with all plots. You can see the full explanation of the options in the [doc]().
 
-This script runs the actual PackMem2, the concatenation of the output files and the analysis.
+`launch_packmem2` is a wrapper which uses some other scripts that can be launched individually: 
 
-If any problems is encountered along the way, each scripts can be individually run with their respective commands:
-* [packmem2](docs/packmem2.md)
-* [concatenate](docs/concatenate.md)
-* [analysis](docs/analysis.md)
+- [packmem2](): computation of packing defects on a single frame;
+- [concatenate](): concatenation of packing defects from all frames;
+- [analysis](): analysis of results and generation of plots.
 
-## Results
+`launch_packmem2` produces the following files:
 
-In the end, you should have the following 9 basic files:
-* 3 for the Total defects - we mean by that the whole membrane defects - which are named `Total_[type of defects].csv`
-* 3 for the Upper leaflet defects - which are named `Total_Up_[type of defects].csv`
-* 3 for the Lower lealfet defects - which are named `Total_Lo_[type of defects]csv`
+- `Total_[type_of_defects].csv`: contains all defects of the trajectory whatever the leaflet (`type_of_defects` is within `(deep|shallow|all)`).
+- `Total_Up_[type_of_defects].csv`: all defects of the trajectory of the upper leaflet.
+- `Total_Lo_[type_of_defects].csv`: all defects of the trajectory of the lower leaflet.
 
-If you used the `-prot` flag, 3 or 6 more files will be in your directory:
-* 3 or 6 for the defects that are near and far from the protein - which are named `Total_[leaflet]_[type of defects]_prot.csv`
+Each line contains information on each defect: defect number, defect area in units of $\AA^2$, an approximate `x` and `y` coordinate where the defect stands.
 
-And the result .pdf file:
-* `Res_membrane.pdf` that contains all the plots of the defects analysis.
+- `Res_membrane.pdf`: contains all plots from which the packing defect constants are computed.
 
--------------------------------------------------------------------------------
+PackMem2 allows the analysis of simulation containing a membrane protein or peptide with the `-prot` flag. More on this feature [here]().
 
-## Possible problems
+## Documentation
 
-If your lipid isn't present in the parameter files (param and vdw_radii files in the `data` folder), then you can add it on your own using the same convention.
+The full documentation is available at [Read the Docs](https://readthedocs.org/projects/packmem2).
 
-In the [CHARMM parameter file](data/param_Charmm.txt) or the [MARTINI parameter file](data//param_Martini.txt):
-* LIPID NAME glycerol / central atom. Example : DMPC C2
+## Contributors
 
-And in the [CHARMM radii files](data/vdw_radii_Charmm.txt) or [MARTINI radii files](data/vdw_radii_Martini_old.txt) - Note that there are multiple for the MARTINI force field:
-* LIPID NAME atom name  vdw radii n/a
-This is done for every lipid atoms.
+- Maya Zygadlo
+- Pierre Poulain
+- Patrick Fuchs
 
-If you don't know the van der Waals radii of each atoms, run the following script:
-```
-uv run calculate_radii -mol [lipid.itp] -ff [forcefield.itp]
-```
-Here again see its dedicated documentation.\
-[calculate_radii](docs/calculate_radii.md)
+## Licence
 
--------------------------------------------------------------------------------
-
-## Contact
-
-If there are any other problems, please contact: `maya.zygadlo@sorbonne-universite.fr`
-
+buildH is licensed under the [BSD License](https://github.com/patrickfuchs/buildH/blob/master/LICENSE.txt).
 
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md)
+
+## Citing PackMem2
+
+If you use PackMem2 for your research, please cite:
+
+```txt
+Ref to come
+```
