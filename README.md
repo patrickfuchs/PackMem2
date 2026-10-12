@@ -4,23 +4,23 @@
 
 ## Installation
 
-We highly recommand the use of [uv](https://docs.astral.sh/uv/) to manage all dependencies and the project environment. First, [install uv](https://docs.astral.sh/uv/getting-started/installation/). Once done, you can simply use:
+**PackMem2** is intended to run under Linux systems. We highly recommand the use of [uv](https://docs.astral.sh/uv/) to manage all dependencies and the project environment. First, [install uv](https://docs.astral.sh/uv/getting-started/installation/). Once done, you can simply use:
 
 ```bash
 uv tool install packmem2
 ```
 
-More on installation [here]().
+This command installs all the scripts and dependencies in your `~/.local` directory. Since `~/.local/bin` is generally on your PATH environment variable under Linux systems, all PackMem2 scripts are directly accessible on the command line. More on installation [here]().
 
 ## Running PackMem2
 
-The previous command installed all the scripts in your `~/.local/bin` directory, thus they are directly accessible on the command line. The main script is called `launch_packmem2` which will do the full analysis. A minimal command on a pure lipid bilayer would look like this:
+The main script is called `launch_packmem2` which will do the full analysis. A minimal command on a pure lipid bilayer (say made of POPC lipids) simulated with GROMACS would look like this:
 
 ```bash
-launch_packmem2 -f [trajectory] -s [structure] -l [lipid name] -e [ending frame]
+launch_packmem2 -f trajectory.xtc -s topol.tpr -l POPC
 ```
 
-This command will loop over the trajectory, calculate all types of defects (deep, shallow, all) on each frames, concatenate defects from all frames, and perform the analysis and write results into csv files and generate a pdf with all plots. You can see the full explanation of the options in the [doc]().
+This command will loop over the trajectory, calculate all types of defects (deep, shallow, all) on each frame, concatenate defects from all frames, perform the analysis and write results into csv files, and generate a pdf with multiple plots. You can see the full explanation of this commend and its many options in the [doc]().
 
 `launch_packmem2` is a wrapper which uses some other scripts that can be launched individually: 
 
@@ -30,11 +30,13 @@ This command will loop over the trajectory, calculate all types of defects (deep
 
 `launch_packmem2` produces the following files:
 
-- `Total_[type_of_defects].csv`: contains all defects of the trajectory whatever the leaflet (`type_of_defects` is within `(deep|shallow|all)`).
+- `Total_[type_of_defects].csv`: all defects of the trajectory whatever the leaflet.
 - `Total_Up_[type_of_defects].csv`: all defects of the trajectory of the upper leaflet.
 - `Total_Lo_[type_of_defects].csv`: all defects of the trajectory of the lower leaflet.
 
-Each line contains information on each defect: defect number, defect area in units of $\AA^2$, an approximate `x` and `y` coordinate where the defect stands.
+where `type_of_defects` is within `(deep|shallow|all)`.
+
+Each line of these csv files contains information on a single defect: defect number, defect area in units of $\AA^2$, an approximate `x` and `y` coordinate where the defect stands.
 
 - `Res_membrane.pdf`: contains all plots from which the packing defect constants are computed.
 

@@ -53,7 +53,7 @@ Then move to PackMem2 directory:
 cd PackMem2
 ```
 
-Sync the environment:
+We use [uv](https://docs.astral.sh/uv/) to manage all dependencies. Sync the environment:
 
 ```
 uv sync
