@@ -20,6 +20,7 @@ jobs:
         with:
           enable-cache: true
 
+      # Install python 3.12 to avoid an error (3.15 installed by default is no compatible with some other libraries).
       - name: Install Python
         run: uv python install 3.12
 
