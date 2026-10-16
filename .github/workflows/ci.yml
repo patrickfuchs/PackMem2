@@ -24,10 +24,11 @@ jobs:
         run: uv python install
 
       # To avoid this error: "The headers or library files could not be found for jpeg, a required dependency when compiling Pillow from source."
+      # And an error on BLAS.
       - name: Install system dependencies (Ubuntu)
         run: |
           sudo apt-get update
-          sudo apt-get install -y libjpeg-dev zlib1g-dev
+          sudo apt-get install -y libjpeg-dev zlib1g-dev libopenblas-dev pkg-config
 
       - name: Install python dependencies
         run: uv sync --locked --dev
