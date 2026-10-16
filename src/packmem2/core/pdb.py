@@ -10,15 +10,14 @@ def outputTXT_defects(
     area_defects: dict,
     first_coord: dict,
     total_size: int,
-    total_edge: int,
     arrayX: np.array,
     arrayY: np.array,
 ) -> None:
     """
     Create output file for packing defects in TXT format.
 
-    ## MatrixSize  9646  9801           # Membrane_matrix_size  Total_matrix_size
-    ## Total   51   582 11.41 6.034     # Total_packing_defect_number, total_packing_defect_area, average_size, pourcent_of_membrane
+    ## MatrixSize  9801
+    ## Total   51   582 11.41 6.034     # Total_packing_defect_number, total_packing_defect_area, average_size, percent_of_membrane
     1    7     7.00    55.00            # Defect_label  defect_size  X_position  Y_position
     2    1     7.00    58.00
 
@@ -32,22 +31,21 @@ def outputTXT_defects(
         Contains the first appearance of the label in the matrix
     total_size: int
         The total area of the matrix
-    total_edge: int
-        The sum of the defect areas on the edge
     arrayX: numpy array
         Array from xmin-1 to xmax+1 by step of 1.0
     arrayY: numpy array
         Array from ymin-1 to ymax+1 by step of 1.0
     """
     with open(f"{out_name}.txt", "w") as f_result:
-        f_result.write(f"## MatrixSize {total_size - total_edge:5d} {total_size:5d} \n")
+        f_result.write(f"## MatrixSize {total_size:5d} \n")
         if len(first_coord) != 0:
             f_result.write(
-                f"## Total {len(area_defects):4d} {sum(area_defects.values()):5d} {sum(area_defects.values()) / float(len(area_defects)):4.2f} {(sum(area_defects.values()) * 100.0) / (total_size - total_edge):5.3f}\n"
+                f"## Total {len(area_defects):4d} {sum(area_defects.values()):5d} {sum(area_defects.values()) / float(len(area_defects)):4.2f} {(sum(area_defects.values()) * 100.0) / (total_size):5.3f}\n"
             )
         else:
             # Exception if no defect
             f_result.write("## Total 0 0 0.0 0.0\n")
+            return
         i = 0
         for key in first_coord:
             f_result.write(

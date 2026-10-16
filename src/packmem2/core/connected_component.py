@@ -2,6 +2,7 @@
 ##### Source: http://en.wikipedia.org/wiki/Connected-component_labeling
 # P. Fuchs 08/2014
 # M. Zygadlo 2025
+# L. Roeleveld 2026
 
 import numpy as np
 
@@ -26,23 +27,29 @@ def find_neighbours(mat: np.array, ind_i: int, ind_j: int) -> list:
     """
     defect_neighbours = []
     # Look for connectivity of the current cell
-    if ind_i > 0:
-        if (
-            ind_j > 0
-            and mat[(ind_i - 1) % mat.shape[0], (ind_j - 1) % mat.shape[1]] == 0
-        ):  # North-West
-            defect_neighbours.append(
-                [(ind_i - 1) % mat.shape[0], (ind_j - 1) % mat.shape[1]]
-            )
-        if mat[(ind_i - 1) % mat.shape[0], ind_j] == 0:  # North
-            defect_neighbours.append([(ind_i - 1) % mat.shape[0], ind_j])
-        if (
-            mat[(ind_i - 1) % mat.shape[0], (ind_j + 1) % mat.shape[1]] == 0
-        ):  # North-East
-            defect_neighbours.append(
-                [(ind_i - 1) % mat.shape[0], (ind_j + 1) % mat.shape[1]]
-            )
-    if ind_j > 0 and mat[ind_i, (ind_j - 1) % mat.shape[1]] == 0:  # West
+    #
+    #     ###
+    #     #c.
+    #     ...
+    if (
+        mat[(ind_i - 1) % mat.shape[0], (ind_j - 1) % mat.shape[1]] == 0
+    ):  # North-West
+        defect_neighbours.append(
+            [(ind_i - 1) % mat.shape[0], (ind_j - 1) % mat.shape[1]]
+        )
+    if (
+        mat[(ind_i - 1) % mat.shape[0], ind_j] == 0
+    ):  # North
+        defect_neighbours.append([(ind_i - 1) % mat.shape[0], ind_j])
+    if (
+        mat[(ind_i - 1) % mat.shape[0], (ind_j + 1) % mat.shape[1]] == 0
+    ):  # North-East
+        defect_neighbours.append(
+            [(ind_i - 1) % mat.shape[0], (ind_j + 1) % mat.shape[1]]
+        )
+    if (
+        mat[ind_i, (ind_j - 1) % mat.shape[1]] == 0
+    ):  # West
         defect_neighbours.append([ind_i, (ind_j - 1) % mat.shape[1]])
     return defect_neighbours
 
@@ -69,7 +76,9 @@ def find_label_neighbours(mat: np.array, defect_neighbours: list[list]) -> list:
         neighbour_i = neighbour[0]
         neighbour_j = neighbour[1]
         # Store their label in a list
-        label_neighbours.append(mat[neighbour_i, neighbour_j])
+        pos_label = mat[neighbour_i, neighbour_j]
+        if pos_label != 0:
+            label_neighbours.append(pos_label)
     # Eliminate duplicate & sort
     label_neighbours = list(set(label_neighbours))
     label_neighbours.sort()
@@ -137,6 +146,27 @@ def merge_list_of_lists(list_of_lists: list[list]) -> list[list]:
                 del list_of_lists[i]
                 break
     return list_of_lists
+
+
+def add_equivalent_labels(
+    equiv_labels: list[list], label_neighbours: list, current_label: int | None = None
+) -> list[list]:
+    if not equiv_labels:
+        if current_label is not None:
+            label_neighbours = list(set(label_neighbours) | {current_label})
+        equiv_labels.append(label_neighbours)
+        return equiv_labels
+
+    is_present_in_equiv_labels = False
+    for k, tmplist in enumerate(equiv_labels):
+        if intersect(tmplist, label_neighbours):
+            equiv_labels[k] = sort_without_duplicate_merged_lists(
+                equiv_labels[k], label_neighbours
+            )
+            is_present_in_equiv_labels = True
+    if not is_present_in_equiv_labels:
+        equiv_labels.append(label_neighbours)
+    return equiv_labels
 
 
 def get_uniq_labels(nb_labels: int, equiv_labels: list[list]) -> tuple[dict, list]:
@@ -254,16 +284,15 @@ def get_area_first_coor_defects(mat: np.array, uniq_labels: list) -> tuple[dict,
     """
     area_defects = {}
     first_coor_defects = {}
-
+    assert len(uniq_labels) == len(set(uniq_labels)), "uniq_labels should not contain duplicates"
     for label in uniq_labels:
         # Get the positions of this label
         label_X = np.where(mat == label)[0]
         label_Y = np.where(mat == label)[1]
         # Add the surface they cover to area_defects
-        if label not in area_defects:
-            area_defects[label] = 0
-            # Take the first occurence as reference coordinates
-            first_coor_defects[label] = [label_X[0], label_Y[0]]
+        area_defects[label] = 0
+        # Take the first occurence as reference coordinates
+        first_coor_defects[label] = [label_X[0], label_Y[0]]
         area_defects[label] += len(label_X)
     return area_defects, first_coor_defects
 
@@ -272,7 +301,7 @@ def get_connected_components(
     mat: np.array, mat_labels: np.array
 ) -> tuple[np.array, list, dict, dict]:
     """
-    Connect and label the defects. Get a list of the labels, tehir area and ttheir first coordinates.
+    Connect and label the defects. Get a list of the labels, their area and their first coordinates.
 
     --------------------
     INPUT
@@ -296,12 +325,9 @@ def get_connected_components(
     equiv_labels = []
 
     # Find where there are defects
-    defect_X = np.where(mat == 0)[0]
-    defect_Y = np.where(mat == 0)[1]
-
-    for i in range(len(defect_X)):
-        indX = defect_X[i]
-        indY = defect_Y[i]
+    defects = np.where(mat == False)
+    for indX, indY in zip(*defects):
+        # indX is the slow counter (row_number), indY is the fast counter (column_number)
         # Create a list that contains the coordinates of the defect neighbours
         defect_neighbours = find_neighbours(mat, indX, indY)
 
@@ -313,39 +339,43 @@ def get_connected_components(
         if len(defect_neighbours) == 1:
             neighbour_i = defect_neighbours[0][0]
             neighbour_j = defect_neighbours[0][1]
-            mat_labels[indX, indY] = mat_labels[neighbour_i, neighbour_j]
+            pos_label = mat_labels[neighbour_i, neighbour_j]
+            if pos_label == 0:
+                nb_labels += 1
+                mat_labels[indX, indY] = nb_labels
+            else:
+                mat_labels[indX, indY] = pos_label
         # If the cell is inside a defect
         if len(defect_neighbours) > 1:
             # Find all the labels of the neighbours
             label_neighbours = find_label_neighbours(mat_labels, defect_neighbours)
             # assign the smallest label to that cell
-            mat_labels[indX][indY] = min(label_neighbours)
+            if len(label_neighbours) == 0:
+                nb_labels += 1
+                mat_labels[indX, indY] = nb_labels
+            else:
+                pos_label = min([x for x in label_neighbours if x])
+                mat_labels[indX, indY] = pos_label
 
             # In case of multiple labels
             if len(label_neighbours) > 1:
-                if len(equiv_labels) == 0:
-                    equiv_labels.append(label_neighbours)
-                else:
-                    is_present_in_equiv_labels = False
-                    for k, tmplist in enumerate(equiv_labels):
-                        # If one the labels already is in equiv_labels
-                        if intersect(tmplist, label_neighbours):
-                            # Fuse the lists, avoid duplicates and sort
-                            equiv_labels[k] = sort_without_duplicate_merged_lists(
-                                equiv_labels[k], label_neighbours
-                            )
-                            is_present_in_equiv_labels = True
-                    # If the labels don't exist in equiv_labels
-                    if not is_present_in_equiv_labels:
-                        equiv_labels.append(label_neighbours)
+                equiv_labels = add_equivalent_labels(equiv_labels, label_neighbours)
 
-    # If there are redundancies, clean them up
-    equiv_labels = merge_list_of_lists(equiv_labels)
+    # rerun the label connection for the defects that are on the edge of the matrix
+    boundary_defects = (defects[0] == 0) | (defects[1] == 0)
+    for indX, indY in zip(defects[0][boundary_defects], defects[1][boundary_defects]):
+        defect_neighbours = find_neighbours(mat, indX, indY)
+        if len(defect_neighbours) > 1:
+            label_neighbours = find_label_neighbours(mat_labels, defect_neighbours)
+            equiv_labels = add_equivalent_labels(
+                equiv_labels, label_neighbours, int(mat_labels[indX, indY])
+            )
+        # If there are redundancies, clean them up
+        equiv_labels = merge_list_of_lists(equiv_labels)
 
     # Get the labels to be linked to their smallest equivalent label
     # Get the list of the unique values in the dictionary
     dict_connected_labels, uniq_labels = get_uniq_labels(nb_labels, equiv_labels)
-
     # Change the labels in the matrix to the smallest one
     mat_labels = connect_labels_in_matrix(mat_labels, dict_connected_labels)
 

@@ -2,6 +2,8 @@ from pathlib import Path
 import pytest
 import packmem2.launch_packmem2 as launch_packmem2
 
+pytestmark = pytest.mark.slow
+
 
 @pytest.mark.slowest
 def test_launch_DMPC(tmp_path):
@@ -24,6 +26,7 @@ def test_launch_DMPC(tmp_path):
     limy = 1e-4
     precision = 3
     nb_block = 5
+    wrapped = False
 
     launch_packmem2.launch(
         cores,
@@ -43,7 +46,8 @@ def test_launch_DMPC(tmp_path):
         limx,
         limy,
         precision,
-        nb_block
+        nb_block,
+        wrapped
     )
 
     # Check Total files
@@ -87,6 +91,7 @@ def test_launch_DMPC_protein(tmp_path):
     limy = 1e-4
     precision = 3
     nb_block = 3
+    wrapped = False
 
     with pytest.raises(TypeError):
         launch_packmem2.launch(
@@ -107,7 +112,8 @@ def test_launch_DMPC_protein(tmp_path):
             limx,
             limy,
             precision,
-            nb_block
+            nb_block,
+            wrapped
         )
 
     # Check Total files
@@ -160,6 +166,7 @@ def test_launch_DLPC(tmp_path):
     limy = 1e-4
     precision = 3
     nb_block = 3
+    wrapped = False
 
     launch_packmem2.launch(
         cores,
@@ -180,6 +187,7 @@ def test_launch_DLPC(tmp_path):
         limy,
         precision,
         nb_block,
+        wrapped
     )
 
     # Check Total files
@@ -214,6 +222,7 @@ def test_launch_DLPC_multiprocess(tmp_path):
     radiiFile = "data/vdw_radii_Martini_old.txt"
     indexFile = None
     output_dir = str(tmp_path)
+    #output_dir = "tests/data/dlpc_multi_bigger_arrays"
     outputname = "DLPC"
     dist_suppl_Z = 1.0
     protein = False
@@ -222,6 +231,7 @@ def test_launch_DLPC_multiprocess(tmp_path):
     limy = 1e-4
     precision = 3
     nb_block = 3
+    wrapped = False
 
     launch_packmem2.launch(
         cores,
@@ -241,7 +251,8 @@ def test_launch_DLPC_multiprocess(tmp_path):
         limx,
         limy,
         precision,
-        nb_block
+        nb_block,
+        wrapped
     )
 
     # Check Total files

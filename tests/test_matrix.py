@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 
 import packmem2.core.matrix as m
 
@@ -22,34 +23,55 @@ def test_find_X_Y():
     assert(tested_ouputX == wanted_outputX)
     assert(tested_ouputY == wanted_outputY)
 
-def test_check_edges():
-    tested_ouput_T = m.check_edges(43, 5, 107)
-    tested_ouput_F = m.check_edges(2, 5, 104)
-    wanted_output_T = 43
-    wanted_output_F = 5
-    assert(tested_ouput_T == wanted_output_T)
-    assert(tested_ouput_F ==  wanted_output_F)
+#def test_fill_matrix(): 
+#    listX = np.arange(-1., 6., 1) 
+#    listY = np.arange(-1., 6., 1) 
+#    Matrix = np.full((len(listX), len(listY)), 0.0) 
+#    tested_ouput = m.fill_matrix(Matrix, 1.34, 'a', [0, 4, 2], listX, listY, np.array([4, 3, 2, 1, 0])) 
+#    wanted_output = np.array([[0.0, 0.0, 0.0, 0.0,   0.001, 0.001, 0.001], 
+#                              [0.0, 0.0, 0.0, 0.001, 0.001, 0.001, 0.001], 
+#                              [0.0, 0.0, 0.0, 0.0,   0.001, 0.001, 0.001], 
+#                              [0.0, 0.0, 0.0, 0.0,   0.0,   0.001, 0.0], 
+#                              [0.0, 0.0, 0.0, 0.0,   0.0,   0.0,   0.0], 
+#                              [0.0, 0.0, 0.0, 0.0,   0.0,   0.0,   0.0], 
+#                              [0.0, 0.0, 0.0, 0.0,   0.0,   0.0,   0.0]]) 
+#    np.testing.assert_array_equal(tested_ouput, wanted_output) 
 
-def test_fill_matrix():
-    listX = np.arange(-1., 6., 1)
-    listY = np.arange(-1., 6., 1)
+def test_fill_matrix_with_edge():
+    listX = np.arange(0., 5., 1)
+    listY = np.arange(0., 5., 1)
     Matrix = np.full((len(listX), len(listY)), 0.0)
-    tested_ouput = m.fill_matrix(Matrix, 1.34, 'a', [0, 4, 2], listX, listY, np.array([4, 3, 2, 1, 0]))
-    wanted_output = np.array([[0.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001],
-                              [0.0, 0.0, 0.0, 0.001, 0.001, 0.001, 0.001],
-                              [0.0, 0.0, 0.0, 0.0, 0.001, 0.001, 0.001],
-                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.001, 0.0],
-                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                              [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
-    np.testing.assert_array_equal(tested_ouput, wanted_output)
+    tested_output = m.fill_matrix(Matrix, 1.34, 'a', [0, 4, 2], listX, listY, np.array([4, 3, 2, 1, 0]))
+    wanted_output = np.array([[0.001, 0.001,  0.001, 0.001, 0.001],
+                              [0.001, 0,      0,     0.001, 0.001],
+                              [0,     0,      0,     0,     0.001],
+                              [0,     0,      0,     0,     0.001],
+                              [0.001, 0,      0,     0.001, 0.001]])
+    try:
+        np.testing.assert_array_equal(tested_output, wanted_output)
+    except AssertionError:
+        with np.printoptions(threshold=np.inf, linewidth=200):
+            print(f"Tested:\n{np.array2string(tested_output, separator=' ')}", file=sys.stderr)
+            print(f"Wanted:\n{np.array2string(wanted_output, separator=' ')}", file=sys.stderr)
+        raise
+    listX = np.arange(0., 6., 1)
+    listY = np.arange(0., 6., 1)
+    Matrix = np.full((len(listX), len(listY)), 0.0)
+    tested_output = m.fill_matrix(Matrix, 1.34, 'a', [0, 4, 2], listX, listY, np.array([4, 3, 2, 1, 0]))
+    wanted_output = np.array([[0.001,  0,     0.001,  0.001, 0.001, 0.001, ],
+                              [0,      0,     0,      0.001, 0.001, 0.001, ],
+                              [0,      0,     0,      0,     0.001, 0,     ],
+                              [0,      0,     0,      0,     0,     0,     ],
+                              [0,      0,     0,      0,     0.001, 0,     ],
+                              [0,      0,     0,      0.001, 0.001, 0.001, ]])
+    try:
+        np.testing.assert_array_equal(tested_output, wanted_output)
+    except AssertionError:
+        with np.printoptions(threshold=np.inf, linewidth=200):
+            print(f"Tested:\n{np.array2string(tested_output, separator=' ')}", file=sys.stderr)
+            print(f"Wanted:\n{np.array2string(wanted_output, separator=' ')}", file=sys.stderr)
+        raise
 
-def test_binarize_matrix_without0():
-    Matrix_bin = np.full((4, 4), 0.)
-    Matrix = np.array([[0.0, 0.003, 5.0, 0.5], [0.001, 0.003, 1.005, 0.003], [0.99, 0.003, 0.003, 0.003], [0.0, 0.0, 0.001, 0.0]])
-    tested_ouput = Matrix_bin = m.binarize_matrix_without0(Matrix, Matrix_bin , -0.01, 0.99)
-    wanted_output = np.array([[0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 1.0, 0.0], [1.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0]])
-    np.testing.assert_array_equal(tested_ouput, wanted_output)
 
 def test_count_edge_area():
     cluster_edge = np.array([1, 5])

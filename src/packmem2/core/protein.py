@@ -6,6 +6,7 @@ import numpy as np
 import MDAnalysis
 
 from packmem2.core import matrix as m
+from packmem2.core.constants import DECIMALS
 
 
 def find_protein(
@@ -42,9 +43,9 @@ def find_protein(
     for i in range(len(protein.resids)):
         # Get the coordinates X Y Z
         coordtmp = [
-            protein.positions[i, 0].round(2),
-            protein.positions[i, 1].round(2),
-            protein.positions[i, 2].round(2),
+            protein.positions[i, 0].round(DECIMALS),
+            protein.positions[i, 1].round(DECIMALS),
+            protein.positions[i, 2].round(DECIMALS),
         ]
         iX, iY = m.find_X_Y(coordtmp, arrayX, arrayY)
         # Upper leaflet
@@ -72,14 +73,11 @@ def find_edges(mat: np.array) -> dict:
         Contains labels as keys and values are arrays of coordinates of the edge cells for each defect (label)
     """
     # Get the indexes of where the defects are
-    defect_X = np.where(mat != 0)[0]
-    defect_Y = np.where(mat != 0)[1]
+    defects = np.argwhere(mat != 0)
     # Dictionary to store the coordinates of the packing defects' edges based on their label
     defects_edges_coors = {}
 
-    for i in range(len(defect_X)):
-        indX = defect_X[i]
-        indY = defect_Y[i]
+    for indX, indY in defects:
         # If this cell is a defect edge
         if (
             mat[(indX - 1) % mat.shape[0], indY] == 0  # top
@@ -115,7 +113,7 @@ def find_shortest_sqdist(coor_prot_edge: np.array, coor_defect_edge: np.array) -
     float
         The shortest squared distance between the edge coordinates of the protein and packing defects
     """
-    # Compute all the square distances between tthe two arrays
+    # Compute all the square distances between the two arrays
     square_dist = np.sum(
         (coor_prot_edge[:, None] - coor_defect_edge[None, :]) ** 2, axis=2
     )
