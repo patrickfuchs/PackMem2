@@ -23,6 +23,12 @@ jobs:
       - name: Install Python
         run: uv python install
 
+      # To avoid this error: "The headers or library files could not be found for jpeg, a required dependency when compiling Pillow from source."
+      - name: Install system dependencies (Ubuntu)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libjpeg-dev zlib1g-dev
+
       - name: Install python dependencies
         run: uv sync --locked --dev
 
