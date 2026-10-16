@@ -12,8 +12,8 @@ def test_launch_DMPC(tmp_path):
     lipid = "DMPC"
     start = 0
     end = 100
-    paramFile = "data/param_Charmm.txt"
-    radiiFile = "data/vdw_radii_Charmm.txt"
+    paramFile = "src/packmem2/data/param_Charmm.txt"
+    radiiFile = "src/packmem2/data/vdw_radii_Charmm.txt"
     indexFile = None
     output_dir = str(tmp_path)
     outputname = "DMPC"
@@ -75,8 +75,8 @@ def test_launch_DMPC_protein(tmp_path):
     lipid = "DMPC"
     start = 0
     end = 100
-    paramFile = "data/param_Charmm.txt"
-    radiiFile = "data/vdw_radii_Charmm.txt"
+    paramFile = "src/packmem2/data/param_Charmm.txt"
+    radiiFile = "src/packmem2/data/vdw_radii_Charmm.txt"
     indexFile = None
     output_dir = str(tmp_path)
     outputname = "DMPC"
@@ -148,8 +148,8 @@ def test_launch_DLPC(tmp_path):
     lipid = "DLPC"
     start = 0
     end = 100
-    paramFile = "data/param_Martini.txt"
-    radiiFile = "data/vdw_radii_Martini_old.txt"
+    paramFile = "src/packmem2/data/param_Martini.txt"
+    radiiFile = "src/packmem2/data/vdw_radii_Martini_old.txt"
     indexFile = None
     output_dir = str(tmp_path)
     outputname = "DLPC"
@@ -210,8 +210,8 @@ def test_launch_DLPC_multiprocess(tmp_path):
     lipid = "DLPC"
     start = 0
     end = 100
-    paramFile = "data/param_Martini.txt"
-    radiiFile = "data/vdw_radii_Martini_old.txt"
+    paramFile = "src/packmem2/data/param_Martini.txt"
+    radiiFile = "src/packmem2/data/vdw_radii_Martini_old.txt"
     indexFile = None
     output_dir = str(tmp_path)
     outputname = "DLPC"

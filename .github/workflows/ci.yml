@@ -20,8 +20,16 @@ jobs:
         with:
           enable-cache: true
 
+      # Install python 3.12 to avoid an error (3.15 installed by default is no compatible with some other libraries).
       - name: Install Python
-        run: uv python install
+        run: uv python install 3.12
+
+      # To avoid this error: "The headers or library files could not be found for jpeg, a required dependency when compiling Pillow from source."
+      # And an error on BLAS.
+      - name: Install system dependencies (Ubuntu)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libjpeg-dev zlib1g-dev libopenblas-dev pkg-config
 
       - name: Install python dependencies
         run: uv sync --locked --dev
