@@ -18,8 +18,8 @@ def test_get_args_packmem2(monkeypatch, tmp_path):
     # Create tmp files
     topo = "tests/data/end_to_end_DMPC/md.gro"
     traj = "tests/data/end_to_end_DMPC/md_10ns.xtc"
-    param = "data/param_Charmm.txt"
-    radii = "data/vdw_radii_Charmm.txt"
+    param = "src/packmem2/data/param_Charmm.txt"
+    radii = "src/packmem2/data/vdw_radii_Charmm.txt"
 
     ## TEST OK ##
     # Simulate the corect arguments
