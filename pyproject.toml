@@ -4,8 +4,9 @@ version = "0.1.1"
 description = "Packing defects size analyser"
 readme = "README.md"
 authors = [
-    { name = "Romain Gautier", email = "gautier@ipmc.cnrs.fr" },
     { name = "Maya Zygadlo", email = "maya.zygadlo@sorbonne-universite.fr" },
+    { name = "Romain Gautier", email = "gautier@ipmc.cnrs.fr" },
+    { name = "Pierre Poulain", email = "pierre.poulain@u-paris.fr" },
     { name = "Patrick Fuchs", email = "patrick.fuchs@u-paris.fr"}
 ]
 maintainers = [
