@@ -37,8 +37,8 @@ def build_args() -> argparse.Namespace:
         "-ff",
         action="store",
         dest="forcefield",
-        default="charmm",
-        help="The force field used. The options are: charmm (default), martini2, martini2P and martini3",
+        required=True,
+        help="The force field used. The options are: charmm, martini2, martini2P and martini3",
     )
     parser.add_argument(
         "-b",
