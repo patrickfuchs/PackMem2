@@ -3,6 +3,7 @@
 # M. Zygadlo 2025
 
 import argparse
+import importlib.metadata
 import numpy as np
 from pathlib import Path
 import MDAnalysis as mda
@@ -19,7 +20,9 @@ def build_args() -> argparse.Namespace:
     parser.parse_args
         Contains all the arguments for the script
     """
-    parser = argparse.ArgumentParser(description="Arguments for PackMem_prot.py")
+    packmem2_version = importlib.metadata.version('packmem2')
+    # Getting the arguments
+    parser = argparse.ArgumentParser(description=f"Arguments for PackMem2 version {packmem2_version}")
     parser.add_argument(
         "-f", action="store", dest="traj", required=True, help="Trajectory file (.xtc)"
     )
@@ -32,6 +35,13 @@ def build_args() -> argparse.Namespace:
         dest="lipid",
         required=True,
         help="Lipid name(s) in the .gro file.. If multiple, seperate them with _",
+    )
+    parser.add_argument(
+        "-ff",
+        action="store",
+        dest="forcefield",
+        required=True,
+        help="The force field used. The options are: charmm, martini2, martini2P and martini3",
     )
     parser.add_argument(
         "-b",
@@ -52,15 +62,15 @@ def build_args() -> argparse.Namespace:
         "-r",
         action="store",
         dest="radiiFile",
-        default="data/vdw_radii_Charmm.txt",
-        help="File for the atom radii.\nThe options are: data/vdw_radii_Charmm.txt (default), data/vdw_radii_Martini_old.txt, data/vdw_radii_Martini2.txt, data/vdw_radii_Martini2P.txt and data/vdw_radii_Martini3.txt",
+        default="None",
+        help="File for the atom radii",
     )
     parser.add_argument(
         "-p",
         action="store",
         dest="paramFile",
-        default="data/param_Charmm.txt",
-        help="File for lipid parameters.\nThe options are: data/param_Charmm.txt (default), data/param_Martini.txt",
+        default="None",
+        help="File for lipid parameters",
     )
     parser.add_argument(
         "-o",
@@ -102,11 +112,16 @@ def build_args() -> argparse.Namespace:
         action="store_true",
         help="Analyse the packing defects close/far of the protein",
     )
-
+    parser.add_argument(
+        "--version",
+        action='version',
+        version=packmem2_version
+    )
+    
     return parser
 
 
-def check_ending_frame(end, topo, traj):
+def check_ending_frame(end: int, topo: str, traj: str) -> int:
     """
     Check if there was a user input of the end argument
     or if the user's end argument is correct
@@ -115,12 +130,15 @@ def check_ending_frame(end, topo, traj):
     INPUT
     end: int
         The new ending frame
-    end: int
-        The new ending frame
     topo: string
         The name of the topology file
     traj: string
         The name of the trajectory file
+    
+    --------------------
+    OUTPUT
+    int
+        The last frame number
     """
     u = mda.Universe(topo, traj, to_guess=())
     total_frames = len(u.trajectory)
@@ -145,6 +163,50 @@ def file_present(filename: str) -> None:
         raise FileNotFoundError(f"ERROR: file '{filename}' not found.")
 
 
+def assign_data_file(forcefield: str, datafile: str, param: bool = False) -> str:
+    """
+    Depending on the force field used, assign the parameter and radii file
+
+    --------------------
+    INPUT
+    forcefield: str
+        The force field used between charmm and martini2/2P/3
+    datafile: str
+        The argument datafile between paramFile and radiiFile
+    param: bool
+        If it is the parameter file or the radii file
+    
+    --------------------
+    OUTPUT
+    str
+        The new value for the datafile
+    """    
+    # Give the datafile that corresponds to the force field
+    if datafile == "None":
+        if param:
+            if forcefield == "charmm":
+                datafile = f"{Path(__file__).resolve().parent.parent}/data/param_Charmm.txt"
+            elif forcefield == "martini2" or forcefield == "martini2P" or forcefield == "martini3":
+                datafile = f"{Path(__file__).resolve().parent.parent}/data/param_Martini.txt"
+            else:
+                raise ValueError(f"ERROR: the force field {forcefield} is not supported.")
+        else:
+            if forcefield == "charmm":
+                datafile = f"{Path(__file__).resolve().parent.parent}/data/vdw_radii_Charmm.txt"
+            elif forcefield == "martini2":
+                datafile = f"{Path(__file__).resolve().parent.parent}/data/vdw_radii_Martini2.txt"
+            elif forcefield == "martini2P":
+                datafile = f"{Path(__file__).resolve().parent.parent}/data/vdw_radii_Martini2P.txt"
+            elif forcefield == "martini3":
+                datafile = f"{Path(__file__).resolve().parent.parent}/data/vdw_radii_Martini3.txt"
+            else:
+                raise ValueError(f"ERROR: the force field {forcefield} is not supported.")
+    # If user input, check the file
+    else:
+        file_present(datafile)
+    return datafile
+
+
 def get_args_packmem2() -> argparse.Namespace:
     """
     Get the arguments the packmem2 and check that the inputfiles are valid.
@@ -165,8 +227,10 @@ def get_args_packmem2() -> argparse.Namespace:
     # Check that the files exist
     file_present(args.traj)
     file_present(args.topo)
-    file_present(args.paramFile)
-    file_present(args.radiiFile)
+
+    # Check that the file is valid
+    args.paramFile = assign_data_file(args.forcefield, args.paramFile, param=True)
+    args.radiiFile = assign_data_file(args.forcefield, args.radiiFile)
 
     # Check that the variable d is positive
     if args.dist_suppl_Z < 0.0:
@@ -230,6 +294,18 @@ def get_args_launch_packmem2() -> argparse.Namespace:
 
     # Check ending frame
     args.end = check_ending_frame(args.end, args.topo, args.traj)
+
+    # Check that the files exist
+    file_present(args.traj)
+    file_present(args.topo)
+
+    # Check that the file is valid
+    args.paramFile = assign_data_file(args.forcefield, args.paramFile, param=True)
+    args.radiiFile = assign_data_file(args.forcefield, args.radiiFile)
+
+    # Check that the variable d is positive
+    if args.dist_suppl_Z < 0.0:
+        raise Exception("ERROR : The distance for the -d option must be > 0.0")
 
     return args
 

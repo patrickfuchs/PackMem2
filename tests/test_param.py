@@ -18,8 +18,7 @@ def test_get_args_packmem2(monkeypatch, tmp_path):
     # Create tmp files
     topo = "tests/data/end_to_end_DMPC/md.gro"
     traj = "tests/data/end_to_end_DMPC/md_10ns.xtc"
-    param = "data/param_Charmm.txt"
-    radii = "data/vdw_radii_Charmm.txt"
+    forcefield = "charmm"
 
     ## TEST OK ##
     # Simulate the corect arguments
@@ -31,8 +30,7 @@ def test_get_args_packmem2(monkeypatch, tmp_path):
             "-s", str(topo),
             "-l", "DPPC",
             "-e", "10",
-            "-p", str(param),
-            "-r", str(radii),
+            "-ff", str(forcefield),
             "-d", "1.0",
             "-prot"
         ]
@@ -58,8 +56,7 @@ def test_get_args_packmem2(monkeypatch, tmp_path):
             "-s", str(topo),
             "-l", "DPPC",
             "-e", "10",
-            "-p", str(param),
-            "-r", str(radii),
+            "-ff", str(forcefield),
             "-od", str(tmp_path),
             "-d", "-1.0",
         ]
@@ -72,8 +69,9 @@ def test_get_args_launch_packmem2(monkeypatch, tmp_path):
     # Create tmp files
     topo = "tests/data/end_to_end_DMPC/md.gro"
     traj = "tests/data/end_to_end_DMPC/md_10ns.xtc"
-    param = tmp_path / "param_Charmm.txt"
-    radii = tmp_path / "vdw_radii_Charmm.txt"
+    forcefield = "charmm"
+    param = "src/packmem2/data/param_Charmm.txt"
+    radii = "src/packmem2/data/vdw_radii_Charmm.txt"
 
     ## TEST OK ##
     # Simulate the corect arguments
@@ -84,6 +82,7 @@ def test_get_args_launch_packmem2(monkeypatch, tmp_path):
             "-c", "1",
             "-f", str(traj),
             "-s", str(topo),
+            "-ff", str(forcefield),
             "-l", "DPPC",
             "-e", "10",
             "-p", str(param),

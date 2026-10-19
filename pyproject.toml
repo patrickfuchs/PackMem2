@@ -1,7 +1,7 @@
 [project]
 name = "packmem2"
-version = "0.1.0"
-description = "Analyser of lipid packing defects from a MD trajectory"
+version = "0.1.1"
+description = "Packing defects size analyser"
 readme = "README.md"
 authors = [
     { name = "Maya Zygadlo", email = "maya.zygadlo@sorbonne-universite.fr" },
