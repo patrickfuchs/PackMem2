@@ -1,6 +1,6 @@
 [project]
 name = "packmem2"
-version = "0.1.0"
+version = "0.1.1"
 description = "Packing defects size analyser"
 readme = "README.md"
 authors = [
