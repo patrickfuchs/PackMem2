@@ -1,5 +1,6 @@
 # M. Zygadlo 2025
 
+import time
 import argparse
 import importlib.metadata
 import pandas as pd
@@ -599,12 +600,22 @@ def launch(
 
 
 def main() -> None:
+    start_time = time.time()
+
     # Get arguments
     args = get_arguments()
 
     launch(
          args.path, args.output_dir, args.output, args.prot, args.nb_block, args.limx, args.limy, args.precision
         )
+
+    ran_time = round((time.time() - start_time) / 60, 2)
+    if ran_time < 1:
+        print(f"-- Analysis ran for {round((time.time() - start_time), 2)} second(s) --")
+    elif ran_time < 60:
+        print(f"-- Analysis ran for {ran_time} minute(s) --")
+    else:
+        print(f"-- Analysis ran for {round((ran_time / 60), 2)} hour(s) --")
 
 
 if __name__ == "__main__":
