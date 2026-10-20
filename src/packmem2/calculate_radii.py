@@ -18,14 +18,21 @@ def get_args() -> argparse.Namespace:
     # Getting the arguments
     parser = argparse.ArgumentParser(description=f"Arguments for calculate_radii of PackMem2 version {packmem2_version}")
     parser.add_argument(
-        "-mol",
+        "-m",
         action="store",
-        dest="mol",
+        dest="mol_file",
         required=True,
         help="the .ipt file for the molecule",
     )
     parser.add_argument(
-        "-ff", action="store", dest="ff", required=True, help="forcefield.itp"
+        "-f", action="store", dest="ff_file", required=True, help="forcefield.itp"
+    )
+    parser.add_argument(
+        "-ff",
+        action="store",
+        dest="forcefield",
+        required=True,
+        help="The force field of the files given. Options: charmm, martini, martini3",
     )
     parser.add_argument(
         "-o",
@@ -33,18 +40,6 @@ def get_args() -> argparse.Namespace:
         dest="output",
         default="vdw_out",
         help="The name of the output .txt file",
-    )
-    parser.add_argument(
-        "-martini",
-        action="store_true",
-        dest="martini",
-        help="If you want to compute the radii with the MARTINI forcefield",
-    )
-    parser.add_argument(
-        "-martini3",
-        action="store_true",
-        dest="martini3",
-        help="If you specificaly have the MARTINI3 force field",
     )
     parser.add_argument(
         "--version",
@@ -61,8 +56,7 @@ def get_aliphatic(
     res_name_prev: str,
     atom_name: str,
     flag: bool,
-    martini: bool,
-    martini3: bool
+    forcefield: str
 ) -> tuple[str, bool]:
     """
     Check if the atom or bead is aliphatic or not
@@ -77,6 +71,8 @@ def get_aliphatic(
         The name of the atom or bead
     flag: bool
         If the central atom of glycerol or equivalent already passed
+    forcefield :str
+        The forcefield of the .itp files given
 
     --------------------
     OUTPUT
@@ -90,9 +86,9 @@ def get_aliphatic(
 
     # Check if we passed the central atom of glycerol or equivalent already passed
     if (
-        (martini or martini3)
+        ("martini" in forcefield)
         and (atom_name == "GL2" or atom_name == "AM1" or atom_name == "R1")
-    ) or ((not martini and not martini3) and atom_name == "C2"):
+    ) or ((forcefield == "charmm") and atom_name == "C2"):
         flag = True
         return "p", flag
     elif flag:
@@ -101,12 +97,22 @@ def get_aliphatic(
         return "p", flag
 
 
-def main() -> None:
+def launch(ff_file: str, mol_file: str, forcefield: str, output: str) -> None:
     """
     Calcultate the radii of given molecules
-    """
-    args = get_args()
 
+    --------------------
+    INPUT
+    ff_file: str
+        The name of the forcef field .itp file
+    mol_file: str
+        The name of the molecule .itp file
+    forcefield: str
+        The forcefield of the .itp files
+        Can be: charmm, martini or martini3
+    output: str
+        The name of the output file
+    """
     sigma = {}
     flag_ff = False
     flag_mol = False
@@ -114,17 +120,17 @@ def main() -> None:
     res_name_prev = ""
 
     # Get the value of sigma from the forcefield .itp
-    with open(args.ff, "r") as file_ff:
+    with open(ff_file, "r") as file_ff:
         for line in file_ff:
             if line.startswith(";"):
                 continue
             if line.startswith("["):
                 flag_ff = False
             if flag_ff and len(line.strip()) != 0:
-                if (args.martini or args.martini3) and line.split()[0] == line.split()[
+                if ("martini" in forcefield) and line.split()[0] == line.split()[
                     1
                 ]:
-                    if args.martini3:
+                    if forcefield == "martini3":
                         sigma[line.split()[0]] = float(line.split()[3])
                     else:
                         # sigma = (C12/C6)^(1/6)
@@ -134,15 +140,15 @@ def main() -> None:
                             sigma[line.split()[0]] = (C12 / C6) ** (1 / 6)
                         else:
                             sigma[line.split()[0]] = 0.0
-                elif not args.martini and not args.martini3:
+                elif forcefield == "charmm":
                     sigma[line.split()[0]] = float(line.split()[5])
-            if ((args.martini or args.martini3) and "[ nonbond_params ]" in line) or (
-                (not args.martini and not args.martini3) and "[ atomtypes ]" in line
+            if (("martini" in forcefield) and "[ nonbond_params ]" in line) or (
+                (forcefield == "charmm") and "[ atomtypes ]" in line
             ):
                 flag_ff = True
 
     # Calculate the radii and prints the radii of each atom type
-    with open(args.mol, "r") as file_mol, open(f"{args.output}.txt", "w") as file_out:
+    with open(mol_file, "r") as file_mol, open(f"{output}.txt", "w") as file_out:
         for line in file_mol:
             if line.startswith(";"):
                 continue
@@ -153,15 +159,22 @@ def main() -> None:
                 res_name = line.split()[3]
                 atom_name = line.split()[4]
                 aliph, flag_aliph = get_aliphatic(
-                    res_name, res_name_prev, atom_name, flag_aliph, args.martini, args.martini3
+                    res_name, res_name_prev, atom_name, flag_aliph, forcefield
                 )
                 res_name_prev = res_name
-                if args.martini or args.martini3:
+                if "martini" in forcefield:
                     file_out.write(f"{res_name:<6s}{atom_name:4s} {radii:.3f} {aliph}\n")
                 else:
                     file_out.write(f"{res_name:<6s}{atom_name:4s} {radii:.2f} {aliph}\n")
             if "[ atoms ]" in line or "[atoms]" in line:
                 flag_mol = True
+
+
+def main() -> None:
+   
+    args = get_args()
+
+    launch(args.ff_file, args.mol_file, args.forcefield, args.output)
 
 
 if __name__ == "__main__":

@@ -2,27 +2,22 @@
 
 This script computes the van der Waals radii from .itp files.
 
-The output is given in the terminal:
-* `Res_membrane.pdf` that contains all the plots of the defects analysis.\
-        In order: the fitted decay plots, the block averaging bar plots and the final bar plots\
-        For each defect type
+The output is written in an output file:
+* `vdw_out.txt` that contains the van der Waals radii for the molecule file given.
 
 ## Command line
 
 The complete options for analysis are:
 ```
-calculate_radii -mol [molecule file] -ff [forcefield file] -o [output name] [-martini] [-martini3] [-h]
+calculate_radii -m [molecule file] -f [forcefield file] -ff [forcefield] -o [output name] [-h]
 ```
 
 ## Options
 
 Input files options:
-- `-mol` molecule parameter file [.itp]
-- `-ff` forcefield paramter file [.itp]
-
-Input options:
-- `-martini` Compute the radius with MARTINI information (Default: False)
-- `-martini3` Compute the radius with MARTINI3 information (Default: False)
+- `-m` molecule parameter file [.itp]
+- `-f` force field parameter file [.itp]
+- `-ff` force field of the given files [charmm, martini, martini3]
 
 Ouput options:
 - `-o` Output name (Default: vdw_out)
