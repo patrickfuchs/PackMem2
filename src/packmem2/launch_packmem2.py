@@ -1,4 +1,5 @@
 from multiprocessing import Process
+import time
 
 from packmem2.core import param as p
 import packmem2.packmem2
@@ -60,6 +61,7 @@ def launch(
                 dist_suppl_Z,
                 protein,
                 pdbout,
+                i,
             ),
         )
         p.start()
@@ -78,6 +80,8 @@ def launch(
 
 
 def main() -> None:
+    start_time = time.time()
+
     args = p.get_args_launch_packmem2()
 
     launch(
@@ -100,6 +104,15 @@ def main() -> None:
         args.precision,
         args.nb_block
     )
+
+    print("--- PackMem2 over ---")
+    ran_time = round((time.time() - start_time) / 60, 2)
+    if ran_time < 1:
+        print(f"-- Ran for {round((time.time() - start_time), 2)} second(s) --")
+    elif ran_time < 60:
+        print(f"-- Ran for {ran_time} minute(s) --")
+    else:
+        print(f"-- Ran for {round((ran_time / 60), 2)} hour(s) --")
 
 
 if __name__ == "__main__":

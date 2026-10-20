@@ -1,5 +1,6 @@
 """Script to concatenate the PackMem analysis results."""
 
+import time
 import argparse
 import importlib.metadata
 import os
@@ -316,11 +317,22 @@ def launch(path: str, output_dir: str, prefix: str, start: int, end: int, prot: 
 
 
 def main() -> None:
+    start_time = time.time()
+
     # Get the argument
     args = get_args()
+    
     # Launch concatenate
     launch(args.path, args.output_dir, args.prefix, args.start, args.end,
            args.protein, args.keep)
+
+    ran_time = round((time.time() - start_time) / 60, 2)
+    if ran_time < 1:
+        print(f"-- Concatenate ran for {round((time.time() - start_time), 2)} second(s) --")
+    elif ran_time < 60:
+        print(f"-- Concatenate ran for {ran_time} minute(s) --")
+    else:
+        print(f"-- Concatenate ran for {round((ran_time / 60), 2)} hour(s) --")
 
 
 if __name__ == "__main__":
